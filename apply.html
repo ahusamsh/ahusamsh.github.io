@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>قدّم طلبك | درب | Darb Path</title>
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -32,7 +30,6 @@
       text-decoration: none;
     }
 
-    /* Language Toggle */
     .lang-toggle {
       position: fixed;
       top: 20px;
@@ -58,6 +55,7 @@
       font-weight: 600;
       transition: .2s;
       font-size: 0.9em;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
     
     .lang-toggle button.active {
@@ -74,7 +72,6 @@
     body.en-mode span.lang-ar { display: none; }
     body.en-mode span.lang-en { display: inline; }
 
-    /* Header */
     .header {
       background: #1a2332;
       padding: 2em 0;
@@ -136,6 +133,7 @@
       color: rgba(248,246,243,.96);
       font-weight: 600;
       transition: .2s;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
     
     .back-btn:hover {
@@ -143,7 +141,6 @@
       transform: translateX(-3px);
     }
 
-    /* Main Content */
     .main-section {
       padding: 4em 0;
       min-height: calc(100vh - 200px);
@@ -175,7 +172,6 @@
       margin: 0 auto;
     }
 
-    /* Google Form */
     .form-embed {
       background: #ffffff;
       border: 1px solid rgba(26,35,50,.12);
@@ -191,7 +187,6 @@
       display: block;
     }
 
-    /* Info Box */
     .info-box {
       background: rgba(201,151,77,.08);
       border: 1px solid rgba(201,151,77,.25);
@@ -235,6 +230,7 @@
       margin-top: 1em;
       box-shadow: 0 10px 30px rgba(26,35,50,.15);
       transition: .2s;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
     
     .btn-open-form:hover {
@@ -242,7 +238,6 @@
       box-shadow: 0 15px 40px rgba(26,35,50,.2);
     }
 
-    /* Footer */
     footer {
       background: #1a2332;
       padding: 2.5em 0;
@@ -260,7 +255,6 @@
       opacity: .8;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .lang-toggle {
         top: 10px;
@@ -298,13 +292,11 @@
 
 <body>
 
-  <!-- Language Toggle -->
   <div class="lang-toggle">
     <button onclick="setLang('ar')" class="active" id="lang-ar">العربية</button>
     <button onclick="setLang('en')" id="lang-en">English</button>
   </div>
 
-  <!-- Header -->
   <header class="header">
     <div class="header-inner">
       <a href="index.html" class="logo-link">
@@ -327,11 +319,9 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <section class="main-section">
     <div class="container">
       
-      <!-- Header -->
       <div class="form-header">
         <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
         <h1 class="form-title lang-en">Apply to Join</h1>
@@ -345,7 +335,6 @@
         </p>
       </div>
 
-      <!-- Google Form -->
       <div class="form-embed">
         <iframe 
           class="google-form-iframe"
@@ -357,7 +346,6 @@
         </iframe>
       </div>
 
-      <!-- Info Box -->
       <div class="info-box">
         <h4 class="lang-ar">هل تحتاج مساعدة؟</h4>
         <h4 class="lang-en">Need Help?</h4>
@@ -384,7 +372,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <div>
       <p class="lang-ar">
@@ -402,10 +389,10 @@
 
   <script>
     function setLang(lang) {
-      const body = document.body;
-      const html = document.documentElement;
-      const btnAr = document.getElementById('lang-ar');
-      const btnEn = document.getElementById('lang-en');
+      var body = document.body;
+      var html = document.documentElement;
+      var btnAr = document.getElementById('lang-ar');
+      var btnEn = document.getElementById('lang-en');
       
       if (lang === 'en') {
         body.classList.add('en-mode');
@@ -425,7 +412,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', function() {
-      const savedLang = localStorage.getItem('lang') || 'ar';
+      var savedLang = localStorage.getItem('lang') || 'ar';
       setLang(savedLang);
     });
   </script>
