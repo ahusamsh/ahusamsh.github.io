@@ -1,454 +1,132 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Darb Path | درب — One Path. Many Cultures. One Language.</title>
   <meta charset="utf-8" />
+  <title>Apply | Darb Path</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Darb Path | درب — A premium Arabic & cultural immersion journey. One Path. Many Cultures. One Language." />
   <meta name="theme-color" content="#1a2332" />
-
-  <link rel="stylesheet" href="assets/css/main.css" />
 
   <style>
     :root{
       --navy:#1a2332;
       --copper:#c9974d;
       --offwhite:#f8f6f3;
-      --ink:#0f172a;
     }
 
-    html{ scroll-behavior:smooth; }
-    body{ background: var(--offwhite) !important; color:#24324b; }
-
-    /* HERO */
-    #header{
-      background:
-        radial-gradient(1200px 650px at 20% 10%, rgba(201,151,77,.18), transparent 60%),
-        radial-gradient(1000px 600px at 80% 30%, rgba(248,246,243,.10), transparent 60%),
-        linear-gradient(180deg, #131b28 0%, var(--navy) 55%, #111827 100%) !important;
-      color: var(--offwhite) !important;
-    }
-    #header:before{ opacity:.06 !important; }
-    #header .inner{
-      padding-top: 5.2em !important;
-      padding-bottom: 5.2em !important;
-      max-width: 980px;
-      margin: 0 auto;
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--offwhite);
+      color:#24324b;
     }
 
-    /* BIG logo no box */
-    .brand-logo{
-      width: clamp(240px, 48vw, 460px);
-      height:auto;
-      display:block;
-      margin: 0 auto 1.1em auto;
-      background: transparent;
-      border-radius: 0;
-      box-shadow:none;
-      padding:0;
+    header{
+      background: linear-gradient(180deg, #131b28, var(--navy));
+      color: #fff;
+      text-align:center;
+      padding: 3.2em 1em 2.2em;
     }
 
-    .brand-kicker{
-      letter-spacing:.14em;
-      text-transform:uppercase;
+    header img{
+      width: 220px;
+      max-width: 70%;
+      margin-bottom: 1em;
+    }
+
+    header h1{
+      margin: .2em 0 .4em;
+      font-size: 1.9em;
+      letter-spacing:.2px;
+    }
+
+    header p{
       opacity:.9;
-      font-size:.85em;
-      margin-bottom:.55em;
-    }
-
-    #header h1{ color: var(--offwhite) !important; letter-spacing:.2px; }
-    #header p{ color: rgba(248,246,243,.88) !important; font-size:1.05em; line-height:1.85; }
-
-    .badge{
-      display:inline-flex; align-items:center; gap:.6em;
-      padding:.55em .95em;
-      border-radius:999px;
-      border:1px solid rgba(248,246,243,.18);
-      background: rgba(248,246,243,.06);
-      font-size:.92em;
-      margin-top:1.1em;
-      backdrop-filter: blur(6px);
-    }
-    .badge-dot{
-      width:10px;height:10px;border-radius:999px;
-      background: var(--copper);
-      box-shadow: 0 0 0 6px rgba(201,151,77,.18);
-      display:inline-block;
-    }
-
-    /* Buttons */
-    .button.special{
-      background: var(--copper) !important;
-      color: var(--navy) !important;
-      border:none !important;
-      font-weight:800 !important;
-      box-shadow: 0 12px 34px rgba(0,0,0,.22);
-      transition: transform .12s ease, filter .12s ease;
-    }
-    .button.special:hover{ filter:brightness(1.06); transform: translateY(-1px); }
-    .button{ border-color: rgba(201,151,77,.55) !important; }
-    .button:hover{ background: rgba(201,151,77,.08) !important; }
-
-    /* SECTIONS */
-    .main{ padding:5em 0 !important; }
-    .main.style1{ background: var(--offwhite) !important; color:#24324b !important; }
-    .main.style2{ background:#111827 !important; color: rgba(248,246,243,.92) !important; }
-    header.major h2{ color: var(--ink) !important; letter-spacing:.2px; }
-    .main.style2 header.major h2{ color: var(--offwhite) !important; }
-    .main p{ line-height:1.9; }
-
-    #one .image.fit img{
-      max-width: 420px;
+      max-width: 720px;
       margin: 0 auto;
-      display:block;
-      opacity:.95;
+      line-height:1.7;
     }
 
-    .main.style1.special .image.fit img{
+    .container{
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5em 1em 4em;
+    }
+
+    .form-wrapper{
+      background:#fff;
       border-radius: 18px;
-      box-shadow: 0 14px 34px rgba(26,35,50,.14);
+      box-shadow: 0 20px 50px rgba(26,35,50,.12);
+      overflow:hidden;
     }
 
-    /* FOOTER / SOCIAL (consistent sizes) */
-    #footer{
-      background: var(--navy) !important;
-      color: rgba(248,246,243,.88) !important;
-    }
-    #footer .copyright{ color: rgba(248,246,243,.65) !important; }
-
-    .social-grid{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap: 12px;
-      margin: 0 0 2em 0;
-      padding: 0;
-      list-style:none;
+    iframe{
+      width:100%;
+      height:1100px;
+      border:0;
     }
 
-    .social-btn{
-      width: 46px;
-      height: 46px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      border-radius: 16px;
-      background: rgba(248,246,243,.06);
-      border: 1px solid rgba(248,246,243,.14);
-      color: rgba(248,246,243,.95);
-      transition: transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+    .back{
+      text-align:center;
+      margin-top:2.2em;
+    }
+
+    .back a{
+      display:inline-block;
       text-decoration:none;
-    }
-    .social-btn:hover{
-      transform: translateY(-1px);
-      background: rgba(201,151,77,.14);
-      border-color: rgba(201,151,77,.35);
-      color: var(--copper);
-    }
-
-    .social-btn svg{
-      width: 22px;
-      height: 22px;
-      fill: currentColor;
-      display:block;
+      padding:.8em 1.4em;
+      border-radius:999px;
+      border:1px solid var(--copper);
+      color:var(--navy);
+      font-weight:600;
+      transition:.15s ease;
     }
 
-    /* Accessible text (hidden) */
-    .sr-only{
-      position:absolute !important;
-      width:1px !important;
-      height:1px !important;
-      padding:0 !important;
-      margin:-1px !important;
-      overflow:hidden !important;
-      clip: rect(0,0,0,0) !important;
-      white-space:nowrap !important;
-      border:0 !important;
+    .back a:hover{
+      background: rgba(201,151,77,.12);
     }
 
-    @media (max-width: 736px){
-      #header .inner{ padding-top: 4.4em !important; padding-bottom: 4.4em !important; }
-      #header p{ font-size:1em; }
-      .main{ padding: 4.2em 0 !important; }
+    footer{
+      text-align:center;
+      font-size:.9em;
+      opacity:.7;
+      margin-top:3em;
+    }
+
+    @media (max-width: 768px){
+      iframe{ height: 1250px; }
+      header h1{ font-size:1.6em; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Header -->
-  <section id="header">
-    <div class="inner">
-      <img class="brand-logo" src="logo.png" alt="Darb Path Logo" />
+<header>
+  <img src="logo.png" alt="Darb Path Logo">
+  <h1>Apply to Join</h1>
+  <p>
+    Seats are limited to maintain quality.<br>
+    Applications are reviewed carefully — if this batch is full, your details are saved for the next program.
+  </p>
+</header>
 
-      <div class="brand-kicker">Darb Path | درب</div>
+<div class="container">
+  <div class="form-wrapper">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
+      loading="lazy">
+      جارٍ التحميل…
+    </iframe>
+  </div>
 
-      <h1><strong>One Path.</strong> Many Cultures. One Language.</h1>
+  <div class="back">
+    <a href="index.html">← Back to Darb Path</a>
+  </div>
 
-      <p>
-        A premium Arabic & cultural immersion journey — designed for small groups,
-        high-quality experiences, and real connection.
-      </p>
-
-      <span class="badge">
-        <span class="badge-dot"></span>
-        <strong>Upcoming Program:</strong> Limited seats — applications reviewed
-      </span>
-
-      <ul class="actions">
-        <li>
-          <a href="https://forms.gle/PK6kwvsurP6wmvLE8" class="button special" target="_blank" rel="noopener">
-            Apply to Join
-          </a>
-        </li>
-        <li>
-          <a href="https://wa.me/13187639149" class="button" target="_blank" rel="noopener">
-            WhatsApp
-          </a>
-        </li>
-        <li><a href="#one" class="button scrolly">Discover</a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- One -->
-  <section id="one" class="main style1">
-    <div class="container">
-      <div class="row 150%">
-        <div class="6u 12u$(medium)">
-          <header class="major">
-            <h2>What is Darb Path?</h2>
-          </header>
-
-          <p>
-            Darb Path is a curated journey that blends Arabic immersion, cultural depth,
-            and meaningful experiences. It’s designed for people who want more than a tour —
-            they want a <strong>path</strong>: structured, guided, and unforgettable.
-          </p>
-
-          <p>
-            We start with limited seats to keep the experience premium and personal.
-            If the first batch fills up, you’ll still be on the list for the next one.
-          </p>
-
-          <ul class="actions">
-            <li><a href="#two" class="button scrolly">What You’ll Get</a></li>
-          </ul>
-        </div>
-
-        <div class="6u$ 12u$(medium) important(medium)">
-          <span class="image fit">
-            <img src="logo.png" alt="Darb Path" />
-          </span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Two -->
-  <section id="two" class="main style2">
-    <div class="container">
-      <div class="row 150%">
-        <div class="6u 12u$(medium)">
-          <ul class="major-icons">
-            <li><span class="icon style1 major fa-language"></span></li>
-            <li><span class="icon style2 major fa-map-marker"></span></li>
-            <li><span class="icon style3 major fa-users"></span></li>
-            <li><span class="icon style4 major fa-calendar"></span></li>
-            <li><span class="icon style5 major fa-star"></span></li>
-            <li><span class="icon style6 major fa-paper-plane"></span></li>
-          </ul>
-        </div>
-
-        <div class="6u$ 12u$(medium)">
-          <header class="major">
-            <h2>What you’ll experience</h2>
-          </header>
-
-          <p>
-            We mix learning with lived experience. That means Arabic you can actually use,
-            cultural activities that make sense (not random filler), and a journey that feels
-            organized without feeling “touristy.”
-          </p>
-
-          <p>
-            <strong>Core highlights:</strong> Arabic immersion, cultural visits, guided activities,
-            and a structured program flow — with clear logistics and a team that actually knows what they’re doing.
-          </p>
-
-          <p>
-            Ready to join the first batch? Apply now — even if it fills, your details are saved for the next program.
-          </p>
-
-          <ul class="actions">
-            <li>
-              <a href="https://forms.gle/PK6kwvsurP6wmvLE8" class="button special" target="_blank" rel="noopener">
-                Apply to Join
-              </a>
-            </li>
-            <li><a href="#three" class="button scrolly">Explore Services</a></li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Three -->
-  <section id="three" class="main style1 special">
-    <div class="container">
-      <header class="major">
-        <h2>Services & Experience</h2>
-      </header>
-
-      <p>A clear program. Limited seats. A premium journey.</p>
-
-      <div class="row 150%">
-        <div class="4u 12u$(medium)">
-          <span class="image fit"><img src="images/pic02.jpg" alt="" /></span>
-          <h3>Arabic Immersion</h3>
-          <p>Practical Arabic support and curated language moments — built into the day, not “on the side.”</p>
-          <ul class="actions">
-            <li><a href="https://forms.gle/PK6kwvsurP6wmvLE8" class="button" target="_blank" rel="noopener">Apply</a></li>
-          </ul>
-        </div>
-
-        <div class="4u 12u$(medium)">
-          <span class="image fit"><img src="images/pic03.jpg" alt="" /></span>
-          <h3>Cultural Depth</h3>
-          <p>Meaningful cultural visits and experiences that reflect identity, history, and place — not checklist tourism.</p>
-          <ul class="actions">
-            <li><a href="#footer" class="button scrolly">Social Links</a></li>
-          </ul>
-        </div>
-
-        <div class="4u$ 12u$(medium)">
-          <span class="image fit"><img src="images/pic04.jpg" alt="" /></span>
-          <h3>Program & Logistics</h3>
-          <p>Structured schedule, guided flow, and clear coordination — designed to keep things smooth and premium.</p>
-          <ul class="actions">
-            <li><a href="#apply" class="button scrolly">Upcoming Program</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Apply -->
-  <section id="apply" class="main style2 special">
-    <div class="container">
-      <header class="major">
-        <h2>Upcoming Program (Batch 01)</h2>
-      </header>
-
-      <p>
-        Seats are <strong>limited</strong> to maintain quality.
-        Applications are reviewed — if the batch is full, your details stay on the waitlist for the next program.
-      </p>
-
-      <ul class="actions uniform">
-        <li>
-          <a href="https://forms.gle/PK6kwvsurP6wmvLE8" class="button special" target="_blank" rel="noopener">
-            Apply to Join
-          </a>
-        </li>
-        <li>
-          <a href="https://wa.me/13187639149" class="button" target="_blank" rel="noopener">
-            WhatsApp
-          </a>
-        </li>
-        <li><a href="#one" class="button scrolly">Back to Top</a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <section id="footer">
-    <ul class="social-grid">
-      <!-- Instagram -->
-      <li>
-        <a class="social-btn" href="https://www.instagram.com/DARBPATH" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.6-2.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg>
-          <span class="sr-only">Instagram</span>
-        </a>
-      </li>
-
-      <!-- TikTok -->
-      <li>
-        <a class="social-btn" href="https://www.tiktok.com/@DARBPATH" target="_blank" rel="noopener" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 3c.5 3.2 2.7 5.4 5.9 5.7v3.3c-2 0-3.8-.6-5.3-1.6v7.1c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.4 0 .8 0 1.2.1v3.4c-.4-.2-.8-.3-1.2-.3-1.5 0-2.7 1.2-2.7 2.7s1.2 2.7 2.7 2.7 2.7-1.2 2.7-2.7V3h2.7z"/></svg>
-          <span class="sr-only">TikTok</span>
-        </a>
-      </li>
-
-      <!-- X -->
-      <li>
-        <a class="social-btn" href="https://x.com/DARBPATH" target="_blank" rel="noopener" aria-label="X">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.6l-5.2-7.1L4.9 22H2l7.4-8.6L1 2h6.8l4.7 6.4L18.9 2zm-1.2 18h1.7L7.1 3.9H5.3L17.7 20z"/></svg>
-          <span class="sr-only">X</span>
-        </a>
-      </li>
-
-      <!-- YouTube -->
-      <li>
-        <a class="social-btn" href="https://www.youtube.com/@DARBPATH" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4A3 3 0 0 0 2.4 7.2 31.4 31.4 0 0 0 2 12a31.4 31.4 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 22 12a31.4 31.4 0 0 0-.4-4.8zM10 15.3V8.7L16 12l-6 3.3z"/></svg>
-          <span class="sr-only">YouTube</span>
-        </a>
-      </li>
-
-      <!-- Snapchat -->
-      <li>
-        <a class="social-btn" href="https://www.snapchat.com/add/DARBPATH" target="_blank" rel="noopener" aria-label="Snapchat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3.1 0 5.6 2.4 5.6 5.4v3.2c0 .4.2.7.6.9 1 .4 2 .9 2 1.8 0 .7-.7 1.1-1.5 1.4-.7.2-1.2.8-1.2 1.5 0 .7.4 1.3 1.1 1.6.4.2.7.5.7.9 0 .7-1.3 1.1-2.5 1.3-.8.1-1.4.7-1.6 1.5-.1.4-.3.6-.7.6-.6 0-1.2-.2-1.8-.4-.5-.2-1-.2-1.5 0-.6.2-1.2.4-1.8.4-.4 0-.6-.2-.7-.6-.2-.8-.8-1.4-1.6-1.5-1.2-.2-2.5-.6-2.5-1.3 0-.4.3-.7.7-.9.7-.3 1.1-.9 1.1-1.6 0-.7-.5-1.3-1.2-1.5-.8-.3-1.5-.7-1.5-1.4 0-.9 1-1.4 2-1.8.4-.2.6-.5.6-.9V7.4C6.4 4.4 8.9 2 12 2z"/></svg>
-          <span class="sr-only">Snapchat</span>
-        </a>
-      </li>
-
-      <!-- Telegram -->
-      <li>
-        <a class="social-btn" href="https://t.me/DARBPATH" target="_blank" rel="noopener" aria-label="Telegram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.7 4.3c.3.1.4.4.3 1l-3.2 15.1c-.2.8-.7 1-1.4.6l-4-2.9-1.9 1.8c-.2.2-.4.4-.8.4l.3-4.3 7.8-7c.3-.3-.1-.4-.5-.2l-9.6 6-4.1-1.3c-.9-.3-.9-.9.2-1.3l15.8-6.1c.5-.2.9-.2 1.1-.1z"/></svg>
-          <span class="sr-only">Telegram</span>
-        </a>
-      </li>
-
-      <!-- Facebook -->
-      <li>
-        <a class="social-btn" href="https://www.facebook.com/DARBPATH" target="_blank" rel="noopener" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.9.3-1.6 1.7-1.6h1.6V4.9c-.3 0-1.4-.1-2.7-.1-2.6 0-4.4 1.6-4.4 4.6V11H7v3h2.7v8h3.8z"/></svg>
-          <span class="sr-only">Facebook</span>
-        </a>
-      </li>
-
-      <!-- WhatsApp -->
-      <li>
-        <a class="social-btn" href="https://wa.me/13187639149" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.9 7l-3.1 1 1-3A8 8 0 1 1 20 12zm-4.6 4.3c.2-.1 1.2-.6 1.4-1.1.2-.5.2-.9.1-1-.1-.1-.2-.2-.5-.3l-1.6-.8c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.6-1.4-1.9-.1-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.1-.6l-.7-1.7c-.2-.5-.4-.4-.6-.4H8.2c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.1 1.7 0z"/></svg>
-          <span class="sr-only">WhatsApp</span>
-        </a>
-      </li>
-
-      <!-- Email (fixed) -->
-      <li>
-        <a class="social-btn" href="mailto:pathdarb@gmail.com" aria-label="Email">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/></svg>
-          <span class="sr-only">Email</span>
-        </a>
-      </li>
-    </ul>
-
-    <ul class="copyright">
-      <li>&copy; Darb Path | درب</li>
-      <li>One Path. Many Cultures. One Language.</li>
-    </ul>
-  </section>
-
-  <script src="assets/js/jquery.min.js"></script>
-  <script src="assets/js/jquery.scrolly.min.js"></script>
-  <script src="assets/js/skel.min.js"></script>
-  <script src="assets/js/util.js"></script>
-  <script src="assets/js/main.js"></script>
+  <footer>
+    © Darb Path | One Path. Many Cultures. One Language.
+  </footer>
+</div>
 
 </body>
 </html>
