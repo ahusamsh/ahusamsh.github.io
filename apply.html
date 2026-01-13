@@ -118,7 +118,6 @@
     body.en-mode .logo-link:hover {
       transform: translateX(4px);
     }
-    /* شعار Header مع خلفية بيضاء */
     .logo-link img {
       width: 56px;
       height: 56px;
@@ -168,19 +167,19 @@
 
     /* Form Section */
     .form-section {
-      padding: 5em 0;
+      padding: 5em 0 4em;
       min-height: calc(100vh - 250px);
       background: 
         radial-gradient(circle at 20% 30%, rgba(201,151,77,.05), transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(90,107,84,.05), transparent 50%);
     }
     .form-container {
-      max-width: 850px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .form-header {
       text-align: center;
-      margin-bottom: 4em;
+      margin-bottom: 3.5em;
     }
     .form-title {
       font-size: clamp(2.2em, 3.5vw, 2.9em);
@@ -196,12 +195,11 @@
       margin: 0 auto;
     }
 
-    /* Google Form Embed Container */
+    /* Google Form Container */
     .form-embed-container {
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 0;
       box-shadow: var(--shadow);
       overflow: hidden;
       position: relative;
@@ -210,59 +208,9 @@
     /* Google Form Iframe */
     .google-form-iframe {
       width: 100%;
-      height: 2200px;
+      height: 2400px;
       border: none;
       display: block;
-    }
-
-    /* Alternative: Direct Link Button */
-    .form-link-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 3.5em 3em;
-      box-shadow: var(--shadow);
-      text-align: center;
-      display: none; /* يظهر إذا لم يعمل iframe */
-    }
-    .form-link-card h3 {
-      font-size: 1.6em;
-      color: var(--navy);
-      margin-bottom: 1em;
-      letter-spacing: .3px;
-    }
-    .form-link-card p {
-      color: var(--muted);
-      line-height: 2;
-      margin-bottom: 2em;
-      font-size: 1.08em;
-    }
-    .btn-google-form {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 1.2em 2.5em;
-      background: var(--copper);
-      color: var(--navy);
-      border: none;
-      border-radius: 999px;
-      font-size: 1.12em;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .2s ease;
-      box-shadow: 0 16px 40px rgba(26,35,50,.2);
-      letter-spacing: .3px;
-    }
-    .btn-google-form:hover {
-      transform: translateY(-3px);
-      filter: brightness(1.1);
-      box-shadow: 0 22px 55px rgba(26,35,50,.28);
-    }
-    .btn-google-form svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
     }
 
     /* Info Box */
@@ -270,20 +218,20 @@
       background: rgba(201,151,77,.08);
       border: 1px solid rgba(201,151,77,.25);
       border-radius: 16px;
-      padding: 1.8em 2em;
+      padding: 2em 2.2em;
       margin-top: 3em;
       text-align: center;
     }
     .info-box h4 {
       color: var(--navy);
-      margin-bottom: 0.8em;
-      font-size: 1.2em;
+      margin-bottom: 0.9em;
+      font-size: 1.25em;
       letter-spacing: .3px;
     }
     .info-box p {
       color: var(--muted);
-      line-height: 2;
-      margin-bottom: 1.2em;
+      line-height: 2.1;
+      margin-bottom: 0.5em;
     }
     .info-box a {
       color: var(--copper);
@@ -294,6 +242,37 @@
     }
     .info-box a:hover {
       text-decoration-color: var(--copper);
+      opacity: .9;
+    }
+
+    /* Alternative Link Button */
+    .btn-google-form {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 1.1em 2.2em;
+      background: var(--copper);
+      color: var(--navy);
+      border: none;
+      border-radius: 999px;
+      font-size: 1.08em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s ease;
+      box-shadow: 0 14px 35px rgba(26,35,50,.18);
+      letter-spacing: .3px;
+      margin-top: 1em;
+    }
+    .btn-google-form:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.1);
+      box-shadow: 0 20px 50px rgba(26,35,50,.25);
+    }
+    .btn-google-form svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
     }
 
     /* Footer */
@@ -317,32 +296,6 @@
       text-decoration-color: var(--copper);
     }
 
-    /* Loading State */
-    .loading-placeholder {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 5em 3em;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(201,151,77,.2);
-      border-top-color: var(--copper);
-      border-radius: 50%;
-      margin: 0 auto 2em;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .loading-text {
-      color: var(--muted);
-      font-size: 1.1em;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       .lang-toggle {
@@ -357,10 +310,10 @@
         display: none;
       }
       .google-form-iframe {
-        height: 2400px;
+        height: 2600px;
       }
-      .form-link-card {
-        padding: 2.5em 2em;
+      .info-box {
+        padding: 1.5em 1.5em;
       }
     }
 
@@ -414,21 +367,11 @@
           </p>
         </div>
 
-        <!-- ====================================== -->
-        <!-- OPTION 1: Google Form Embedded (iframe) -->
-        <!-- ====================================== -->
-        <div class="form-embed-container" id="formEmbed">
-          <!-- 
-            استبدل الرابط التالي برابط نموذج جوجل الخاص بك
-            للحصول على رابط التضمين:
-            1. افتح نموذج جوجل
-            2. اضغط على "إرسال" (Send)
-            3. اختر أيقونة "<>" (Embed HTML)
-            4. انسخ الرابط من src="..."
-          -->
+        <!-- Google Form Embedded -->
+        <div class="form-embed-container">
           <iframe 
             class="google-form-iframe"
-            src="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true"
+            src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
             frameborder="0" 
             marginheight="0" 
             marginwidth="0">
@@ -436,39 +379,6 @@
             <span class="lang-en">Loading…</span>
           </iframe>
         </div>
-
-        <!-- ====================================== -->
-        <!-- OPTION 2: Direct Link (البديل) -->
-        <!-- ====================================== -->
-        <!-- 
-          إذا لم يعمل iframe، احذف التعليق من الكود التالي
-          واستبدل الرابط برابط نموذج جوجل المباشر
-        -->
-        <!--
-        <div class="form-link-card">
-          <h3 class="lang-ar">انتقل إلى نموذج التقديم</h3>
-          <h3 class="lang-en">Go to Application Form</h3>
-          <p class="lang-ar">
-            سيتم فتح نموذج جوجل في نافذة جديدة.<br>
-            املأ جميع الحقول المطلوبة وأرسل طلبك.
-          </p>
-          <p class="lang-en">
-            The Google Form will open in a new window.<br>
-            Fill in all required fields and submit your application.
-          </p>
-          <a 
-            href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" 
-            target="_blank" 
-            rel="noopener"
-            class="btn-google-form">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-            </svg>
-            <span class="lang-ar">افتح النموذج</span>
-            <span class="lang-en">Open Form</span>
-          </a>
-        </div>
-        -->
 
         <!-- Info Box -->
         <div class="info-box">
@@ -484,6 +394,20 @@
             <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
             <a href="mailto:info@darbpath.com">info@darbpath.com</a>
           </p>
+          
+          <!-- رابط بديل لفتح النموذج في صفحة منفصلة -->
+          <a 
+            href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform" 
+            target="_blank" 
+            rel="noopener"
+            class="btn-google-form">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+              <path d="M8 12h8v2H8zm0 4h8v2H8zm0-8h5v2H8z"/>
+            </svg>
+            <span class="lang-ar">افتح النموذج في صفحة جديدة</span>
+            <span class="lang-en">Open Form in New Tab</span>
+          </a>
         </div>
 
       </div>
