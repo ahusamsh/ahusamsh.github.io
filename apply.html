@@ -3,64 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>قدّم طلبك | درب | Darb Path</title>
+  <title>قدّم طلبك | درب | Path</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --primary: #3d5247;
+      --secondary: #b8a07e;
+      --cream: #e8e4d9;
+      --light-cream: #f5f2ea;
+      --white: #ffffff;
+      --text: #2d2d2d;
+      --text-light: #5a5a5a;
+      --border: rgba(61,82,71,.15);
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
-      background: #f8f6f3;
-      color: #0f172a;
+      background: var(--cream);
+      color: var(--text);
       line-height: 1.7;
+      min-height: 100vh;
     }
-    
+
     h1, h2, h3 {
       font-family: 'Amiri', serif;
+      color: var(--primary);
     }
-    
+
     a {
       color: inherit;
       text-decoration: none;
     }
 
+    /* Language Toggle */
     .lang-toggle {
       position: fixed;
       top: 20px;
       left: 20px;
       z-index: 100;
-      background: rgba(26,35,50,.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(248,246,243,.2);
-      border-radius: 12px;
-      padding: 8px;
+      background: var(--primary);
+      border-radius: 8px;
+      padding: 6px;
       display: flex;
       gap: 4px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
     }
-    
+
     .lang-toggle button {
       padding: 8px 16px;
       border: none;
       background: transparent;
-      color: rgba(248,246,243,.7);
+      color: rgba(255,255,255,.7);
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
       transition: .2s;
       font-size: 0.9em;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
-    
+
     .lang-toggle button.active {
-      background: #c9974d;
-      color: #1a2332;
+      background: var(--secondary);
+      color: var(--primary);
     }
 
     .lang-ar { display: block; }
@@ -72,114 +88,113 @@
     body.en-mode span.lang-ar { display: none; }
     body.en-mode span.lang-en { display: inline; }
 
+    /* Header */
     .header {
-      background: #1a2332;
+      background: var(--primary);
       padding: 2em 0;
-      border-bottom: 1px solid rgba(248,246,243,.15);
-      box-shadow: 0 4px 16px rgba(0,0,0,.1);
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
-    
+
     .header-inner {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 0 22px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
       flex-wrap: wrap;
     }
-    
+
     .logo-link {
       display: flex;
       align-items: center;
-      gap: 16px;
-      color: rgba(248,246,243,.96);
+      gap: 14px;
+      color: var(--white);
       transition: .2s;
     }
-    
+
     .logo-link:hover {
       transform: translateX(-3px);
     }
-    
+
     .logo-link img {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background: #ffffff;
-      border: 1px solid rgba(248,246,243,.3);
-      padding: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: var(--white);
+      padding: 8px;
     }
-    
+
     .logo-text b {
       display: block;
       font-size: 1.2em;
-      letter-spacing: .3px;
+      letter-spacing: .5px;
     }
-    
+
     .logo-text span {
-      font-size: 0.9em;
-      opacity: .75;
+      font-size: 0.85em;
+      opacity: .8;
       display: block;
-      margin-top: 3px;
+      margin-top: 2px;
     }
-    
+
     .back-btn {
       padding: 10px 20px;
-      background: rgba(248,246,243,.15);
-      border: 1px solid rgba(248,246,243,.25);
-      border-radius: 999px;
-      color: rgba(248,246,243,.96);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      color: var(--white);
       font-weight: 600;
       transition: .2s;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
-    
+
     .back-btn:hover {
-      background: rgba(248,246,243,.22);
+      background: rgba(255,255,255,.18);
       transform: translateX(-3px);
     }
 
+    /* Main Section */
     .main-section {
       padding: 4em 0;
       min-height: calc(100vh - 200px);
     }
-    
+
     .container {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 22px;
+      padding: 0 24px;
     }
-    
+
     .form-header {
       text-align: center;
       margin-bottom: 3em;
     }
-    
+
     .form-title {
       font-size: 2.5em;
-      color: #1a2332;
       margin-bottom: 0.5em;
       letter-spacing: .3px;
     }
-    
+
     .form-subtitle {
-      color: rgba(15,23,42,.7);
+      color: var(--text-light);
       font-size: 1.1em;
       line-height: 2;
       max-width: 700px;
       margin: 0 auto;
     }
 
+    /* Google Form */
     .form-embed {
-      background: #ffffff;
-      border: 1px solid rgba(26,35,50,.12);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(26,35,50,.1);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
       overflow: hidden;
     }
-    
+
     .google-form-iframe {
       width: 100%;
       height: 2400px;
@@ -187,102 +202,105 @@
       display: block;
     }
 
+    /* Info Box */
     .info-box {
-      background: rgba(201,151,77,.08);
-      border: 1px solid rgba(201,151,77,.25);
-      border-radius: 16px;
+      background: rgba(184,160,126,.1);
+      border: 1px solid rgba(184,160,126,.25);
+      border-radius: 12px;
       padding: 2em;
       margin-top: 3em;
       text-align: center;
     }
-    
+
     .info-box h4 {
-      color: #1a2332;
+      color: var(--primary);
       margin-bottom: 0.8em;
       font-size: 1.2em;
     }
-    
+
     .info-box p {
-      color: rgba(15,23,42,.7);
+      color: var(--text-light);
       line-height: 2;
       margin-bottom: 0.5em;
     }
-    
+
     .info-box a {
-      color: #c9974d;
+      color: var(--secondary);
       font-weight: 600;
       text-decoration: underline;
     }
-    
+
     .info-box a:hover {
       opacity: .8;
     }
-    
+
     .btn-open-form {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       padding: 12px 24px;
-      background: #c9974d;
-      color: #1a2332;
-      border-radius: 999px;
+      background: var(--secondary);
+      color: var(--primary);
+      border-radius: 8px;
       font-weight: 700;
       margin-top: 1em;
-      box-shadow: 0 10px 30px rgba(26,35,50,.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
       transition: .2s;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
-    
+
     .btn-open-form:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(26,35,50,.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
     }
 
+    /* Footer */
     footer {
-      background: #1a2332;
+      background: var(--primary);
       padding: 2.5em 0;
-      color: rgba(248,246,243,.88);
-      border-top: 1px solid rgba(248,246,243,.15);
+      color: rgba(255,255,255,.88);
+      border-top: 1px solid rgba(255,255,255,.1);
       text-align: center;
     }
-    
+
     footer a {
-      color: #c9974d;
+      color: var(--secondary);
       text-decoration: underline;
     }
-    
+
     footer a:hover {
       opacity: .8;
     }
 
+    /* Responsive */
     @media (max-width: 768px) {
       .lang-toggle {
         top: 10px;
         left: 10px;
       }
-      
+
       .header-inner {
         flex-direction: column;
         text-align: center;
       }
-      
+
       .logo-text span {
         display: none;
       }
-      
+
       .google-form-iframe {
         height: 2600px;
       }
-      
+
       .form-title {
         font-size: 2em;
       }
     }
-    
+
     body.en-mode {
       direction: ltr;
     }
-    
+
     body.en-mode .back-btn:hover,
     body.en-mode .logo-link:hover {
       transform: translateX(3px);
@@ -303,8 +321,8 @@
         <img src="logo.png" alt="شعار درب">
         <div class="logo-text">
           <b>
-            <span class="lang-ar">درب | Darb Path</span>
-            <span class="lang-en">Darb Path | درب</span>
+            <span class="lang-ar">درب | Path</span>
+            <span class="lang-en">Path | درب</span>
           </b>
           <span>
             <span class="lang-ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span>
@@ -321,7 +339,7 @@
 
   <section class="main-section">
     <div class="container">
-      
+
       <div class="form-header">
         <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
         <h1 class="form-title lang-en">Apply to Join</h1>
@@ -359,7 +377,7 @@
           <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
           <a href="mailto:info@darbpath.com">info@darbpath.com</a>
         </p>
-        
+
         <a 
           href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform" 
           target="_blank" 
@@ -375,10 +393,10 @@
   <footer>
     <div>
       <p class="lang-ar">
-        © 2026 درب | Darb Path — طريق واحد. ثقافات متعددة. لغة واحدة.
+        © 2026 درب | Path — طريق واحد. ثقافات متعددة. لغة واحدة.
       </p>
       <p class="lang-en">
-        © 2026 Darb Path | درب — One Path. Many Cultures. One Language.
+        © 2026 Path | درب — One Path. Many Cultures. One Language.
       </p>
       <p style="margin-top: 1em;">
         <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
@@ -393,7 +411,7 @@
       var html = document.documentElement;
       var btnAr = document.getElementById('lang-ar');
       var btnEn = document.getElementById('lang-en');
-      
+
       if (lang === 'en') {
         body.classList.add('en-mode');
         html.setAttribute('dir', 'ltr');
