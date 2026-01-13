@@ -1,53 +1,35 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>قدّم طلبك | درب | Darb Path</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="قدّم طلبك للانضمام إلى رحلة درب - غمر لغوي وثقافي في المدينة المنورة" />
-  <meta name="theme-color" content="#1a2332" />
   
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --navy:#1a2332;
-      --copper:#c9974d;
-      --off:#f8f6f3;
-      --sage:#5a6b54;
-      --cream:#e8e6e1;
-      --ink:#0f172a;
-      --text: rgba(15,23,42,.88);
-      --muted: rgba(15,23,42,.70);
-      --line: rgba(26,35,50,.12);
-      --card:#ffffff;
-      --radius: 22px;
-      --shadow: 0 10px 30px rgba(26,35,50,.10);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html{ scroll-behavior:smooth; }
     
-    body{
+    body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
-      background: var(--off);
-      color: var(--text);
+      background: #f8f6f3;
+      color: #0f172a;
       line-height: 1.7;
-      min-height: 100vh;
     }
     
     h1, h2, h3 {
       font-family: 'Amiri', serif;
-      font-weight: 700;
     }
     
-    a{ color:inherit; text-decoration:none; }
-    .container{ 
-      width:min(1100px, calc(100% - 44px)); 
-      margin:0 auto; 
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
     /* Language Toggle */
@@ -65,147 +47,143 @@
       gap: 4px;
       box-shadow: 0 8px 24px rgba(0,0,0,.2);
     }
+    
     .lang-toggle button {
       padding: 8px 16px;
       border: none;
       background: transparent;
-      color: rgba(248,246,243,.70);
+      color: rgba(248,246,243,.7);
       cursor: pointer;
       border-radius: 8px;
       font-weight: 600;
-      transition: .2s ease;
+      transition: .2s;
       font-size: 0.9em;
     }
+    
     .lang-toggle button.active {
-      background: var(--copper);
-      color: var(--navy);
+      background: #c9974d;
+      color: #1a2332;
     }
 
-    /* Language System */
     .lang-ar { display: block; }
     .lang-en { display: none; }
-    body.en-mode .lang-ar { display: none !important; }
-    body.en-mode .lang-en { display: block !important; }
+    body.en-mode .lang-ar { display: none; }
+    body.en-mode .lang-en { display: block; }
     span.lang-ar { display: inline; }
     span.lang-en { display: none; }
-    body.en-mode span.lang-ar { display: none !important; }
-    body.en-mode span.lang-en { display: inline !important; }
+    body.en-mode span.lang-ar { display: none; }
+    body.en-mode span.lang-en { display: inline; }
 
     /* Header */
     .header {
-      background: var(--navy);
-      padding: 2.5em 0;
+      background: #1a2332;
+      padding: 2em 0;
       border-bottom: 1px solid rgba(248,246,243,.15);
-      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+      box-shadow: 0 4px 16px rgba(0,0,0,.1);
     }
+    
     .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 28px;
+      gap: 20px;
       flex-wrap: wrap;
     }
+    
     .logo-link {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       color: rgba(248,246,243,.96);
-      transition: .2s ease;
+      transition: .2s;
     }
+    
     .logo-link:hover {
-      transform: translateX(-4px);
+      transform: translateX(-3px);
     }
-    body.en-mode .logo-link:hover {
-      transform: translateX(4px);
-    }
+    
     .logo-link img {
-      width: 56px;
-      height: 56px;
+      width: 54px;
+      height: 54px;
       border-radius: 14px;
       background: #ffffff;
       border: 1px solid rgba(248,246,243,.3);
       padding: 10px;
-      transition: .2s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,.15);
     }
-    .logo-link:hover img {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0,0,0,.2);
-    }
-    .logo-text {
-      line-height: 1.3;
-    }
+    
     .logo-text b {
       display: block;
-      font-size: 1.3em;
-      letter-spacing: .4px;
+      font-size: 1.2em;
+      letter-spacing: .3px;
     }
+    
     .logo-text span {
-      font-size: 0.92em;
-      opacity: .78;
+      font-size: 0.9em;
+      opacity: .75;
       display: block;
-      margin-top: 4px;
+      margin-top: 3px;
     }
+    
     .back-btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       background: rgba(248,246,243,.15);
       border: 1px solid rgba(248,246,243,.25);
       border-radius: 999px;
       color: rgba(248,246,243,.96);
       font-weight: 600;
-      transition: .2s ease;
-      font-size: 0.95em;
+      transition: .2s;
     }
+    
     .back-btn:hover {
       background: rgba(248,246,243,.22);
-      border-color: rgba(248,246,243,.4);
-      transform: translateX(-4px);
-    }
-    body.en-mode .back-btn:hover {
-      transform: translateX(4px);
+      transform: translateX(-3px);
     }
 
-    /* Form Section */
-    .form-section {
-      padding: 5em 0 4em;
-      min-height: calc(100vh - 250px);
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(201,151,77,.05), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(90,107,84,.05), transparent 50%);
+    /* Main Content */
+    .main-section {
+      padding: 4em 0;
+      min-height: calc(100vh - 200px);
     }
-    .form-container {
+    
+    .container {
       max-width: 900px;
       margin: 0 auto;
+      padding: 0 22px;
     }
+    
     .form-header {
       text-align: center;
-      margin-bottom: 3.5em;
+      margin-bottom: 3em;
     }
+    
     .form-title {
-      font-size: clamp(2.2em, 3.5vw, 2.9em);
-      color: var(--navy);
-      margin-bottom: 0.7em;
-      letter-spacing: .4px;
+      font-size: 2.5em;
+      color: #1a2332;
+      margin-bottom: 0.5em;
+      letter-spacing: .3px;
     }
+    
     .form-subtitle {
-      color: var(--muted);
-      font-size: 1.15em;
-      line-height: 2.1;
+      color: rgba(15,23,42,.7);
+      font-size: 1.1em;
+      line-height: 2;
       max-width: 700px;
       margin: 0 auto;
     }
 
-    /* Google Form Container */
-    .form-embed-container {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    /* Google Form */
+    .form-embed {
+      background: #ffffff;
+      border: 1px solid rgba(26,35,50,.12);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(26,35,50,.1);
       overflow: hidden;
-      position: relative;
     }
     
-    /* Google Form Iframe */
     .google-form-iframe {
       width: 100%;
       height: 2400px;
@@ -218,107 +196,102 @@
       background: rgba(201,151,77,.08);
       border: 1px solid rgba(201,151,77,.25);
       border-radius: 16px;
-      padding: 2em 2.2em;
+      padding: 2em;
       margin-top: 3em;
       text-align: center;
     }
+    
     .info-box h4 {
-      color: var(--navy);
-      margin-bottom: 0.9em;
-      font-size: 1.25em;
-      letter-spacing: .3px;
+      color: #1a2332;
+      margin-bottom: 0.8em;
+      font-size: 1.2em;
     }
+    
     .info-box p {
-      color: var(--muted);
-      line-height: 2.1;
+      color: rgba(15,23,42,.7);
+      line-height: 2;
       margin-bottom: 0.5em;
     }
+    
     .info-box a {
-      color: var(--copper);
+      color: #c9974d;
       font-weight: 600;
       text-decoration: underline;
-      text-decoration-color: rgba(201,151,77,.4);
-      transition: .2s ease;
     }
+    
     .info-box a:hover {
-      text-decoration-color: var(--copper);
-      opacity: .9;
+      opacity: .8;
     }
-
-    /* Alternative Link Button */
-    .btn-google-form {
+    
+    .btn-open-form {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 1.1em 2.2em;
-      background: var(--copper);
-      color: var(--navy);
-      border: none;
+      gap: 10px;
+      padding: 12px 24px;
+      background: #c9974d;
+      color: #1a2332;
       border-radius: 999px;
-      font-size: 1.08em;
       font-weight: 700;
-      cursor: pointer;
-      transition: .2s ease;
-      box-shadow: 0 14px 35px rgba(26,35,50,.18);
-      letter-spacing: .3px;
       margin-top: 1em;
+      box-shadow: 0 10px 30px rgba(26,35,50,.15);
+      transition: .2s;
     }
-    .btn-google-form:hover {
+    
+    .btn-open-form:hover {
       transform: translateY(-3px);
-      filter: brightness(1.1);
-      box-shadow: 0 20px 50px rgba(26,35,50,.25);
-    }
-    .btn-google-form svg {
-      width: 22px;
-      height: 22px;
-      fill: currentColor;
+      box-shadow: 0 15px 40px rgba(26,35,50,.2);
     }
 
     /* Footer */
     footer {
-      background: var(--navy);
-      padding: 3em 0;
+      background: #1a2332;
+      padding: 2.5em 0;
       color: rgba(248,246,243,.88);
       border-top: 1px solid rgba(248,246,243,.15);
       text-align: center;
     }
-    footer p {
-      line-height: 2;
-    }
+    
     footer a {
-      color: var(--copper);
-      transition: .2s ease;
+      color: #c9974d;
       text-decoration: underline;
-      text-decoration-color: rgba(201,151,77,.4);
     }
+    
     footer a:hover {
-      text-decoration-color: var(--copper);
+      opacity: .8;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
       .lang-toggle {
-        top: 12px;
-        left: 12px;
+        top: 10px;
+        left: 10px;
       }
+      
       .header-inner {
         flex-direction: column;
         text-align: center;
       }
+      
       .logo-text span {
         display: none;
       }
+      
       .google-form-iframe {
         height: 2600px;
       }
-      .info-box {
-        padding: 1.5em 1.5em;
+      
+      .form-title {
+        font-size: 2em;
       }
     }
-
+    
     body.en-mode {
       direction: ltr;
+    }
+    
+    body.en-mode .back-btn:hover,
+    body.en-mode .logo-link:hover {
+      transform: translateX(3px);
     }
   </style>
 </head>
@@ -333,12 +306,18 @@
 
   <!-- Header -->
   <header class="header">
-    <div class="container header-inner">
+    <div class="header-inner">
       <a href="index.html" class="logo-link">
         <img src="logo.png" alt="شعار درب">
         <div class="logo-text">
-          <b><span class="lang-ar">درب | Darb Path</span><span class="lang-en">Darb Path | درب</span></b>
-          <span><span class="lang-ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span><span class="lang-en">One Path. Many Cultures. One Language.</span></span>
+          <b>
+            <span class="lang-ar">درب | Darb Path</span>
+            <span class="lang-en">Darb Path | درب</span>
+          </b>
+          <span>
+            <span class="lang-ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span>
+            <span class="lang-en">One Path. Many Cultures. One Language.</span>
+          </span>
         </div>
       </a>
       <a href="index.html" class="back-btn">
@@ -348,91 +327,80 @@
     </div>
   </header>
 
-  <!-- Form Section -->
-  <section class="form-section">
+  <!-- Main Content -->
+  <section class="main-section">
     <div class="container">
-      <div class="form-container">
-        
-        <!-- Form Header -->
-        <div class="form-header">
-          <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
-          <h1 class="form-title lang-en">Apply to Join</h1>
-          <p class="form-subtitle lang-ar">
-            املأ النموذج أدناه وسنتواصل معك خلال أسبوع.<br>
-            جميع المعلومات سرية ومحمية.
-          </p>
-          <p class="form-subtitle lang-en">
-            Fill out the form below and we'll contact you within a week.<br>
-            All information is confidential and secure.
-          </p>
-        </div>
-
-        <!-- Google Form Embedded -->
-        <div class="form-embed-container">
-          <iframe 
-            class="google-form-iframe"
-            src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
-            frameborder="0" 
-            marginheight="0" 
-            marginwidth="0">
-            <span class="lang-ar">جاري التحميل…</span>
-            <span class="lang-en">Loading…</span>
-          </iframe>
-        </div>
-
-        <!-- Info Box -->
-        <div class="info-box">
-          <h4 class="lang-ar">هل تحتاج مساعدة؟</h4>
-          <h4 class="lang-en">Need Help?</h4>
-          <p class="lang-ar">
-            إذا واجهت أي مشكلة في ملء النموذج، تواصل معنا عبر:<br>
-            <a href="https://wa.me/13187639149" target="_blank">واتساب</a> | 
-            <a href="mailto:info@darbpath.com">info@darbpath.com</a>
-          </p>
-          <p class="lang-en">
-            If you face any issues filling the form, contact us via:<br>
-            <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
-            <a href="mailto:info@darbpath.com">info@darbpath.com</a>
-          </p>
-          
-          <!-- رابط بديل لفتح النموذج في صفحة منفصلة -->
-          <a 
-            href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform" 
-            target="_blank" 
-            rel="noopener"
-            class="btn-google-form">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-              <path d="M8 12h8v2H8zm0 4h8v2H8zm0-8h5v2H8z"/>
-            </svg>
-            <span class="lang-ar">افتح النموذج في صفحة جديدة</span>
-            <span class="lang-en">Open Form in New Tab</span>
-          </a>
-        </div>
-
+      
+      <!-- Header -->
+      <div class="form-header">
+        <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
+        <h1 class="form-title lang-en">Apply to Join</h1>
+        <p class="form-subtitle lang-ar">
+          املأ النموذج أدناه وسنتواصل معك خلال أسبوع.<br>
+          جميع المعلومات سرية ومحمية.
+        </p>
+        <p class="form-subtitle lang-en">
+          Fill out the form below and we'll contact you within a week.<br>
+          All information is confidential and secure.
+        </p>
       </div>
+
+      <!-- Google Form -->
+      <div class="form-embed">
+        <iframe 
+          class="google-form-iframe"
+          src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
+          frameborder="0" 
+          marginheight="0" 
+          marginwidth="0">
+          جاري التحميل...
+        </iframe>
+      </div>
+
+      <!-- Info Box -->
+      <div class="info-box">
+        <h4 class="lang-ar">هل تحتاج مساعدة؟</h4>
+        <h4 class="lang-en">Need Help?</h4>
+        <p class="lang-ar">
+          إذا واجهت أي مشكلة في ملء النموذج، تواصل معنا عبر:<br>
+          <a href="https://wa.me/13187639149" target="_blank">واتساب</a> | 
+          <a href="mailto:info@darbpath.com">info@darbpath.com</a>
+        </p>
+        <p class="lang-en">
+          If you face any issues, contact us via:<br>
+          <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
+          <a href="mailto:info@darbpath.com">info@darbpath.com</a>
+        </p>
+        
+        <a 
+          href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform" 
+          target="_blank" 
+          class="btn-open-form">
+          <span class="lang-ar">افتح النموذج في صفحة جديدة</span>
+          <span class="lang-en">Open Form in New Tab</span>
+        </a>
+      </div>
+
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <div class="container">
+    <div>
       <p class="lang-ar">
         © 2026 درب | Darb Path — طريق واحد. ثقافات متعددة. لغة واحدة.
       </p>
       <p class="lang-en">
         © 2026 Darb Path | درب — One Path. Many Cultures. One Language.
       </p>
-      <p style="margin-top: 1.5em;">
+      <p style="margin-top: 1em;">
         <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
         <a href="mailto:info@darbpath.com">info@darbpath.com</a>
       </p>
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script>
-    // Language Toggle
     function setLang(lang) {
       const body = document.body;
       const html = document.documentElement;
@@ -456,8 +424,7 @@
       }
     }
 
-    // Load saved language
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', function() {
       const savedLang = localStorage.getItem('lang') || 'ar';
       setLang(savedLang);
     });
