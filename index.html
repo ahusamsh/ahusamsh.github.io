@@ -2,131 +2,497 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Apply | Darb Path</title>
+  <title>Darb Path | درب — One Path. Many Cultures. One Language.</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Darb Path | درب — A premium Arabic & cultural immersion journey. One Path. Many Cultures. One Language." />
   <meta name="theme-color" content="#1a2332" />
 
   <style>
     :root{
       --navy:#1a2332;
-      --copper:#c9974d;
-      --offwhite:#f8f6f3;
+      --navy2:#111827;
+      --off:#f8f6f3;
+      --ink:#0b1220;
+
+      /* Copper (more muted, less “shouty”) */
+      --copper:#b8893e;
+      --copper2:#d2a45a;
+
+      --card:#ffffff;
+      --line:rgba(26,35,50,.12);
+      --shadow: 0 18px 55px rgba(17,24,39,.14);
+      --shadow2: 0 10px 30px rgba(17,24,39,.10);
     }
 
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
     body{
       margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--offwhite);
-      color:#24324b;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--off);
+      color: rgba(11,18,32,.86);
     }
 
-    header{
-      background: linear-gradient(180deg, #131b28, var(--navy));
-      color: #fff;
-      text-align:center;
-      padding: 3.2em 1em 2.2em;
+    a{ color:inherit; }
+    .container{ width:min(1080px, calc(100% - 42px)); margin:0 auto; }
+
+    /* Header / Hero */
+    .hero{
+      position:relative;
+      min-height: 82vh;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      background: linear-gradient(180deg, var(--navy2), var(--navy));
+      color: var(--off);
     }
 
-    header img{
-      width: 220px;
-      max-width: 70%;
-      margin-bottom: 1em;
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 500px at 20% 15%, rgba(184,137,62,.20), transparent 60%),
+        radial-gradient(900px 500px at 80% 30%, rgba(248,246,243,.12), transparent 65%),
+        linear-gradient(0deg, rgba(17,24,39,.60), rgba(17,24,39,.35));
+      pointer-events:none;
+      z-index:1;
     }
 
-    header h1{
-      margin: .2em 0 .4em;
-      font-size: 1.9em;
+    .hero-bg{
+      position:absolute;
+      inset:0;
+      background:
+        url("images/madinah-hero.jpg") center/cover no-repeat;
+      filter: saturate(0.92) contrast(1.05);
+      transform: scale(1.03);
+      z-index:0;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:2;
+      padding: 5.5em 0 4.8em;
+    }
+
+    .brand-logo{
+      width: clamp(240px, 38vw, 420px);
+      height:auto;
+      display:block;
+      margin: 0 0 1.2em 0;
+    }
+
+    .kicker{
+      display:inline-flex;
+      gap:.7em;
+      align-items:center;
+      padding:.55em 1em;
+      border-radius:999px;
+      border:1px solid rgba(248,246,243,.18);
+      background: rgba(248,246,243,.08);
+      backdrop-filter: blur(8px);
+      font-size:.9em;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      opacity:.95;
+    }
+
+    .kdot{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--copper2);
+      box-shadow: 0 0 0 6px rgba(184,137,62,.18);
+    }
+
+    .hero h1{
+      margin: .9em 0 .35em;
+      font-size: clamp(2.2em, 3.6vw, 3.3em);
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+
+    .hero p{
+      max-width: 720px;
+      margin: 0 0 1.6em;
+      color: rgba(248,246,243,.90);
+      line-height:1.9;
+      font-size:1.06em;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+      margin: 1.7em 0 0;
+      padding:0;
+      list-style:none;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:.92em 1.25em;
+      border-radius: 999px;
+      border: 1px solid rgba(184,137,62,.55);
+      background: rgba(248,246,243,.05);
+      color: rgba(248,246,243,.95);
+      text-decoration:none;
+      font-weight: 700;
+      letter-spacing:.2px;
+      transition: .14s ease;
+      box-shadow: none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(184,137,62,.12);
+      border-color: rgba(210,164,90,.55);
+    }
+
+    /* New primary button: copper but muted + classy */
+    .btn.primary{
+      color: var(--navy2);
+      border: 1px solid rgba(210,164,90,.55);
+      background: linear-gradient(180deg, rgba(210,164,90,.92), rgba(184,137,62,.92));
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+    .btn.primary:hover{
+      filter: brightness(1.03);
+      background: linear-gradient(180deg, rgba(210,164,90,.98), rgba(184,137,62,.98));
+    }
+
+    .btn.ghost{
+      border-color: rgba(248,246,243,.20);
+    }
+
+    /* Sections */
+    section{ padding: 4.6em 0; }
+    .section-title{
+      margin:0 0 .5em;
+      color: var(--ink);
+      font-size: clamp(1.6em, 2.2vw, 2.1em);
       letter-spacing:.2px;
     }
+    .muted{ color: rgba(11,18,32,.70); line-height:1.9; }
 
-    header p{
-      opacity:.9;
-      max-width: 720px;
-      margin: 0 auto;
-      line-height:1.7;
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 28px;
+      align-items:center;
     }
 
-    .container{
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5em 1em 4em;
-    }
-
-    .form-wrapper{
-      background:#fff;
-      border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(26,35,50,.12);
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow2);
       overflow:hidden;
     }
 
-    iframe{
+    .photo{
+      aspect-ratio: 4/3;
+      background: #eaeaea;
       width:100%;
-      height:1100px;
-      border:0;
+      object-fit: cover;
+      display:block;
     }
 
-    .back{
-      text-align:center;
-      margin-top:2.2em;
-    }
-
-    .back a{
-      display:inline-block;
-      text-decoration:none;
-      padding:.8em 1.4em;
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.6em;
+      padding:.55em .95em;
       border-radius:999px;
-      border:1px solid var(--copper);
-      color:var(--navy);
-      font-weight:600;
-      transition:.15s ease;
+      border:1px solid rgba(184,137,62,.28);
+      background: rgba(184,137,62,.10);
+      color: rgba(11,18,32,.82);
+      font-weight: 700;
+      margin-top: 1.2em;
     }
+    .pill b{ color: var(--navy2); }
 
-    .back a:hover{
-      background: rgba(201,151,77,.12);
+    /* Feature cards */
+    .features{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 1.8em;
     }
+    .feature{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 1.2em 1.2em 1.25em;
+      box-shadow: var(--shadow2);
+    }
+    .feature h3{
+      margin:.1em 0 .45em;
+      color: var(--ink);
+      font-size:1.08em;
+    }
+    .feature p{ margin:0; color: rgba(11,18,32,.72); line-height:1.85; }
 
+    /* Dark section */
+    .dark{
+      background: linear-gradient(180deg, #0f172a, #0b1220);
+      color: rgba(248,246,243,.92);
+    }
+    .dark .section-title{ color: var(--off); }
+    .dark .muted{ color: rgba(248,246,243,.78); }
+    .dark .feature{
+      background: rgba(248,246,243,.04);
+      border: 1px solid rgba(248,246,243,.10);
+      box-shadow: none;
+    }
+    .dark .feature h3{ color: rgba(248,246,243,.95); }
+    .dark .feature p{ color: rgba(248,246,243,.76); }
+
+    /* Footer / Social */
     footer{
+      background: var(--navy2);
+      padding: 3.2em 0 2.8em;
+      color: rgba(248,246,243,.86);
+    }
+    .social-grid{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap: 12px;
+      list-style:none;
+      padding:0;
+      margin: 0 0 1.8em;
+    }
+    .social-btn{
+      width: 46px;
+      height: 46px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 16px;
+      background: rgba(248,246,243,.06);
+      border: 1px solid rgba(248,246,243,.14);
+      color: rgba(248,246,243,.95);
+      transition: .14s ease;
+      text-decoration:none;
+    }
+    .social-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(184,137,62,.16);
+      border-color: rgba(210,164,90,.30);
+      color: var(--copper2);
+    }
+    .social-btn svg{
+      width:22px;height:22px;fill:currentColor;display:block;
+    }
+    .copyright{
       text-align:center;
-      font-size:.9em;
-      opacity:.7;
-      margin-top:3em;
+      opacity:.72;
+      font-size:.95em;
+      line-height:1.7;
     }
 
-    @media (max-width: 768px){
-      iframe{ height: 1250px; }
-      header h1{ font-size:1.6em; }
+    /* Responsive */
+    @media (max-width: 900px){
+      .grid-2{ grid-template-columns:1fr; }
+      .brand-logo{ margin: 0 auto 1.2em; }
+      .hero-inner{ text-align:center; }
+      .actions{ justify-content:center; }
+    }
+    @media (max-width: 960px){
+      .features{ grid-template-columns:1fr; }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <img src="logo.png" alt="Darb Path Logo">
-  <h1>Apply to Join</h1>
-  <p>
-    Seats are limited to maintain quality.<br>
-    Applications are reviewed carefully — if this batch is full, your details are saved for the next program.
-  </p>
-</header>
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="hero-bg" aria-hidden="true"></div>
 
-<div class="container">
-  <div class="form-wrapper">
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
-      loading="lazy">
-      جارٍ التحميل…
-    </iframe>
-  </div>
+    <div class="container hero-inner">
+      <img class="brand-logo" src="logo.png" alt="Darb Path Logo">
 
-  <div class="back">
-    <a href="index.html">← Back to Darb Path</a>
-  </div>
+      <div class="kicker"><span class="kdot"></span> Darb Path | درب</div>
 
-  <footer>
-    © Darb Path | One Path. Many Cultures. One Language.
+      <h1>One Path. Many Cultures. One Language.</h1>
+      <p>
+        A curated Arabic & cultural immersion journey in Madinah —
+        built for small groups, premium quality, and real connection.
+      </p>
+
+      <ul class="actions">
+        <li><a class="btn primary" href="apply.html">Apply to Join</a></li>
+        <li><a class="btn" href="https://wa.me/13187639149" target="_blank" rel="noopener">WhatsApp</a></li>
+        <li><a class="btn ghost" href="#about">Discover</a></li>
+      </ul>
+
+      <div class="pill" style="justify-content:center;">
+        <span style="width:10px;height:10px;border-radius:999px;background:var(--copper2);display:inline-block;"></span>
+        <b>Upcoming Program:</b> Limited seats — applications reviewed
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container grid-2">
+      <div>
+        <h2 class="section-title">What is Darb Path?</h2>
+        <p class="muted">
+          Darb Path is a premium, structured journey that blends Arabic immersion, cultural depth,
+          and meaningful experiences in Madinah. It’s not “tourism” — it’s a guided path with purpose.
+        </p>
+        <p class="muted">
+          We keep seats limited to maintain quality. If the first batch fills up,
+          your application stays saved for the next program.
+        </p>
+
+        <div class="features">
+          <div class="feature">
+            <h3>Arabic Immersion</h3>
+            <p>Practical Arabic support and curated language moments—built into the day.</p>
+          </div>
+          <div class="feature">
+            <h3>Cultural Depth</h3>
+            <p>Visits and experiences that reflect identity, history, and place—no filler.</p>
+          </div>
+          <div class="feature">
+            <h3>Premium Flow</h3>
+            <p>Clear schedule, smooth logistics, and a guided program that feels effortless.</p>
+          </div>
+        </div>
+
+        <ul class="actions" style="margin-top:1.6em;">
+          <li><a class="btn primary" href="apply.html">Apply to Join</a></li>
+          <li><a class="btn" href="#program">Upcoming Program</a></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <img class="photo" src="images/masjid-nabawi.jpg" alt="Al-Masjid an-Nabawi, Madinah">
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES (dark) -->
+  <section class="dark" id="services">
+    <div class="container">
+      <h2 class="section-title">Services & Experience</h2>
+      <p class="muted">
+        A clear program. Limited seats. A premium journey designed for people who want depth and structure.
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <h3>Guided Experience</h3>
+          <p>Professional coordination with a smooth flow from start to finish.</p>
+        </div>
+        <div class="feature">
+          <h3>Curated Places</h3>
+          <p>Handpicked visits that match the identity and story of Madinah.</p>
+        </div>
+        <div class="feature">
+          <h3>Small Group Quality</h3>
+          <p>Limited seats so the experience stays premium, personal, and comfortable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAM -->
+  <section id="program">
+    <div class="container grid-2">
+      <div class="card">
+        <img class="photo" src="images/madinah-street.jpg" alt="Madinah atmosphere">
+      </div>
+
+      <div>
+        <h2 class="section-title">Upcoming Program</h2>
+        <p class="muted">
+          Seats are limited to maintain quality.
+          Applications are reviewed carefully — if this batch is full, your details are saved for the next program.
+        </p>
+
+        <ul class="actions" style="margin-top:1.2em;">
+          <li><a class="btn primary" href="apply.html">Apply to Join</a></li>
+          <li><a class="btn" href="mailto:pathdarb@gmail.com">Email</a></li>
+          <li><a class="btn" href="https://wa.me/13187639149" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+
+        <div class="pill">
+          <span style="width:10px;height:10px;border-radius:999px;background:var(--copper2);display:inline-block;"></span>
+          Limited seats — applications reviewed
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container">
+      <ul class="social-grid">
+        <li>
+          <a class="social-btn" href="https://www.instagram.com/DARBPATH" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.6-2.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://www.tiktok.com/@DARBPATH" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M15.7 3c.5 3.2 2.7 5.4 5.9 5.7v3.3c-2 0-3.8-.6-5.3-1.6v7.1c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.4 0 .8 0 1.2.1v3.4c-.4-.2-.8-.3-1.2-.3-1.5 0-2.7 1.2-2.7 2.7s1.2 2.7 2.7 2.7 2.7-1.2 2.7-2.7V3h2.7z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://x.com/DARBPATH" target="_blank" rel="noopener" aria-label="X">
+            <svg viewBox="0 0 24 24"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.6l-5.2-7.1L4.9 22H2l7.4-8.6L1 2h6.8l4.7 6.4L18.9 2zm-1.2 18h1.7L7.1 3.9H5.3L17.7 20z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://www.youtube.com/@DARBPATH" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.4A3 3 0 0 0 2.4 7.2 31.4 31.4 0 0 0 2 12a31.4 31.4 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.6.4 7.5.4 7.5.4s5.9 0 7.5-.4a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 22 12a31.4 31.4 0 0 0-.4-4.8zM10 15.3V8.7L16 12l-6 3.3z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://www.snapchat.com/add/DARBPATH" target="_blank" rel="noopener" aria-label="Snapchat">
+            <svg viewBox="0 0 24 24"><path d="M12 2c3.1 0 5.6 2.4 5.6 5.4v3.2c0 .4.2.7.6.9 1 .4 2 .9 2 1.8 0 .7-.7 1.1-1.5 1.4-.7.2-1.2.8-1.2 1.5 0 .7.4 1.3 1.1 1.6.4.2.7.5.7.9 0 .7-1.3 1.1-2.5 1.3-.8.1-1.4.7-1.6 1.5-.1.4-.3.6-.7.6-.6 0-1.2-.2-1.8-.4-.5-.2-1-.2-1.5 0-.6.2-1.2.4-1.8.4-.4 0-.6-.2-.7-.6-.2-.8-.8-1.4-1.6-1.5-1.2-.2-2.5-.6-2.5-1.3 0-.4.3-.7.7-.9.7-.3 1.1-.9 1.1-1.6 0-.7-.5-1.3-1.2-1.5-.8-.3-1.5-.7-1.5-1.4 0-.9 1-1.4 2-1.8.4-.2.6-.5.6-.9V7.4C6.4 4.4 8.9 2 12 2z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://t.me/DARBPATH" target="_blank" rel="noopener" aria-label="Telegram">
+            <svg viewBox="0 0 24 24"><path d="M21.7 4.3c.3.1.4.4.3 1l-3.2 15.1c-.2.8-.7 1-1.4.6l-4-2.9-1.9 1.8c-.2.2-.4.4-.8.4l.3-4.3 7.8-7c.3-.3-.1-.4-.5-.2l-9.6 6-4.1-1.3c-.9-.3-.9-.9.2-1.3l15.8-6.1c.5-.2.9-.2 1.1-.1z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://www.facebook.com/DARBPATH" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.9.3-1.6 1.7-1.6h1.6V4.9c-.3 0-1.4-.1-2.7-.1-2.6 0-4.4 1.6-4.4 4.6V11H7v3h2.7v8h3.8z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="https://wa.me/13187639149" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.9 7l-3.1 1 1-3A8 8 0 1 1 20 12zm-4.6 4.3c.2-.1 1.2-.6 1.4-1.1.2-.5.2-.9.1-1-.1-.1-.2-.2-.5-.3l-1.6-.8c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.6-1.4-1.9-.1-.3 0-.5.1-.6l.5-.6c.2-.2.2-.4.1-.6l-.7-1.7c-.2-.5-.4-.4-.6-.4H8.2c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.1 1.7 0z"/></svg>
+          </a>
+        </li>
+
+        <li>
+          <a class="social-btn" href="mailto:pathdarb@gmail.com" aria-label="Email">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/></svg>
+          </a>
+        </li>
+      </ul>
+
+      <div class="copyright">
+        <div>© Darb Path | درب</div>
+        <div>One Path. Many Cultures. One Language.</div>
+      </div>
+    </div>
   </footer>
-</div>
 
 </body>
 </html>
