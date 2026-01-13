@@ -1,18 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Apply | Darb Path</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#1a2332" />
-
-  <style>
-    :root{
-      --navy:#1a2332;
-      --copper:#c9974d;
-      --offwhite:#f8f6f3;
-    }
-<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
@@ -28,7 +14,7 @@
 
   <style>
     :root{
-      /* Brand Colors - من الهوية البصرية */
+      /* Brand Colors من الهوية البصرية */
       --navy:#1a2332;
       --copper:#c9974d;
       --off:#f8f6f3;
@@ -75,13 +61,14 @@
       top: 20px;
       left: 20px;
       z-index: 100;
-      background: rgba(26,35,50,.90);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(248,246,243,.14);
+      background: rgba(26,35,50,.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(248,246,243,.16);
       border-radius: 12px;
       padding: 8px;
       display: flex;
       gap: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
     }
     .lang-toggle button {
       padding: 8px 16px;
@@ -93,6 +80,7 @@
       font-weight: 600;
       transition: .2s ease;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.9em;
     }
     .lang-toggle button.active {
       background: var(--copper);
@@ -103,18 +91,23 @@
     }
 
     /* Content Toggle */
-    [lang="en"] { display: none; }
-    body.en-mode [lang="ar"] { display: none; }
-    body.en-mode [lang="en"] { display: block; }
-    body.en-mode { direction: ltr; }
+    .lang-ar { display: block; }
+    .lang-en { display: none; }
+    body.en-mode .lang-ar { display: none !important; }
+    body.en-mode .lang-en { display: block !important; }
+    span.lang-ar { display: inline; }
+    span.lang-en { display: none; }
+    body.en-mode span.lang-ar { display: none !important; }
+    body.en-mode span.lang-en { display: inline !important; }
 
     /* Header */
     .header {
       background: var(--navy);
-      padding: 2em 0;
-      border-bottom: 1px solid rgba(248,246,243,.12);
+      padding: 2.2em 0;
+      border-bottom: 1px solid rgba(248,246,243,.14);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
     }
     .header::before {
       content: "";
@@ -125,7 +118,7 @@
       height: 100%;
       background: url("pattern.svg") repeat-x;
       background-size: auto 100%;
-      opacity: 0.06;
+      opacity: 0.05;
       pointer-events: none;
     }
     .header-inner {
@@ -134,77 +127,99 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 24px;
       flex-wrap: wrap;
     }
     .logo-link {
       display: flex;
       align-items: center;
-      gap: 14px;
-      color: rgba(248,246,243,.95);
+      gap: 16px;
+      color: rgba(248,246,243,.96);
+      transition: .2s ease;
+    }
+    .logo-link:hover {
+      transform: translateX(-3px);
+    }
+    body.en-mode .logo-link:hover {
+      transform: translateX(3px);
     }
     .logo-link img {
-      width: 50px;
-      height: 50px;
+      width: 52px;
+      height: 52px;
       border-radius: 14px;
-      background: rgba(248,246,243,.08);
-      border: 1px solid rgba(248,246,243,.14);
-      padding: 8px;
+      background: rgba(248,246,243,.10);
+      border: 1px solid rgba(248,246,243,.18);
+      padding: 9px;
+      transition: .2s ease;
+    }
+    .logo-link:hover img {
+      background: rgba(248,246,243,.14);
+      transform: scale(1.05);
     }
     .logo-text {
-      line-height: 1.2;
+      line-height: 1.25;
     }
     .logo-text b {
       display: block;
-      font-size: 1.2em;
-      letter-spacing: .3px;
+      font-size: 1.25em;
+      letter-spacing: .4px;
       font-family: 'Amiri', serif;
     }
     .logo-text span {
-      font-size: 0.9em;
-      opacity: .80;
+      font-size: 0.92em;
+      opacity: .78;
       display: block;
       margin-top: 3px;
     }
     .back-btn {
-      padding: 10px 20px;
-      background: rgba(248,246,243,.10);
-      border: 1px solid rgba(248,246,243,.20);
+      padding: 11px 22px;
+      background: rgba(248,246,243,.12);
+      border: 1px solid rgba(248,246,243,.22);
       border-radius: 999px;
-      color: rgba(248,246,243,.95);
+      color: rgba(248,246,243,.96);
       font-weight: 600;
       transition: .2s ease;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.95em;
     }
     .back-btn:hover {
-      background: rgba(248,246,243,.16);
-      transform: translateX(-2px);
+      background: rgba(248,246,243,.18);
+      border-color: rgba(248,246,243,.35);
+      transform: translateX(-3px);
+    }
+    body.en-mode .back-btn:hover {
+      transform: translateX(3px);
     }
 
     /* Form Section */
     .form-section {
-      padding: 4em 0;
+      padding: 4.5em 0;
       min-height: calc(100vh - 200px);
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(201,151,77,.04), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(90,107,84,.04), transparent 50%);
     }
     .form-container {
-      max-width: 750px;
+      max-width: 780px;
       margin: 0 auto;
     }
     .form-header {
       text-align: center;
-      margin-bottom: 3em;
+      margin-bottom: 3.5em;
     }
     .form-title {
-      font-size: clamp(2em, 3vw, 2.5em);
+      font-size: clamp(2.1em, 3.2vw, 2.7em);
       color: var(--navy);
-      margin-bottom: 0.5em;
+      margin-bottom: 0.6em;
       font-family: 'Amiri', serif;
-      letter-spacing: .3px;
+      letter-spacing: .4px;
     }
     .form-subtitle {
       color: var(--muted);
-      font-size: 1.1em;
-      line-height: 1.9;
+      font-size: 1.12em;
+      line-height: 2;
+      max-width: 650px;
+      margin: 0 auto;
     }
 
     /* Form Card */
@@ -212,7 +227,7 @@
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 2.5em;
+      padding: 3em 2.8em;
       box-shadow: var(--shadow2);
       position: relative;
       overflow: hidden;
@@ -220,37 +235,86 @@
     .form-card::before {
       content: "";
       position: absolute;
-      top: -10px;
-      right: -10px;
-      width: 150px;
-      height: 150px;
+      top: -20px;
+      right: -20px;
+      width: 180px;
+      height: 180px;
       background: url("pattern.svg") no-repeat;
       background-size: contain;
-      opacity: 0.04;
+      opacity: 0.03;
       pointer-events: none;
+    }
+    .form-card::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      width: 180px;
+      height: 180px;
+      background: url("pattern.svg") no-repeat;
+      background-size: contain;
+      opacity: 0.03;
+      pointer-events: none;
+      transform: rotate(180deg);
+    }
+
+    /* Section Headers */
+    .section-header {
+      color: var(--navy);
+      margin: 0 0 1.5em;
+      padding-bottom: 1em;
+      border-bottom: 2px solid rgba(201,151,77,.15);
+      font-family: 'Amiri', serif;
+      font-size: 1.4em;
+      letter-spacing: .3px;
+      position: relative;
+    }
+    .section-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      right: 0;
+      width: 80px;
+      height: 2px;
+      background: var(--copper);
+    }
+    body.en-mode .section-header::after {
+      right: auto;
+      left: 0;
+    }
+    .section-header:first-of-type {
+      margin-top: 0;
+    }
+    .section-header:not(:first-of-type) {
+      margin-top: 2.5em;
     }
 
     /* Form Groups */
     .form-group {
-      margin-bottom: 1.8em;
+      margin-bottom: 2em;
       position: relative;
     }
     .form-label {
       display: block;
-      margin-bottom: 0.6em;
+      margin-bottom: 0.7em;
       font-weight: 600;
       color: var(--ink);
-      font-size: 1em;
+      font-size: 1.02em;
     }
     .form-label .required {
       color: var(--copper);
-      margin-right: 3px;
+      margin-right: 4px;
+      font-size: 1.1em;
+    }
+    body.en-mode .form-label .required {
+      margin-right: 0;
+      margin-left: 4px;
     }
     .form-input,
     .form-select,
     .form-textarea {
       width: 100%;
-      padding: 0.9em 1.1em;
+      padding: 1em 1.2em;
       border: 1px solid var(--line);
       border-radius: 14px;
       font-size: 1em;
@@ -259,23 +323,30 @@
       color: var(--text);
       transition: .2s ease;
     }
+    .form-input:hover,
+    .form-select:hover,
+    .form-textarea:hover {
+      border-color: rgba(201,151,77,.3);
+    }
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
       outline: none;
       border-color: var(--copper);
       box-shadow: 0 0 0 3px rgba(201,151,77,.12);
+      background: #fff;
     }
     .form-textarea {
-      min-height: 140px;
+      min-height: 150px;
       resize: vertical;
+      line-height: 1.8;
     }
     .form-help {
       display: block;
-      margin-top: 0.5em;
-      font-size: 0.9em;
+      margin-top: 0.6em;
+      font-size: 0.92em;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* Radio/Checkbox Groups */
@@ -283,50 +354,63 @@
     .checkbox-group {
       display: flex;
       flex-direction: column;
-      gap: 0.8em;
+      gap: 0.9em;
     }
     .radio-label,
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 0.7em;
+      gap: 0.8em;
       cursor: pointer;
-      padding: 0.8em;
-      border-radius: 10px;
+      padding: 1em 1.1em;
+      border-radius: 12px;
+      border: 1px solid var(--line);
       transition: .2s ease;
+      background: var(--card);
     }
     .radio-label:hover,
     .checkbox-label:hover {
-      background: rgba(201,151,77,.05);
+      background: rgba(201,151,77,.04);
+      border-color: rgba(201,151,77,.25);
+    }
+    .radio-label input:checked + span,
+    .checkbox-label input:checked + span {
+      font-weight: 600;
+      color: var(--navy);
     }
     .radio-label input,
     .checkbox-label input {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       accent-color: var(--copper);
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     /* Submit Button */
     .submit-btn {
       width: 100%;
-      padding: 1.1em;
+      padding: 1.2em;
       background: var(--copper);
       color: var(--navy);
       border: none;
       border-radius: 999px;
-      font-size: 1.1em;
+      font-size: 1.15em;
       font-weight: 700;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
       cursor: pointer;
       transition: .2s ease;
       box-shadow: 0 16px 40px rgba(26,35,50,.18);
-      margin-top: 1.5em;
+      margin-top: 2em;
+      letter-spacing: .3px;
     }
     .submit-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.05);
-      box-shadow: 0 20px 50px rgba(26,35,50,.22);
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+      box-shadow: 0 22px 55px rgba(26,35,50,.25);
+    }
+    .submit-btn:active {
+      transform: translateY(-1px);
     }
     .submit-btn:disabled {
       opacity: 0.6;
@@ -338,57 +422,68 @@
     .success-message {
       display: none;
       text-align: center;
-      padding: 3em 2em;
+      padding: 3.5em 2.5em;
     }
     .success-message.show {
       display: block;
     }
     .success-icon {
-      width: 80px;
-      height: 80px;
-      background: rgba(201,151,77,.15);
+      width: 90px;
+      height: 90px;
+      background: rgba(201,151,77,.16);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1.5em;
+      margin: 0 auto 1.8em;
+      box-shadow: 0 12px 30px rgba(201,151,77,.2);
+      animation: successPop 0.5s ease-out;
+    }
+    @keyframes successPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
     }
     .success-icon svg {
-      width: 40px;
-      height: 40px;
-      fill: var(--copper);
+      width: 45px;
+      height: 45px;
+      stroke: var(--copper);
+      stroke-width: 3;
     }
     .success-title {
-      font-size: 1.8em;
+      font-size: 2em;
       color: var(--navy);
-      margin-bottom: 0.5em;
+      margin-bottom: 0.6em;
       font-family: 'Amiri', serif;
+      letter-spacing: .3px;
     }
     .success-text {
       color: var(--muted);
-      line-height: 1.9;
-      margin-bottom: 2em;
+      line-height: 2;
+      margin-bottom: 2.5em;
+      font-size: 1.08em;
     }
     .btn-secondary {
       display: inline-block;
-      padding: 0.9em 1.8em;
+      padding: 1em 2em;
       background: var(--navy);
       color: var(--off);
       border-radius: 999px;
       font-weight: 600;
       transition: .2s ease;
+      box-shadow: 0 12px 30px rgba(26,35,50,.2);
     }
     .btn-secondary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(26,35,50,.25);
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px rgba(26,35,50,.3);
     }
 
     /* Footer */
     footer {
       background: var(--navy);
-      padding: 2.5em 0;
-      color: rgba(248,246,243,.85);
-      border-top: 1px solid rgba(248,246,243,.12);
+      padding: 2.8em 0;
+      color: rgba(248,246,243,.86);
+      border-top: 1px solid rgba(248,246,243,.14);
       text-align: center;
     }
     footer a {
@@ -396,22 +491,44 @@
       transition: .2s ease;
     }
     footer a:hover {
-      opacity: .8;
+      opacity: .85;
+      text-decoration: underline;
+    }
+
+    /* Privacy Notice */
+    .privacy-notice {
+      text-align: center;
+      margin-top: 2em;
+      padding-top: 2em;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.95em;
+      line-height: 1.8;
+    }
+    .privacy-notice a {
+      color: var(--copper);
+      text-decoration: underline;
+      text-decoration-color: rgba(201,151,77,.4);
+      transition: .2s ease;
+    }
+    .privacy-notice a:hover {
+      text-decoration-color: var(--copper);
+      opacity: .9;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
       .form-card {
-        padding: 1.8em;
+        padding: 2.2em 1.8em;
       }
       .lang-toggle {
-        top: 10px;
-        left: 10px;
+        top: 12px;
+        left: 12px;
         padding: 6px;
       }
       .lang-toggle button {
-        padding: 6px 12px;
-        font-size: 0.9em;
+        padding: 7px 14px;
+        font-size: 0.88em;
       }
       .header-inner {
         flex-direction: column;
@@ -420,11 +537,14 @@
       .logo-text span {
         display: none;
       }
+      .section-header {
+        font-size: 1.25em;
+      }
     }
 
     /* RTL Adjustments */
     body.en-mode .back-btn:hover {
-      transform: translateX(2px);
+      transform: translateX(3px);
     }
   </style>
 </head>
@@ -443,15 +563,13 @@
       <a href="index.html" class="logo-link">
         <img src="logo.png" alt="شعار درب">
         <div class="logo-text">
-          <b lang="ar">درب | Darb Path</b>
-          <b lang="en">Darb Path | درب</b>
-          <span lang="ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span>
-          <span lang="en">One Path. Many Cultures. One Language.</span>
+          <b><span class="lang-ar">درب | Darb Path</span><span class="lang-en">Darb Path | درب</span></b>
+          <span><span class="lang-ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span><span class="lang-en">One Path. Many Cultures. One Language.</span></span>
         </div>
       </a>
       <a href="index.html" class="back-btn">
-        <span lang="ar">← العودة للرئيسية</span>
-        <span lang="en">← Back to Home</span>
+        <span class="lang-ar">→ العودة للرئيسية</span>
+        <span class="lang-en">← Back to Home</span>
       </a>
     </div>
   </header>
@@ -463,13 +581,13 @@
         
         <!-- Form Header -->
         <div class="form-header">
-          <h1 class="form-title" lang="ar">قدّم طلبك للانضمام</h1>
-          <h1 class="form-title" lang="en">Apply to Join</h1>
-          <p class="form-subtitle" lang="ar">
+          <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
+          <h1 class="form-title lang-en">Apply to Join</h1>
+          <p class="form-subtitle lang-ar">
             املأ النموذج أدناه وسنتواصل معك خلال أسبوع.<br>
             جميع المعلومات سرية ومحمية.
           </p>
-          <p class="form-subtitle" lang="en">
+          <p class="form-subtitle lang-en">
             Fill out the form below and we'll contact you within a week.<br>
             All information is confidential and secure.
           </p>
@@ -480,16 +598,14 @@
           <form id="applyForm" onsubmit="handleSubmit(event)">
             
             <!-- Personal Information -->
-            <h3 style="color: var(--navy); margin-bottom: 1.2em; font-family: 'Amiri', serif; font-size: 1.3em;">
-              <span lang="ar">المعلومات الشخصية</span>
-              <span lang="en">Personal Information</span>
-            </h3>
+            <h3 class="section-header lang-ar">المعلومات الشخصية</h3>
+            <h3 class="section-header lang-en">Personal Information</h3>
 
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">الاسم الكامل</span>
-                <span lang="en">Full Name</span>
+                <span class="lang-ar">الاسم الكامل</span>
+                <span class="lang-en">Full Name</span>
               </label>
               <input type="text" class="form-input" name="fullName" required 
                      placeholder="أدخل اسمك الكامل / Enter your full name">
@@ -498,8 +614,8 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">البريد الإلكتروني</span>
-                <span lang="en">Email Address</span>
+                <span class="lang-ar">البريد الإلكتروني</span>
+                <span class="lang-en">Email Address</span>
               </label>
               <input type="email" class="form-input" name="email" required 
                      placeholder="example@email.com">
@@ -508,18 +624,20 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">رقم الهاتف (مع كود البلد)</span>
-                <span lang="en">Phone Number (with country code)</span>
+                <span class="lang-ar">رقم الهاتف (مع كود البلد)</span>
+                <span class="lang-en">Phone Number (with country code)</span>
               </label>
               <input type="tel" class="form-input" name="phone" required 
                      placeholder="+966 xxx xxx xxxx">
+              <small class="form-help lang-ar">مثال: +966501234567</small>
+              <small class="form-help lang-en">Example: +966501234567</small>
             </div>
 
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">الجنسية</span>
-                <span lang="en">Nationality</span>
+                <span class="lang-ar">الجنسية</span>
+                <span class="lang-en">Nationality</span>
               </label>
               <input type="text" class="form-input" name="nationality" required 
                      placeholder="أدخل جنسيتك / Enter your nationality">
@@ -528,167 +646,167 @@
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">العمر</span>
-                <span lang="en">Age</span>
+                <span class="lang-ar">العمر</span>
+                <span class="lang-en">Age</span>
               </label>
               <input type="number" class="form-input" name="age" required min="16" max="100"
                      placeholder="أدخل عمرك / Enter your age">
             </div>
 
             <!-- Arabic Level -->
-            <h3 style="color: var(--navy); margin: 2em 0 1.2em; font-family: 'Amiri', serif; font-size: 1.3em;">
-              <span lang="ar">مستوى اللغة العربية</span>
-              <span lang="en">Arabic Language Level</span>
-            </h3>
+            <h3 class="section-header lang-ar">مستوى اللغة العربية</h3>
+            <h3 class="section-header lang-en">Arabic Language Level</h3>
 
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">ما هو مستواك في اللغة العربية؟</span>
-                <span lang="en">What is your Arabic language level?</span>
+                <span class="lang-ar">ما هو مستواك في اللغة العربية؟</span>
+                <span class="lang-en">What is your Arabic language level?</span>
               </label>
               <div class="radio-group">
                 <label class="radio-label">
                   <input type="radio" name="arabicLevel" value="beginner" required>
-                  <span lang="ar">مبتدئ (لا أعرف العربية أو أعرف القليل جداً)</span>
-                  <span lang="en">Beginner (No Arabic or very little)</span>
+                  <span class="lang-ar">مبتدئ (لا أعرف العربية أو أعرف القليل جداً)</span>
+                  <span class="lang-en">Beginner (No Arabic or very little)</span>
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="arabicLevel" value="elementary">
-                  <span lang="ar">أساسي (أعرف الحروف وبعض الكلمات البسيطة)</span>
-                  <span lang="en">Elementary (Know letters and some simple words)</span>
+                  <span class="lang-ar">أساسي (أعرف الحروف وبعض الكلمات البسيطة)</span>
+                  <span class="lang-en">Elementary (Know letters and some simple words)</span>
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="arabicLevel" value="intermediate">
-                  <span lang="ar">متوسط (أستطيع التحدث والقراءة ببطء)</span>
-                  <span lang="en">Intermediate (Can speak and read slowly)</span>
+                  <span class="lang-ar">متوسط (أستطيع التحدث والقراءة ببطء)</span>
+                  <span class="lang-en">Intermediate (Can speak and read slowly)</span>
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="arabicLevel" value="advanced">
-                  <span lang="ar">متقدم (أتحدث وأقرأ بطلاقة)</span>
-                  <span lang="en">Advanced (Speak and read fluently)</span>
+                  <span class="lang-ar">متقدم (أتحدث وأقرأ بطلاقة)</span>
+                  <span class="lang-en">Advanced (Speak and read fluently)</span>
                 </label>
               </div>
             </div>
 
             <!-- Motivation -->
-            <h3 style="color: var(--navy); margin: 2em 0 1.2em; font-family: 'Amiri', serif; font-size: 1.3em;">
-              <span lang="ar">الدافع والتوقعات</span>
-              <span lang="en">Motivation & Expectations</span>
-            </h3>
+            <h3 class="section-header lang-ar">الدافع والتوقعات</h3>
+            <h3 class="section-header lang-en">Motivation & Expectations</h3>
 
             <div class="form-group">
               <label class="form-label">
                 <span class="required">*</span>
-                <span lang="ar">لماذا تريد الانضمام إلى درب؟</span>
-                <span lang="en">Why do you want to join Darb Path?</span>
+                <span class="lang-ar">لماذا تريد الانضمام إلى درب؟</span>
+                <span class="lang-en">Why do you want to join Darb Path?</span>
               </label>
               <textarea class="form-textarea" name="motivation" required 
                         placeholder="أخبرنا عن دوافعك وتوقعاتك من البرنامج... / Tell us about your motivation and expectations..."></textarea>
-              <small class="form-help" lang="ar">أخبرنا عن أهدافك وما تأمل تحقيقه من هذه الرحلة</small>
-              <small class="form-help" lang="en">Tell us about your goals and what you hope to achieve from this journey</small>
+              <small class="form-help lang-ar">أخبرنا عن أهدافك وما تأمل تحقيقه من هذه الرحلة (100-500 كلمة)</small>
+              <small class="form-help lang-en">Tell us about your goals and what you hope to achieve from this journey (100-500 words)</small>
             </div>
 
             <div class="form-group">
               <label class="form-label">
-                <span lang="ar">هل سبق لك زيارة المدينة المنورة؟</span>
-                <span lang="en">Have you visited Madinah before?</span>
+                <span class="lang-ar">هل سبق لك زيارة المدينة المنورة؟</span>
+                <span class="lang-en">Have you visited Madinah before?</span>
               </label>
               <div class="radio-group">
                 <label class="radio-label">
                   <input type="radio" name="visitedMadinah" value="yes">
-                  <span lang="ar">نعم</span>
-                  <span lang="en">Yes</span>
+                  <span class="lang-ar">نعم، زرت المدينة من قبل</span>
+                  <span class="lang-en">Yes, I've visited Madinah before</span>
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="visitedMadinah" value="no">
-                  <span lang="ar">لا</span>
-                  <span lang="en">No</span>
+                  <span class="lang-ar">لا، هذه ستكون زيارتي الأولى</span>
+                  <span class="lang-en">No, this will be my first visit</span>
                 </label>
               </div>
             </div>
 
             <!-- Additional Information -->
-            <h3 style="color: var(--navy); margin: 2em 0 1.2em; font-family: 'Amiri', serif; font-size: 1.3em;">
-              <span lang="ar">معلومات إضافية</span>
-              <span lang="en">Additional Information</span>
-            </h3>
+            <h3 class="section-header lang-ar">معلومات إضافية</h3>
+            <h3 class="section-header lang-en">Additional Information</h3>
 
             <div class="form-group">
               <label class="form-label">
-                <span lang="ar">متى تفضل الانضمام؟</span>
-                <span lang="en">When would you prefer to join?</span>
+                <span class="lang-ar">متى تفضل الانضمام؟</span>
+                <span class="lang-en">When would you prefer to join?</span>
               </label>
               <select class="form-select" name="preferredTime">
-                <option value="" lang="ar">اختر الوقت المفضل...</option>
-                <option value="" lang="en">Select preferred time...</option>
-                <option value="asap" lang="ar">في أقرب وقت ممكن</option>
-                <option value="asap" lang="en">As soon as possible</option>
-                <option value="1-3months" lang="ar">خلال 1-3 أشهر</option>
-                <option value="1-3months" lang="en">Within 1-3 months</option>
-                <option value="3-6months" lang="ar">خلال 3-6 أشهر</option>
-                <option value="3-6months" lang="en">Within 3-6 months</option>
-                <option value="6+months" lang="ar">بعد 6 أشهر</option>
-                <option value="6+months" lang="en">After 6 months</option>
+                <option value="" class="lang-ar">اختر الوقت المفضل...</option>
+                <option value="" class="lang-en">Select preferred time...</option>
+                <option value="asap" class="lang-ar">في أقرب وقت ممكن</option>
+                <option value="asap" class="lang-en">As soon as possible</option>
+                <option value="1-3months" class="lang-ar">خلال 1-3 أشهر</option>
+                <option value="1-3months" class="lang-en">Within 1-3 months</option>
+                <option value="3-6months" class="lang-ar">خلال 3-6 أشهر</option>
+                <option value="3-6months" class="lang-en">Within 3-6 months</option>
+                <option value="6+months" class="lang-ar">بعد 6 أشهر أو أكثر</option>
+                <option value="6+months" class="lang-en">After 6 months or more</option>
               </select>
             </div>
 
             <div class="form-group">
               <label class="form-label">
-                <span lang="ar">كيف سمعت عنا؟</span>
-                <span lang="en">How did you hear about us?</span>
+                <span class="lang-ar">كيف سمعت عنا؟</span>
+                <span class="lang-en">How did you hear about us?</span>
               </label>
               <select class="form-select" name="referralSource">
-                <option value="" lang="ar">اختر...</option>
-                <option value="" lang="en">Select...</option>
-                <option value="instagram" lang="ar">إنستغرام</option>
-                <option value="instagram" lang="en">Instagram</option>
-                <option value="facebook" lang="ar">فيسبوك</option>
-                <option value="facebook" lang="en">Facebook</option>
-                <option value="twitter" lang="ar">تويتر / X</option>
-                <option value="twitter" lang="en">Twitter / X</option>
-                <option value="tiktok" lang="ar">تيك توك</option>
-                <option value="tiktok" lang="en">TikTok</option>
-                <option value="youtube" lang="ar">يوتيوب</option>
-                <option value="youtube" lang="en">YouTube</option>
-                <option value="friend" lang="ar">من صديق</option>
-                <option value="friend" lang="en">From a friend</option>
-                <option value="search" lang="ar">بحث جوجل</option>
-                <option value="search" lang="en">Google search</option>
-                <option value="other" lang="ar">أخرى</option>
-                <option value="other" lang="en">Other</option>
+                <option value="" class="lang-ar">اختر...</option>
+                <option value="" class="lang-en">Select...</option>
+                <option value="instagram" class="lang-ar">إنستغرام</option>
+                <option value="instagram" class="lang-en">Instagram</option>
+                <option value="facebook" class="lang-ar">فيسبوك</option>
+                <option value="facebook" class="lang-en">Facebook</option>
+                <option value="twitter" class="lang-ar">تويتر / X</option>
+                <option value="twitter" class="lang-en">Twitter / X</option>
+                <option value="tiktok" class="lang-ar">تيك توك</option>
+                <option value="tiktok" class="lang-en">TikTok</option>
+                <option value="youtube" class="lang-ar">يوتيوب</option>
+                <option value="youtube" class="lang-en">YouTube</option>
+                <option value="snapchat" class="lang-ar">سناب شات</option>
+                <option value="snapchat" class="lang-en">Snapchat</option>
+                <option value="telegram" class="lang-ar">تيليجرام</option>
+                <option value="telegram" class="lang-en">Telegram</option>
+                <option value="friend" class="lang-ar">من صديق أو معرفة</option>
+                <option value="friend" class="lang-en">From a friend or acquaintance</option>
+                <option value="search" class="lang-ar">بحث جوجل</option>
+                <option value="search" class="lang-en">Google search</option>
+                <option value="other" class="lang-ar">أخرى</option>
+                <option value="other" class="lang-en">Other</option>
               </select>
             </div>
 
             <div class="form-group">
               <label class="form-label">
-                <span lang="ar">ملاحظات أو أسئلة إضافية</span>
-                <span lang="en">Additional notes or questions</span>
+                <span class="lang-ar">ملاحظات أو أسئلة إضافية</span>
+                <span class="lang-en">Additional notes or questions</span>
               </label>
               <textarea class="form-textarea" name="additionalNotes" 
                         placeholder="أي معلومات إضافية تود مشاركتها... / Any additional information you'd like to share..."></textarea>
+              <small class="form-help lang-ar">أي احتياجات خاصة، قيود غذائية، أو معلومات أخرى ترغب في إخبارنا بها</small>
+              <small class="form-help lang-en">Any special requirements, dietary restrictions, or other information you'd like us to know</small>
             </div>
 
             <!-- Submit Button -->
             <button type="submit" class="submit-btn">
-              <span lang="ar">إرسال الطلب</span>
-              <span lang="en">Submit Application</span>
+              <span class="lang-ar">إرسال الطلب</span>
+              <span class="lang-en">Submit Application</span>
             </button>
 
-            <p style="text-align: center; margin-top: 1.5em; color: var(--muted); font-size: 0.95em;">
-              <span lang="ar">
+            <div class="privacy-notice">
+              <span class="lang-ar">
                 بإرسال هذا النموذج، أنت توافق على 
-                <a href="#" style="color: var(--copper); text-decoration: underline;">شروط الاستخدام</a>
+                <a href="#">شروط الاستخدام</a>
                 و
-                <a href="#" style="color: var(--copper); text-decoration: underline;">سياسة الخصوصية</a>
+                <a href="#">سياسة الخصوصية</a>
               </span>
-              <span lang="en">
+              <span class="lang-en">
                 By submitting this form, you agree to our 
-                <a href="#" style="color: var(--copper); text-decoration: underline;">Terms of Use</a>
+                <a href="#">Terms of Use</a>
                 and
-                <a href="#" style="color: var(--copper); text-decoration: underline;">Privacy Policy</a>
+                <a href="#">Privacy Policy</a>
               </span>
-            </p>
+            </div>
           </form>
         </div>
 
@@ -696,22 +814,24 @@
         <div class="success-message" id="successMessage">
           <div class="success-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h2 class="success-title" lang="ar">شكراً لك! تم استلام طلبك</h2>
-          <h2 class="success-title" lang="en">Thank you! Your application has been received</h2>
-          <p class="success-text" lang="ar">
+          <h2 class="success-title lang-ar">شكراً لك! تم استلام طلبك بنجاح</h2>
+          <h2 class="success-title lang-en">Thank you! Your application has been received</h2>
+          <p class="success-text lang-ar">
             سنراجع طلبك بعناية ونتواصل معك خلال أسبوع عبر البريد الإلكتروني أو الهاتف.<br>
-            تحقق من بريدك الوارد (وصندوق الرسائل غير المرغوبة).
+            تحقق من بريدك الوارد (وصندوق الرسائل غير المرغوبة).<br><br>
+            رقم الطلب: <strong>#<span id="applicationNumber"></span></strong>
           </p>
-          <p class="success-text" lang="en">
+          <p class="success-text lang-en">
             We'll carefully review your application and contact you within a week via email or phone.<br>
-            Please check your inbox (and spam folder).
+            Please check your inbox (and spam folder).<br><br>
+            Application ID: <strong>#<span id="applicationNumberEn"></span></strong>
           </p>
           <a href="index.html" class="btn-secondary">
-            <span lang="ar">العودة للرئيسية</span>
-            <span lang="en">Back to Home</span>
+            <span class="lang-ar">العودة للرئيسية</span>
+            <span class="lang-en">Back to Home</span>
           </a>
         </div>
 
@@ -722,13 +842,13 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p lang="ar">
+      <p class="lang-ar">
         © 2026 درب | Darb Path — طريق واحد. ثقافات متعددة. لغة واحدة.
       </p>
-      <p lang="en">
+      <p class="lang-en">
         © 2026 Darb Path | درب — One Path. Many Cultures. One Language.
       </p>
-      <p style="margin-top: 1em;">
+      <p style="margin-top: 1.2em;">
         <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
         <a href="mailto:info@darbpath.com">info@darbpath.com</a>
       </p>
@@ -740,20 +860,21 @@
     // Language Toggle
     function setLang(lang) {
       const body = document.body;
+      const html = document.documentElement;
       const btnAr = document.getElementById('lang-ar');
       const btnEn = document.getElementById('lang-en');
       
       if (lang === 'en') {
         body.classList.add('en-mode');
-        body.setAttribute('dir', 'ltr');
-        body.setAttribute('lang', 'en');
+        html.setAttribute('dir', 'ltr');
+        html.setAttribute('lang', 'en');
         btnEn.classList.add('active');
         btnAr.classList.remove('active');
         localStorage.setItem('lang', 'en');
       } else {
         body.classList.remove('en-mode');
-        body.setAttribute('dir', 'rtl');
-        body.setAttribute('lang', 'ar');
+        html.setAttribute('dir', 'rtl');
+        html.setAttribute('lang', 'ar');
         btnAr.classList.add('active');
         btnEn.classList.remove('active');
         localStorage.setItem('lang', 'ar');
@@ -762,10 +883,8 @@
 
     // Load saved language preference
     window.addEventListener('DOMContentLoaded', () => {
-      const savedLang = localStorage.getItem('lang');
-      if (savedLang === 'en') {
-        setLang('en');
-      }
+      const savedLang = localStorage.getItem('lang') || 'ar';
+      setLang(savedLang);
     });
 
     // Form Submission Handler
@@ -779,7 +898,8 @@
       
       // Disable submit button
       submitBtn.disabled = true;
-      submitBtn.textContent = localStorage.getItem('lang') === 'en' ? 'Sending...' : 'جاري الإرسال...';
+      const currentLang = localStorage.getItem('lang') || 'ar';
+      submitBtn.textContent = currentLang === 'en' ? 'Sending...' : 'جاري الإرسال...';
       
       // Collect form data
       const formData = new FormData(form);
@@ -788,9 +908,12 @@
         data[key] = value;
       });
       
-      // Here you would typically send to your backend
-      // For now, we'll simulate a successful submission
+      // Generate application number
+      const appNumber = 'DP' + Date.now().toString().slice(-8);
+      
+      // Log data (في الإنتاج، أرسل إلى backend)
       console.log('Form Data:', data);
+      console.log('Application Number:', appNumber);
       
       // Simulate API call
       setTimeout(() => {
@@ -798,145 +921,40 @@
         formCard.style.display = 'none';
         successMessage.classList.add('show');
         
+        // Set application number
+        document.getElementById('applicationNumber').textContent = appNumber;
+        document.getElementById('applicationNumberEn').textContent = appNumber;
+        
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        // In production, you would send this to your backend:
-        // fetch('https://your-api.com/applications', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(data)
-        // })
-        // .then(response => response.json())
-        // .then(result => {
-        //   formCard.style.display = 'none';
-        //   successMessage.classList.add('show');
-        // })
-        // .catch(error => {
-        //   alert('حدث خطأ. يرجى المحاولة مرة أخرى. / An error occurred. Please try again.');
-        //   submitBtn.disabled = false;
-        //   submitBtn.textContent = localStorage.getItem('lang') === 'en' ? 'Submit Application' : 'إرسال الطلب';
-        // });
+        // في الإنتاج، استخدم:
+        /*
+        fetch('https://your-api.com/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          formCard.style.display = 'none';
+          successMessage.classList.add('show');
+          document.getElementById('applicationNumber').textContent = result.applicationId;
+          document.getElementById('applicationNumberEn').textContent = result.applicationId;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(error => {
+          const errorMsg = currentLang === 'en' 
+            ? 'An error occurred. Please try again.' 
+            : 'حدث خطأ. يرجى المحاولة مرة أخرى.';
+          alert(errorMsg);
+          submitBtn.disabled = false;
+          submitBtn.textContent = currentLang === 'en' ? 'Submit Application' : 'إرسال الطلب';
+        });
+        */
       }, 1500);
     }
   </script>
-
-</body>
-</html>
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--offwhite);
-      color:#24324b;
-    }
-
-    header{
-      background: linear-gradient(180deg, #131b28, var(--navy));
-      color: #fff;
-      text-align:center;
-      padding: 3.2em 1em 2.2em;
-    }
-
-    header img{
-      width: 220px;
-      max-width: 70%;
-      margin-bottom: 1em;
-    }
-
-    header h1{
-      margin: .2em 0 .4em;
-      font-size: 1.9em;
-      letter-spacing:.2px;
-    }
-
-    header p{
-      opacity:.9;
-      max-width: 720px;
-      margin: 0 auto;
-      line-height:1.7;
-    }
-
-    .container{
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5em 1em 4em;
-    }
-
-    .form-wrapper{
-      background:#fff;
-      border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(26,35,50,.12);
-      overflow:hidden;
-    }
-
-    iframe{
-      width:100%;
-      height:1100px;
-      border:0;
-    }
-
-    .back{
-      text-align:center;
-      margin-top:2.2em;
-    }
-
-    .back a{
-      display:inline-block;
-      text-decoration:none;
-      padding:.8em 1.4em;
-      border-radius:999px;
-      border:1px solid var(--copper);
-      color:var(--navy);
-      font-weight:600;
-      transition:.15s ease;
-    }
-
-    .back a:hover{
-      background: rgba(201,151,77,.12);
-    }
-
-    footer{
-      text-align:center;
-      font-size:.9em;
-      opacity:.7;
-      margin-top:3em;
-    }
-
-    @media (max-width: 768px){
-      iframe{ height: 1250px; }
-      header h1{ font-size:1.6em; }
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <img src="logo.png" alt="Darb Path Logo">
-  <h1>Apply to Join</h1>
-  <p>
-    Seats are limited to maintain quality.<br>
-    Applications are reviewed carefully — if this batch is full, your details are saved for the next program.
-  </p>
-</header>
-
-<div class="container">
-  <div class="form-wrapper">
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
-      loading="lazy">
-      جارٍ التحميل…
-    </iframe>
-  </div>
-
-  <div class="back">
-    <a href="index.html">← Back to Darb Path</a>
-  </div>
-
-  <footer>
-    © Darb Path | One Path. Many Cultures. One Language.
-  </footer>
-</div>
 
 </body>
 </html>
