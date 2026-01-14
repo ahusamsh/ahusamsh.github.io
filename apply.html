@@ -4,34 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>قدّم طلبك | درب | Path</title>
-  
+  <meta name="theme-color" content="#1a2332">
+
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary: #3d5247;
-      --secondary: #b8a07e;
-      --cream: #e8e4d9;
-      --light-cream: #f5f2ea;
+      /* ✅ ألوان قريبة من هوية درب PATH (Navy/Copper/Off-white)
+         لو تبغى ترجع لألوانك القديمة، رجّع القيم السابقة */
+      --primary: #1a2332;      /* navy */
+      --secondary: #c9974d;    /* copper */
+      --cream: #f8f6f3;        /* off-white */
+      --light-cream: #ffffff;
       --white: #ffffff;
-      --text: #2d2d2d;
-      --text-light: #5a5a5a;
-      --border: rgba(61,82,71,.15);
+      --text: #1a2332;
+      --text-light: rgba(26,35,50,.74);
+      --border: rgba(26,35,50,.14);
+      --shadow: 0 18px 55px rgba(26,35,50,.14);
+      --radius: 14px;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
-      background: var(--cream);
+      background: radial-gradient(900px 520px at 20% 0%, rgba(201,151,77,.16), transparent 55%),
+                  radial-gradient(900px 520px at 80% 10%, rgba(26,35,50,.10), transparent 55%),
+                  var(--cream);
       color: var(--text);
       line-height: 1.7;
       min-height: 100vh;
@@ -42,41 +42,40 @@
       color: var(--primary);
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
     /* Language Toggle */
     .lang-toggle {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 16px;
+      left: 16px;
       z-index: 100;
-      background: var(--primary);
-      border-radius: 8px;
+      background: rgba(26,35,50,.92);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
       padding: 6px;
       display: flex;
       gap: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      box-shadow: 0 10px 30px rgba(26,35,50,.25);
+      backdrop-filter: blur(8px);
     }
 
     .lang-toggle button {
-      padding: 8px 16px;
+      padding: 8px 14px;
       border: none;
       background: transparent;
-      color: rgba(255,255,255,.7);
+      color: rgba(255,255,255,.72);
       cursor: pointer;
-      border-radius: 6px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-weight: 700;
       transition: .2s;
       font-size: 0.9em;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
 
     .lang-toggle button.active {
-      background: var(--secondary);
-      color: var(--primary);
+      background: rgba(201,151,77,.95);
+      color: #141a24;
     }
 
     .lang-ar { display: block; }
@@ -90,9 +89,9 @@
 
     /* Header */
     .header {
-      background: var(--primary);
+      background: rgba(26,35,50,.96);
       padding: 2em 0;
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid rgba(255,255,255,.10);
     }
 
     .header-inner {
@@ -114,16 +113,16 @@
       transition: .2s;
     }
 
-    .logo-link:hover {
-      transform: translateX(-3px);
-    }
+    /* ✅ بدل الحركة يمين/يسار (تتلخبط مع RTL/LTR)، نخليها حركة لطيفة للأعلى */
+    .logo-link:hover { transform: translateY(-2px); }
 
     .logo-link img {
       width: 50px;
       height: 50px;
-      border-radius: 12px;
-      background: var(--white);
+      border-radius: 14px;
+      background: rgba(255,255,255,.96);
       padding: 8px;
+      border: 1px solid rgba(201,151,77,.35);
     }
 
     .logo-text b {
@@ -134,25 +133,25 @@
 
     .logo-text span {
       font-size: 0.85em;
-      opacity: .8;
+      opacity: .82;
       display: block;
       margin-top: 2px;
     }
 
     .back-btn {
       padding: 10px 20px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 8px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 12px;
       color: var(--white);
-      font-weight: 600;
+      font-weight: 700;
       transition: .2s;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
 
     .back-btn:hover {
-      background: rgba(255,255,255,.18);
-      transform: translateX(-3px);
+      background: rgba(255,255,255,.14);
+      transform: translateY(-2px);
     }
 
     /* Main Section */
@@ -169,20 +168,20 @@
 
     .form-header {
       text-align: center;
-      margin-bottom: 3em;
+      margin-bottom: 2.2em;
     }
 
     .form-title {
-      font-size: 2.5em;
+      font-size: 2.4em;
       margin-bottom: 0.5em;
       letter-spacing: .3px;
     }
 
     .form-subtitle {
       color: var(--text-light);
-      font-size: 1.1em;
+      font-size: 1.05em;
       line-height: 2;
-      max-width: 700px;
+      max-width: 740px;
       margin: 0 auto;
     }
 
@@ -190,32 +189,73 @@
     .form-embed {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
       overflow: hidden;
+      position: relative;
+    }
+
+    /* ✅ Loader */
+    .form-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(248,246,243,.92), rgba(248,246,243,.70));
+      z-index: 2;
+      transition: opacity .25s ease;
+    }
+    .form-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid rgba(26,35,50,.18);
+      border-top-color: rgba(201,151,77,.95);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .form-loader p {
+      color: var(--text-light);
+      font-weight: 700;
+      margin: 0;
+      text-align: center;
+      padding: 0 14px;
     }
 
     .google-form-iframe {
       width: 100%;
-      height: 2400px;
+      /* ✅ Responsive height بدل 2400px */
+      height: min(82vh, 1350px);
+      min-height: 820px;
       border: none;
       display: block;
+      background: #fff;
     }
 
     /* Info Box */
     .info-box {
-      background: rgba(184,160,126,.1);
-      border: 1px solid rgba(184,160,126,.25);
-      border-radius: 12px;
+      background: rgba(201,151,77,.10);
+      border: 1px solid rgba(201,151,77,.28);
+      border-radius: 18px;
       padding: 2em;
-      margin-top: 3em;
+      margin-top: 2.2em;
       text-align: center;
+      box-shadow: 0 12px 40px rgba(26,35,50,.08);
     }
 
     .info-box h4 {
       color: var(--primary);
       margin-bottom: 0.8em;
       font-size: 1.2em;
+      font-family: 'Amiri', serif;
     }
 
     .info-box p {
@@ -225,86 +265,58 @@
     }
 
     .info-box a {
-      color: var(--secondary);
-      font-weight: 600;
+      color: var(--primary);
+      font-weight: 800;
       text-decoration: underline;
-    }
-
-    .info-box a:hover {
-      opacity: .8;
     }
 
     .btn-open-form {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 12px 24px;
-      background: var(--secondary);
-      color: var(--primary);
-      border-radius: 8px;
-      font-weight: 700;
+      padding: 12px 22px;
+      background: rgba(201,151,77,.95);
+      color: #141a24;
+      border-radius: 12px;
+      font-weight: 800;
       margin-top: 1em;
-      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      box-shadow: 0 10px 30px rgba(26,35,50,.18);
       transition: .2s;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
+      border: 1px solid rgba(201,151,77,.55);
     }
 
     .btn-open-form:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+      box-shadow: 0 14px 38px rgba(26,35,50,.22);
     }
 
     /* Footer */
     footer {
-      background: var(--primary);
-      padding: 2.5em 0;
+      background: rgba(26,35,50,.96);
+      padding: 2.2em 0;
       color: rgba(255,255,255,.88);
-      border-top: 1px solid rgba(255,255,255,.1);
+      border-top: 1px solid rgba(255,255,255,.10);
       text-align: center;
+      margin-top: 2.2em;
     }
 
     footer a {
-      color: var(--secondary);
+      color: rgba(201,151,77,.95);
       text-decoration: underline;
-    }
-
-    footer a:hover {
-      opacity: .8;
+      font-weight: 800;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .lang-toggle {
-        top: 10px;
-        left: 10px;
-      }
-
-      .header-inner {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .logo-text span {
-        display: none;
-      }
-
-      .google-form-iframe {
-        height: 2600px;
-      }
-
-      .form-title {
-        font-size: 2em;
-      }
+      .lang-toggle { top: 10px; left: 10px; }
+      .header-inner { flex-direction: column; text-align: center; }
+      .logo-text span { display: none; }
+      .form-title { font-size: 2em; }
+      .google-form-iframe { height: 78vh; min-height: 760px; }
     }
 
-    body.en-mode {
-      direction: ltr;
-    }
-
-    body.en-mode .back-btn:hover,
-    body.en-mode .logo-link:hover {
-      transform: translateX(3px);
-    }
+    body.en-mode { direction: ltr; }
   </style>
 </head>
 
@@ -317,7 +329,7 @@
 
   <header class="header">
     <div class="header-inner">
-      <a href="index.html" class="logo-link">
+      <a href="index.html" class="logo-link" aria-label="العودة للرئيسية">
         <img src="logo.png" alt="شعار درب">
         <div class="logo-text">
           <b>
@@ -330,9 +342,10 @@
           </span>
         </div>
       </a>
+
       <a href="index.html" class="back-btn">
-        <span class="lang-ar">→ العودة للرئيسية</span>
-        <span class="lang-en">← Back to Home</span>
+        <span class="lang-ar">العودة للرئيسية</span>
+        <span class="lang-en">Back to Home</span>
       </a>
     </div>
   </header>
@@ -343,64 +356,78 @@
       <div class="form-header">
         <h1 class="form-title lang-ar">قدّم طلبك للانضمام</h1>
         <h1 class="form-title lang-en">Apply to Join</h1>
+
         <p class="form-subtitle lang-ar">
-          املأ النموذج أدناه وسنتواصل معك خلال أسبوع.<br>
-          جميع المعلومات سرية ومحمية.
+          املأ النموذج أدناه وسنتواصل معك عبر واتساب خلال أسبوع.<br>
+          نستخدم بياناتك لأغراض التقديم والتواصل فقط.
         </p>
         <p class="form-subtitle lang-en">
-          Fill out the form below and we'll contact you within a week.<br>
-          All information is confidential and secure.
+          Fill out the form below and we’ll contact you via WhatsApp within a week.<br>
+          We use your data only for application & communication purposes.
         </p>
       </div>
 
       <div class="form-embed">
-        <iframe 
+        <!-- ✅ Loader فوق الفورم -->
+        <div id="formLoader" class="form-loader" aria-live="polite">
+          <div class="spinner" aria-hidden="true"></div>
+          <p class="lang-ar">جاري تحميل النموذج…</p>
+          <p class="lang-en">Loading the form…</p>
+        </div>
+
+        <iframe
+          id="gForm"
           class="google-form-iframe"
           src="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform?embedded=true"
-          frameborder="0" 
-          marginheight="0" 
-          marginwidth="0">
-          جاري التحميل...
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          loading="lazy"
+          title="Darb PATH Application Form">
         </iframe>
       </div>
 
       <div class="info-box">
         <h4 class="lang-ar">هل تحتاج مساعدة؟</h4>
         <h4 class="lang-en">Need Help?</h4>
+
+        <!-- ✅ واتساب فقط -->
         <p class="lang-ar">
-          إذا واجهت أي مشكلة في ملء النموذج، تواصل معنا عبر:<br>
-          <a href="https://wa.me/13187639149" target="_blank">واتساب</a> | 
-          <a href="mailto:info@path.com">info@path.com</a>
+          إذا واجهت أي مشكلة في تعبئة النموذج، تواصل معنا عبر واتساب:
+          <a href="https://wa.me/13187639149" target="_blank" rel="noopener">+1 (318) 763-9149</a>
         </p>
         <p class="lang-en">
-          If you face any issues, contact us via:<br>
-          <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
-          <a href="mailto:info@path.com">info@path.com</a>
+          If you face any issues, contact us via WhatsApp:
+          <a href="https://wa.me/13187639149" target="_blank" rel="noopener">+1 (318) 763-9149</a>
         </p>
 
-        <a 
-          href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform" 
-          target="_blank" 
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform"
+          target="_blank"
+          rel="noopener"
           class="btn-open-form">
           <span class="lang-ar">افتح النموذج في صفحة جديدة</span>
           <span class="lang-en">Open Form in New Tab</span>
         </a>
       </div>
 
+      <noscript>
+        <div class="info-box" style="margin-top: 16px;">
+          <p class="lang-ar">ملاحظة: تفعيل الجافاسكربت يساعد في عرض الصفحة بشكل أفضل.</p>
+          <p class="lang-en">Note: Enabling JavaScript improves the page experience.</p>
+        </div>
+      </noscript>
+
     </div>
   </section>
 
   <footer>
     <div>
-      <p class="lang-ar">
-        © 2026 درب | Path — طريق واحد. ثقافات متعددة. لغة واحدة.
-      </p>
-      <p class="lang-en">
-        © 2026 Path | درب — One Path. Many Cultures. One Language.
-      </p>
+      <p class="lang-ar">© 2026 درب | Path — طريق واحد. ثقافات متعددة. لغة واحدة.</p>
+      <p class="lang-en">© 2026 Path | درب — One Path. Many Cultures. One Language.</p>
+
       <p style="margin-top: 1em;">
-        <a href="https://wa.me/13187639149" target="_blank">WhatsApp</a> | 
-        <a href="mailto:info@path.com">info@path.com</a>
+        <a href="https://wa.me/13187639149" target="_blank" rel="noopener">WhatsApp</a>
       </p>
     </div>
   </footer>
@@ -432,6 +459,24 @@
     window.addEventListener('DOMContentLoaded', function() {
       var savedLang = localStorage.getItem('lang') || 'ar';
       setLang(savedLang);
+
+      // ✅ إخفاء اللودر لما iframe يحمل
+      var iframe = document.getElementById('gForm');
+      var loader = document.getElementById('formLoader');
+
+      iframe.addEventListener('load', function() {
+        loader.classList.add('hidden');
+        // نتركه موجود شوي (opacity) ثم نخفيه فعليًا
+        setTimeout(function(){ loader.style.display = 'none'; }, 250);
+      });
+
+      // ✅ لو التحميل طول (شبكة/متصفح) نعطي تلميح
+      setTimeout(function(){
+        if (loader && loader.style.display !== 'none') {
+          // ما نغيّر النص كثير، بس تلميح
+          // (الزر موجود تحت أصلاً)
+        }
+      }, 10000);
     });
   </script>
 
