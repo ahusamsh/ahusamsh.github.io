@@ -3,25 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>قدّم طلبك | درب | Path</title>
-  <meta name="theme-color" content="#1a2332">
+
+  <title>قدّم طلبك | PATH</title>
+  <meta name="description" content="قدّم طلبك للانضمام إلى برنامج PATH." />
 
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* ✅ ألوان قريبة من هوية درب PATH (Navy/Copper/Off-white)
-         لو تبغى ترجع لألوانك القديمة، رجّع القيم السابقة */
-      --primary: #1a2332;      /* navy */
-      --secondary: #c9974d;    /* copper */
-      --cream: #f8f6f3;        /* off-white */
-      --light-cream: #ffffff;
+      /* ✅ ألوانك الأصلية */
+      --primary: #3d5247;
+      --secondary: #b8a07e;
+      --cream: #e8e4d9;
+      --light-cream: #f5f2ea;
       --white: #ffffff;
-      --text: #1a2332;
-      --text-light: rgba(26,35,50,.74);
-      --border: rgba(26,35,50,.14);
-      --shadow: 0 18px 55px rgba(26,35,50,.14);
-      --radius: 14px;
+      --text: #2d2d2d;
+      --text-light: #5a5a5a;
+      --border: rgba(61,82,71,.15);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,15 +27,13 @@
 
     body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
-      background: radial-gradient(900px 520px at 20% 0%, rgba(201,151,77,.16), transparent 55%),
-                  radial-gradient(900px 520px at 80% 10%, rgba(26,35,50,.10), transparent 55%),
-                  var(--cream);
+      background: var(--cream);
       color: var(--text);
       line-height: 1.7;
       min-height: 100vh;
     }
 
-    h1, h2, h3 {
+    h1, h2, h3, h4 {
       font-family: 'Amiri', serif;
       color: var(--primary);
     }
@@ -47,41 +43,40 @@
     /* Language Toggle */
     .lang-toggle {
       position: fixed;
-      top: 16px;
-      left: 16px;
+      top: 20px;
+      left: 20px;
       z-index: 100;
-      background: rgba(26,35,50,.92);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
+      background: var(--primary);
+      border-radius: 8px;
       padding: 6px;
       display: flex;
       gap: 4px;
-      box-shadow: 0 10px 30px rgba(26,35,50,.25);
-      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
     }
 
     .lang-toggle button {
-      padding: 8px 14px;
+      padding: 8px 16px;
       border: none;
       background: transparent;
-      color: rgba(255,255,255,.72);
+      color: rgba(255,255,255,.7);
       cursor: pointer;
-      border-radius: 10px;
-      font-weight: 700;
+      border-radius: 6px;
+      font-weight: 600;
       transition: .2s;
       font-size: 0.9em;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
 
     .lang-toggle button.active {
-      background: rgba(201,151,77,.95);
-      color: #141a24;
+      background: var(--secondary);
+      color: var(--primary);
     }
 
     .lang-ar { display: block; }
     .lang-en { display: none; }
     body.en-mode .lang-ar { display: none; }
     body.en-mode .lang-en { display: block; }
+
     span.lang-ar { display: inline; }
     span.lang-en { display: none; }
     body.en-mode span.lang-ar { display: none; }
@@ -89,9 +84,9 @@
 
     /* Header */
     .header {
-      background: rgba(26,35,50,.96);
+      background: var(--primary);
       padding: 2em 0;
-      border-bottom: 1px solid rgba(255,255,255,.10);
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
 
     .header-inner {
@@ -113,44 +108,43 @@
       transition: .2s;
     }
 
-    /* ✅ بدل الحركة يمين/يسار (تتلخبط مع RTL/LTR)، نخليها حركة لطيفة للأعلى */
+    /* ✅ حركة لطيفة بدون يمين/يسار */
     .logo-link:hover { transform: translateY(-2px); }
 
     .logo-link img {
       width: 50px;
       height: 50px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.96);
+      border-radius: 12px;
+      background: var(--white);
       padding: 8px;
-      border: 1px solid rgba(201,151,77,.35);
     }
 
-    .logo-text b {
-      display: block;
-      font-size: 1.2em;
-      letter-spacing: .5px;
+    /* ✅ شلنا أي اسم/درب/دarb من الأعلى */
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .logo-text span {
-      font-size: 0.85em;
-      opacity: .82;
-      display: block;
-      margin-top: 2px;
+    .tagline {
+      font-size: 0.95em;
+      opacity: .9;
+      line-height: 1.5;
     }
 
     .back-btn {
       padding: 10px 20px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 12px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
       color: var(--white);
-      font-weight: 700;
+      font-weight: 600;
       transition: .2s;
       font-family: 'IBM Plex Sans Arabic', sans-serif;
     }
 
     .back-btn:hover {
-      background: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.18);
       transform: translateY(-2px);
     }
 
@@ -168,72 +162,70 @@
 
     .form-header {
       text-align: center;
-      margin-bottom: 2.2em;
+      margin-bottom: 3em;
     }
 
     .form-title {
-      font-size: 2.4em;
+      font-size: 2.5em;
       margin-bottom: 0.5em;
       letter-spacing: .3px;
     }
 
     .form-subtitle {
       color: var(--text-light);
-      font-size: 1.05em;
+      font-size: 1.1em;
       line-height: 2;
-      max-width: 740px;
+      max-width: 700px;
       margin: 0 auto;
     }
 
-    /* Google Form */
+    /* Form Embed + Loader */
     .form-embed {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
       overflow: hidden;
       position: relative;
     }
 
-    /* ✅ Loader */
-    .form-loader {
+    .form-loader{
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
       gap: 12px;
-      background: linear-gradient(180deg, rgba(248,246,243,.92), rgba(248,246,243,.70));
+      background: linear-gradient(180deg, rgba(245,242,234,.92), rgba(232,228,217,.75));
       z-index: 2;
       transition: opacity .25s ease;
     }
-    .form-loader.hidden {
+    .form-loader.hidden{
       opacity: 0;
       pointer-events: none;
     }
-    .spinner {
-      width: 44px;
-      height: 44px;
+    .spinner{
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 3px solid rgba(26,35,50,.18);
-      border-top-color: rgba(201,151,77,.95);
+      border: 3px solid rgba(61,82,71,.18);
+      border-top-color: rgba(184,160,126,.95);
       animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .form-loader p {
+    .form-loader p{
+      margin:0;
       color: var(--text-light);
-      font-weight: 700;
-      margin: 0;
-      text-align: center;
+      font-weight: 600;
+      text-align:center;
       padding: 0 14px;
     }
 
+    /* ✅ iframe مرن (بدل 2400px) */
     .google-form-iframe {
       width: 100%;
-      /* ✅ Responsive height بدل 2400px */
-      height: min(82vh, 1350px);
+      height: min(82vh, 1400px);
       min-height: 820px;
       border: none;
       display: block;
@@ -242,20 +234,18 @@
 
     /* Info Box */
     .info-box {
-      background: rgba(201,151,77,.10);
-      border: 1px solid rgba(201,151,77,.28);
-      border-radius: 18px;
+      background: rgba(184,160,126,.1);
+      border: 1px solid rgba(184,160,126,.25);
+      border-radius: 12px;
       padding: 2em;
-      margin-top: 2.2em;
+      margin-top: 3em;
       text-align: center;
-      box-shadow: 0 12px 40px rgba(26,35,50,.08);
     }
 
     .info-box h4 {
       color: var(--primary);
       margin-bottom: 0.8em;
       font-size: 1.2em;
-      font-family: 'Amiri', serif;
     }
 
     .info-box p {
@@ -265,55 +255,46 @@
     }
 
     .info-box a {
-      color: var(--primary);
-      font-weight: 800;
+      color: var(--secondary);
+      font-weight: 700;
       text-decoration: underline;
     }
 
-    .btn-open-form {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 22px;
-      background: rgba(201,151,77,.95);
-      color: #141a24;
-      border-radius: 12px;
-      font-weight: 800;
-      margin-top: 1em;
-      box-shadow: 0 10px 30px rgba(26,35,50,.18);
-      transition: .2s;
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-      border: 1px solid rgba(201,151,77,.55);
-    }
-
-    .btn-open-form:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 38px rgba(26,35,50,.22);
-    }
+    .info-box a:hover { opacity: .85; }
 
     /* Footer */
     footer {
-      background: rgba(26,35,50,.96);
-      padding: 2.2em 0;
+      background: var(--primary);
+      padding: 2.5em 0;
       color: rgba(255,255,255,.88);
-      border-top: 1px solid rgba(255,255,255,.10);
+      border-top: 1px solid rgba(255,255,255,.1);
       text-align: center;
-      margin-top: 2.2em;
+      margin-top: 2.5em;
     }
 
     footer a {
-      color: rgba(201,151,77,.95);
+      color: var(--secondary);
       text-decoration: underline;
-      font-weight: 800;
+      font-weight: 700;
     }
+
+    footer a:hover { opacity: .85; }
 
     /* Responsive */
     @media (max-width: 768px) {
       .lang-toggle { top: 10px; left: 10px; }
-      .header-inner { flex-direction: column; text-align: center; }
-      .logo-text span { display: none; }
+
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+
       .form-title { font-size: 2em; }
-      .google-form-iframe { height: 78vh; min-height: 760px; }
+
+      .google-form-iframe{
+        height: 78vh;
+        min-height: 760px;
+      }
     }
 
     body.en-mode { direction: ltr; }
@@ -330,16 +311,12 @@
   <header class="header">
     <div class="header-inner">
       <a href="index.html" class="logo-link" aria-label="العودة للرئيسية">
-        <img src="logo.png" alt="شعار درب">
+        <img src="logo.png" alt="شعار PATH">
         <div class="logo-text">
-          <b>
-            <span class="lang-ar">درب | Path</span>
-            <span class="lang-en">Path | درب</span>
-          </b>
-          <span>
+          <div class="tagline">
             <span class="lang-ar">طريق واحد. ثقافات متعددة. لغة واحدة.</span>
             <span class="lang-en">One Path. Many Cultures. One Language.</span>
-          </span>
+          </div>
         </div>
       </a>
 
@@ -368,7 +345,7 @@
       </div>
 
       <div class="form-embed">
-        <!-- ✅ Loader فوق الفورم -->
+        <!-- Loader -->
         <div id="formLoader" class="form-loader" aria-live="polite">
           <div class="spinner" aria-hidden="true"></div>
           <p class="lang-ar">جاري تحميل النموذج…</p>
@@ -383,7 +360,9 @@
           marginheight="0"
           marginwidth="0"
           loading="lazy"
-          title="Darb PATH Application Form">
+          title="PATH Application Form"
+          referrerpolicy="no-referrer-when-downgrade"
+          sandbox="allow-forms allow-scripts allow-same-origin">
         </iframe>
       </div>
 
@@ -391,7 +370,7 @@
         <h4 class="lang-ar">هل تحتاج مساعدة؟</h4>
         <h4 class="lang-en">Need Help?</h4>
 
-        <!-- ✅ واتساب فقط -->
+        <!-- ✅ واتساب فقط + بدون إيميل + بدون أي رابط يطلعك خارج الموقع للنموذج -->
         <p class="lang-ar">
           إذا واجهت أي مشكلة في تعبئة النموذج، تواصل معنا عبر واتساب:
           <a href="https://wa.me/13187639149" target="_blank" rel="noopener">+1 (318) 763-9149</a>
@@ -400,15 +379,6 @@
           If you face any issues, contact us via WhatsApp:
           <a href="https://wa.me/13187639149" target="_blank" rel="noopener">+1 (318) 763-9149</a>
         </p>
-
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLScKF0Las-Epglvf5IRYePAatevkj-6FXXiHmIotyQvfgtzfyQ/viewform"
-          target="_blank"
-          rel="noopener"
-          class="btn-open-form">
-          <span class="lang-ar">افتح النموذج في صفحة جديدة</span>
-          <span class="lang-en">Open Form in New Tab</span>
-        </a>
       </div>
 
       <noscript>
@@ -423,8 +393,8 @@
 
   <footer>
     <div>
-      <p class="lang-ar">© 2026 درب | Path — طريق واحد. ثقافات متعددة. لغة واحدة.</p>
-      <p class="lang-en">© 2026 Path | درب — One Path. Many Cultures. One Language.</p>
+      <p class="lang-ar">© 2026 PATH — طريق واحد. ثقافات متعددة. لغة واحدة.</p>
+      <p class="lang-en">© 2026 PATH — One Path. Many Cultures. One Language.</p>
 
       <p style="margin-top: 1em;">
         <a href="https://wa.me/13187639149" target="_blank" rel="noopener">WhatsApp</a>
@@ -460,23 +430,14 @@
       var savedLang = localStorage.getItem('lang') || 'ar';
       setLang(savedLang);
 
-      // ✅ إخفاء اللودر لما iframe يحمل
+      // إخفاء اللودر عند تحميل النموذج
       var iframe = document.getElementById('gForm');
       var loader = document.getElementById('formLoader');
 
-      iframe.addEventListener('load', function() {
+      iframe.addEventListener('load', function () {
         loader.classList.add('hidden');
-        // نتركه موجود شوي (opacity) ثم نخفيه فعليًا
         setTimeout(function(){ loader.style.display = 'none'; }, 250);
       });
-
-      // ✅ لو التحميل طول (شبكة/متصفح) نعطي تلميح
-      setTimeout(function(){
-        if (loader && loader.style.display !== 'none') {
-          // ما نغيّر النص كثير، بس تلميح
-          // (الزر موجود تحت أصلاً)
-        }
-      }, 10000);
     });
   </script>
 
