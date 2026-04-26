@@ -1393,7 +1393,7 @@
                             <span><i class="fas fa-users"></i> <span class="ar-text">عدد محدود</span><span class="en-text">Limited seats</span></span>
                         </div>
                         <div class="program-price">
-                            $${Number(program.price).toLocaleString()} <span>/ <span class="ar-text">أسبوعياً</span><span class="en-text">weekly</span></span>
+                            $${Number(program.price).toLocaleString()} <span> <span class="ar-text">للبرنامج</span><span class="en-text">total</span></span>
                         </div>
                         <button class="program-btn" ${program.registration_open ? `onclick="location.href='apply.html?program=${program.id}'"` : 'disabled'}>
                             <span class="ar-text">${program.registration_open ? 'سجّل الآن' : 'التسجيل مغلق'}</span>
