@@ -1,5 +1,15 @@
 [
     {
+        "id": "institute_study",
+        "title_ar": "الدراسة في معهد متميز",
+        "title_en": "Study at a distinguished institute",
+        "desc_ar": "دراسة مكثفة للغة العربية والعلوم الشرعية في معهد متميز",
+        "desc_en": "Intensive study of Arabic language and Islamic sciences at a distinguished institute",
+        "image": "images/hero-madinah.jpg",
+        "category": "educational",
+        "visible": true
+    },
+    {
         "id": "seerah_tours",
         "title_ar": "جولات السيرة النبوية",
         "title_en": "Prophetic Seerah Tours",
@@ -15,7 +25,7 @@
         "title_en": "Prophet's Mosque Circles",
         "desc_ar": "حضور حلقات العلم والقرآن في الحرم النبوي",
         "desc_en": "Attend knowledge and Quran circles in the Prophet's Mosque",
-        "image": "images/activity-haram.jpg",
+        "image": "images/masjid-nabawi.jpg",
         "category": "spiritual",
         "visible": true
     },
@@ -30,32 +40,12 @@
         "visible": true
     },
     {
-        "id": "archery",
-        "title_ar": "الرماية",
-        "title_en": "Archery",
-        "desc_ar": "تعلم فن الرماية بالقوس",
-        "desc_en": "Learn the art of archery",
-        "image": "images/activity-archery.jpg",
-        "category": "adventure",
-        "visible": true
-    },
-    {
         "id": "camping",
         "title_ar": "التخييم الصحراوي",
         "title_en": "Desert Camping",
         "desc_ar": "ليلة ساحرة تحت النجوم في الصحراء",
         "desc_en": "A magical night under the stars in the desert",
-        "image": "images/activity-camping.jpg",
-        "category": "adventure",
-        "visible": true
-    },
-    {
-        "id": "hiking",
-        "title_ar": "رحلات المشي",
-        "title_en": "Hiking Trips",
-        "desc_ar": "استكشاف الطبيعة الخلابة حول المدينة",
-        "desc_en": "Explore the beautiful nature around Madinah",
-        "image": "images/activity-hiking.jpg",
+        "image": "images/pic04.jpg",
         "category": "adventure",
         "visible": true
     },
@@ -80,22 +70,12 @@
         "visible": true
     },
     {
-        "id": "swimming",
-        "title_ar": "السباحة",
-        "title_en": "Swimming",
-        "desc_ar": "وقت للسباحة والاسترخاء في مسابح خاصة",
-        "desc_en": "Swimming and relaxation time at private pools",
-        "image": "images/activity-swimming.jpg",
-        "category": "sports",
-        "visible": true
-    },
-    {
         "id": "football",
         "title_ar": "كرة القدم",
         "title_en": "Football",
         "desc_ar": "مباريات ودية أسبوعية",
         "desc_en": "Weekly friendly matches",
-        "image": "images/activity-football.jpg",
+        "image": "images/pic03.jpg",
         "category": "sports",
         "visible": true
     }
