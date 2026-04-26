@@ -1317,7 +1317,7 @@
         // Fetch data from local JSON
         async function fetchData(sheetName) {
             try {
-                const response = await fetch(`data/${sheetName}.json`);
+                const response = await fetch(`data/${sheetName}.json?t=${new Date().getTime()}`);
                 const data = await response.json();
                 return data;
             } catch (error) {
