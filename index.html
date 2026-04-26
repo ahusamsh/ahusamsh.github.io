@@ -1314,12 +1314,12 @@
             if (!isActive) parent.classList.add('active');
         }
 
-        // Fetch data from Google Sheets
+        // Fetch data from local JSON
         async function fetchData(sheetName) {
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?sheet=${sheetName}`);
+                const response = await fetch(`data/${sheetName}.json`);
                 const data = await response.json();
-                if (!data.error) return data;
+                return data;
             } catch (error) {
                 console.log(`Error loading ${sheetName}:`, error);
             }

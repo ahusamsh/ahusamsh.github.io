@@ -925,7 +925,7 @@
             const container = document.getElementById('programsContainer');
             
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?sheet=programs`);
+                const response = await fetch('data/programs.json');
                 const programs = await response.json();
                 
                 programsData = programs.filter(p => p.visible);
