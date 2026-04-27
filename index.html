@@ -891,6 +891,135 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Countdown Section */
+        .countdown-section {
+            background: linear-gradient(135deg, #0f2f25 0%, var(--primary-green) 50%, #2d6b55 100%);
+            padding: 60px 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .countdown-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(196,163,90,0.05)" stroke-width="0.5"/></svg>') repeat;
+            background-size: 200px;
+            animation: patternMove 30s linear infinite;
+        }
+
+        @keyframes patternMove {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(200px) translateY(200px); }
+        }
+
+        .countdown-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-label {
+            color: var(--primary-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .countdown-program-name {
+            color: var(--white);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .countdown-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+        }
+
+        .countdown-box {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(196,163,90,0.3);
+            border-radius: 16px;
+            padding: 25px 20px;
+            min-width: 110px;
+            transition: var(--transition);
+        }
+
+        .countdown-box:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: var(--primary-gold);
+            transform: translateY(-5px);
+        }
+
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            line-height: 1;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .countdown-unit {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .countdown-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary-gold);
+            color: var(--white);
+            padding: 14px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 1.05rem;
+        }
+
+        .countdown-cta:hover {
+            background: var(--light-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(196,163,90,0.4);
+        }
+
+        .countdown-cta .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        .countdown-expired {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            padding: 20px;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .nav-center {
@@ -945,6 +1074,23 @@
 
             .nav-right .nav-cta {
                 display: none;
+            }
+
+            .countdown-boxes {
+                gap: 12px;
+            }
+
+            .countdown-box {
+                min-width: 70px;
+                padding: 18px 14px;
+            }
+
+            .countdown-number {
+                font-size: 2rem;
+            }
+
+            .countdown-program-name {
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -1030,6 +1176,53 @@
                     <span class="en-text">WhatsApp</span>
                 </a>
             </div>
+        </div>
+    </section>
+
+    <!-- Countdown Section -->
+    <section class="countdown-section" id="countdown">
+        <div class="countdown-inner" data-aos="fade-up">
+            <p class="countdown-label">
+                <span class="ar-text">العد التنازلي لبدء البرنامج</span>
+                <span class="en-text">PROGRAM STARTS IN</span>
+            </p>
+            <h2 class="countdown-program-name" id="countdownProgramName"></h2>
+            <div class="countdown-boxes" id="countdownBoxes">
+                <div class="countdown-box">
+                    <div class="countdown-number" id="cd-days">--</div>
+                    <div class="countdown-unit">
+                        <span class="ar-text">يوم</span>
+                        <span class="en-text">Days</span>
+                    </div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="cd-hours">--</div>
+                    <div class="countdown-unit">
+                        <span class="ar-text">ساعة</span>
+                        <span class="en-text">Hours</span>
+                    </div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="cd-minutes">--</div>
+                    <div class="countdown-unit">
+                        <span class="ar-text">دقيقة</span>
+                        <span class="en-text">Minutes</span>
+                    </div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="cd-seconds">--</div>
+                    <div class="countdown-unit">
+                        <span class="ar-text">ثانية</span>
+                        <span class="en-text">Seconds</span>
+                    </div>
+                </div>
+            </div>
+            <a href="apply.html" class="countdown-cta" id="countdownCta">
+                <span class="pulse-dot"></span>
+                <span class="ar-text">سجّل الآن — المقاعد محدودة</span>
+                <span class="en-text">Register Now — Limited Seats</span>
+                <i class="fas fa-arrow-left"></i>
+            </a>
         </div>
     </section>
 
@@ -1438,11 +1631,79 @@
             AOS.refresh();
         }
 
+        // Countdown Timer
+        let countdownInterval;
+
+        async function initCountdown() {
+            try {
+                const response = await fetch(`data/programs.json?t=${new Date().getTime()}`);
+                const programs = await response.json();
+                
+                // Find the next open program with a future start date
+                const now = new Date();
+                const nextProgram = programs
+                    .filter(p => p.visible && p.registration_open)
+                    .filter(p => new Date(p.start_date) > now)
+                    .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))[0];
+                
+                if (!nextProgram) {
+                    document.getElementById('countdown').style.display = 'none';
+                    return;
+                }
+                
+                const isArabic = !document.body.classList.contains('en');
+                document.getElementById('countdownProgramName').innerHTML = 
+                    `<span class="ar-text">${nextProgram.title_ar}</span><span class="en-text">${nextProgram.title_en}</span>`;
+                
+                // Pass referral code if exists
+                const urlParams = new URLSearchParams(window.location.search);
+                const refCode = urlParams.get('ref');
+                const ctaLink = document.getElementById('countdownCta');
+                if (refCode) {
+                    ctaLink.href = `apply.html?program=${nextProgram.id}&ref=${refCode}`;
+                } else {
+                    ctaLink.href = `apply.html?program=${nextProgram.id}`;
+                }
+                
+                const targetDate = new Date(nextProgram.start_date + 'T00:00:00');
+                
+                function updateCountdown() {
+                    const now = new Date();
+                    const diff = targetDate - now;
+                    
+                    if (diff <= 0) {
+                        clearInterval(countdownInterval);
+                        document.getElementById('countdownBoxes').innerHTML = 
+                            `<div class="countdown-expired"><i class="fas fa-rocket" style="font-size:2rem;color:var(--primary-gold);margin-bottom:10px;"></i><br><span class="ar-text">البرنامج بدأ! 🎉</span><span class="en-text">Program has started! 🎉</span></div>`;
+                        return;
+                    }
+                    
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+                    document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+                    document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
+                    document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
+                }
+                
+                updateCountdown();
+                countdownInterval = setInterval(updateCountdown, 1000);
+                
+            } catch (error) {
+                console.log('Countdown error:', error);
+                document.getElementById('countdown').style.display = 'none';
+            }
+        }
+
         // Load all data
         document.addEventListener('DOMContentLoaded', function() {
             loadServices();
             loadPrograms();
             loadActivities();
+            initCountdown();
         });
 
         // Smooth scroll

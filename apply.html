@@ -415,6 +415,113 @@
         .page-footer { text-align: center; padding: 25px; color: var(--gray); }
         .page-footer a { color: var(--primary-green); text-decoration: none; }
 
+        /* Coupon / Referral Code */
+        .coupon-wrapper {
+            position: relative;
+        }
+
+        .coupon-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coupon-input-group input {
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            font-family: 'Poppins', monospace;
+        }
+
+        .coupon-apply-btn {
+            padding: 14px 25px;
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .coupon-apply-btn:hover {
+            background: var(--primary-gold);
+        }
+
+        .coupon-apply-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .coupon-result {
+            margin-top: 12px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .coupon-result.success {
+            display: flex;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .coupon-result.error {
+            display: flex;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .coupon-result i {
+            font-size: 1.2rem;
+        }
+
+        .coupon-discount-badge {
+            display: inline-block;
+            background: var(--primary-gold);
+            color: var(--white);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .coupon-source {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .coupon-remove {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 5px;
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .coupon-remove:hover {
+            opacity: 1;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-body { padding: 25px; }
@@ -422,6 +529,7 @@
             .radio-group { flex-direction: column; }
             .radio-option { min-width: 100%; }
             .programs-selection { grid-template-columns: 1fr; }
+            .coupon-input-group { flex-direction: column; }
         }
     </style>
 </head>
@@ -838,6 +946,38 @@
                     </div>
                 </div>
 
+                <!-- كوبون خصم / رمز دعوة -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-tag"></i>
+                        <span class="ar-text">كوبون خصم / رمز دعوة</span>
+                        <span class="en-text">Discount Code / Referral</span>
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label>
+                            <span class="ar-text">هل لديك كود خصم أو رمز دعوة؟</span>
+                            <span class="en-text">Do you have a discount or referral code?</span>
+                        </label>
+                        <div class="coupon-wrapper">
+                            <div class="coupon-input-group">
+                                <input type="text" id="couponInput" name="referral_code" placeholder="XXXXX" autocomplete="off">
+                                <button type="button" class="coupon-apply-btn" id="couponApplyBtn" onclick="applyCoupon()">
+                                    <span class="ar-text">تطبيق</span>
+                                    <span class="en-text">Apply</span>
+                                </button>
+                            </div>
+                            <div class="coupon-result" id="couponResult"></div>
+                        </div>
+                        <small>
+                            <span class="ar-text">إذا حصلت على رمز من أحد الإخوان أو مجموعة، أدخله هنا</span>
+                            <span class="en-text">If you received a code from a brother or group, enter it here</span>
+                        </small>
+                        <input type="hidden" id="couponSource" name="referral_source" value="">
+                        <input type="hidden" id="couponDiscount" name="referral_discount" value="0">
+                    </div>
+                </div>
+
                 <!-- الموافقات -->
                 <div class="form-section">
                     <h3 class="form-section-title">
@@ -1050,8 +1190,114 @@
             }
         });
 
+        let referralsData = [];
+
+        // Load referrals data
+        async function loadReferrals() {
+            try {
+                const response = await fetch(`data/referrals.json?t=${new Date().getTime()}`);
+                referralsData = await response.json();
+            } catch (error) {
+                console.log('Referrals not loaded:', error);
+                referralsData = [];
+            }
+        }
+
+        // Apply coupon/referral code
+        function applyCoupon() {
+            const input = document.getElementById('couponInput');
+            const result = document.getElementById('couponResult');
+            const code = input.value.trim().toUpperCase();
+            
+            if (!code) {
+                result.className = 'coupon-result error';
+                result.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>
+                        <span class="ar-text">الرجاء إدخال الكود</span>
+                        <span class="en-text">Please enter a code</span>
+                    </span>
+                `;
+                return;
+            }
+            
+            const referral = referralsData.find(r => r.code.toUpperCase() === code && r.active);
+            
+            if (referral) {
+                result.className = 'coupon-result success';
+                const isArabic = !document.body.classList.contains('en');
+                const typeLabel = referral.type === 'group' 
+                    ? (isArabic ? 'مجموعة' : 'Group') 
+                    : (isArabic ? 'فردي' : 'Individual');
+                
+                result.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <div style="flex:1">
+                        <div>
+                            <span class="ar-text">تم تطبيق الكود بنجاح!</span>
+                            <span class="en-text">Code applied successfully!</span>
+                            <span class="coupon-discount-badge">${referral.discount_percent}% OFF</span>
+                        </div>
+                        <div class="coupon-source">
+                            <span class="ar-text">عن طريق: ${referral.name_ar} (${typeLabel})</span>
+                            <span class="en-text">Via: ${referral.name_en} (${typeLabel})</span>
+                        </div>
+                    </div>
+                    <button type="button" class="coupon-remove" onclick="removeCoupon()" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                input.value = code;
+                input.readOnly = true;
+                document.getElementById('couponApplyBtn').disabled = true;
+                document.getElementById('couponSource').value = `${referral.name_en} (${referral.code}) - ${referral.type}`;
+                document.getElementById('couponDiscount').value = referral.discount_percent;
+            } else {
+                result.className = 'coupon-result error';
+                result.innerHTML = `
+                    <i class="fas fa-times-circle"></i>
+                    <span>
+                        <span class="ar-text">الكود غير صالح أو منتهي الصلاحية</span>
+                        <span class="en-text">Invalid or expired code</span>
+                    </span>
+                `;
+            }
+        }
+
+        // Remove applied coupon
+        function removeCoupon() {
+            const input = document.getElementById('couponInput');
+            const result = document.getElementById('couponResult');
+            input.value = '';
+            input.readOnly = false;
+            document.getElementById('couponApplyBtn').disabled = false;
+            document.getElementById('couponSource').value = '';
+            document.getElementById('couponDiscount').value = '0';
+            result.className = 'coupon-result';
+            result.innerHTML = '';
+        }
+
+        // Check URL for referral code
+        function checkUrlReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                document.getElementById('couponInput').value = refCode.toUpperCase();
+                // Wait for referrals to load then auto-apply
+                setTimeout(() => {
+                    if (referralsData.length > 0) {
+                        applyCoupon();
+                    }
+                }, 500);
+            }
+        }
+
         // Initialize
-        document.addEventListener('DOMContentLoaded', loadPrograms);
+        document.addEventListener('DOMContentLoaded', async function() {
+            await Promise.all([loadPrograms(), loadReferrals()]);
+            checkUrlReferral();
+        });
     </script>
 </body>
 </html>
