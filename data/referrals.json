@@ -1,34 +1,10 @@
 [
     {
-        "code": "AHMED10",
-        "name_ar": "أحمد",
-        "name_en": "Ahmed",
+        "code": "AH10",
+        "name_ar": "أبوحسام",
+        "name_en": "ahusam",
         "type": "individual",
         "discount_percent": 10,
-        "active": true
-    },
-    {
-        "code": "MASJID5",
-        "name_ar": "مسجد النور",
-        "name_en": "Al-Noor Mosque",
-        "type": "group",
-        "discount_percent": 5,
-        "active": true
-    },
-    {
-        "code": "DAWAH15",
-        "name_ar": "مجموعة الدعوة",
-        "name_en": "Dawah Group",
-        "type": "group",
-        "discount_percent": 15,
-        "active": true
-    },
-    {
-        "code": "FRIEND5",
-        "name_ar": "صديق درب",
-        "name_en": "Path Friend",
-        "type": "individual",
-        "discount_percent": 5,
         "active": true
     }
 ]
