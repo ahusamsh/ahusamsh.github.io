@@ -22,8 +22,8 @@
         "icon": "fas fa-car",
         "title_ar": "طريقك واضح",
         "title_en": "No Getting Lost",
-        "desc_ar": "من المطار وحتى يومك الدراسي الأول، كل تنقّل منظّم ومضمون. لن تضيع دقيقة من وقتك في التساؤل عن كيفية الوصول.",
-        "desc_en": "From the airport to your first class, every transfer is arranged. Your time and energy belong to immersion — not navigation.",
+        "desc_ar": "منذ لحظة وصولك للمطار وحتى تنقلاتك اليومية، نوفر نظام مواصلات مريح ومجدول يضمن لك التنقل بيسر وسهولة داخل المدينة.",
+        "desc_en": "From the airport to your daily commutes, we provide a comfortable and scheduled transportation system that ensures you move easily within the city.",
         "visible": true
     },
     {
@@ -49,8 +49,8 @@
         "icon": "fas fa-handshake",
         "title_ar": "كل شيء في مكانه",
         "title_en": "Everything in Order",
-        "desc_ar": "التأشيرة، التسجيل، الأوراق الرسمية — نتولّى تنسيق كل ذلك معك قبل وصولك. تأتي مرتاح البال، ومستعدًّا.",
-        "desc_en": "Visa guidance, registration, official paperwork — handled before you land. You arrive ready, not overwhelmed.",
+        "desc_ar": "التنسيق المسبق، التسجيل في المعهد، والأوراق المطلوبة — نتولى ترتيب هذه الجوانب معك قبل وصولك لضمان بداية سلسة لتجربتك.",
+        "desc_en": "Pre-coordination, institute registration, and required paperwork — we handle these arrangements with you before arrival to ensure a smooth start.",
         "visible": true
     }
 ]
