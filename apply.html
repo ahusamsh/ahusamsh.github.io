@@ -625,35 +625,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>
-                            <span class="ar-text">نوع السكن المفضل <span class="required">*</span></span>
-                            <span class="en-text">Preferred Accommodation <span class="required">*</span></span>
-                        </label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="acc_shared" name="accommodation" value="مشترك" required>
-                                <label for="acc_shared">
-                                    <span class="ar-text">مشترك</span>
-                                    <span class="en-text">Shared</span>
-                                </label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="acc_double" name="accommodation" value="ثنائي">
-                                <label for="acc_double">
-                                    <span class="ar-text">ثنائي</span>
-                                    <span class="en-text">Double</span>
-                                </label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="acc_single" name="accommodation" value="فردي">
-                                <label for="acc_single">
-                                    <span class="ar-text">فردي</span>
-                                    <span class="en-text">Single</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <!-- المعلومات الشخصية -->
@@ -815,8 +787,8 @@
 
                     <div class="form-group">
                         <label>
-                            <span class="ar-text">ما هو هدفك من تعلم العربية؟ <span class="required">*</span></span>
-                            <span class="en-text">What's your goal in learning Arabic? <span class="required">*</span></span>
+                            <span class="ar-text">ما هو هدفك من معايشة العربية؟ <span class="required">*</span></span>
+                            <span class="en-text">What's your goal in experiencing Arabic? <span class="required">*</span></span>
                         </label>
                         <textarea name="goals" rows="3" required></textarea>
                     </div>
@@ -872,6 +844,42 @@
                         </div>
                         <div class="conditional-field" id="requirementsField">
                             <textarea name="requirements" rows="2" placeholder="اذكر المتطلبات هنا... / Mention requirements here..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- نوع السكن المفضل -->
+                    <div class="form-group">
+                        <label>
+                            <span class="ar-text">نوع السكن المفضل <span class="required">*</span></span>
+                            <span class="en-text">Preferred Accommodation <span class="required">*</span></span>
+                        </label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="acc_shared" name="accommodation" value="مشترك" required onchange="updateHousingNote(this)">
+                                <label for="acc_shared">
+                                    <span class="ar-text">مشترك</span>
+                                    <span class="en-text">Shared</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="acc_double" name="accommodation" value="ثنائي" onchange="updateHousingNote(this)">
+                                <label for="acc_double">
+                                    <span class="ar-text">ثنائي</span>
+                                    <span class="en-text">Double</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="acc_single" name="accommodation" value="فردي" onchange="updateHousingNote(this)">
+                                <label for="acc_single">
+                                    <span class="ar-text">فردي</span>
+                                    <span class="en-text">Single</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="housingNote" style="margin-top: 10px; font-size: 0.85rem; color: var(--primary-gold); display: none; font-weight: 600;">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="ar-text">قد يتم فرض رسوم إضافية عند اختيار سكن ثنائي أو فردي</span>
+                            <span class="en-text">Additional fees may apply for double or single accommodation</span>
                         </div>
                     </div>
 
@@ -1060,6 +1068,16 @@
             field.classList.toggle('show', hasComp);
         }
 
+        // Housing note display
+        function updateHousingNote(radio) {
+            const note = document.getElementById('housingNote');
+            if (radio.value === 'ثنائي' || radio.value === 'فردي') {
+                note.style.display = 'block';
+            } else {
+                note.style.display = 'none';
+            }
+        }
+
         // Load programs
         async function loadPrograms() {
             const container = document.getElementById('programsContainer');
@@ -1148,6 +1166,11 @@
             document.getElementById('programDatesText').textContent = isArabic
                 ? `فترة البرنامج: ${startDate} إلى ${endDate}`
                 : `Program period: ${startDate} to ${endDate}`;
+
+            // Refresh coupon price if already applied
+            if (document.getElementById('couponInput').readOnly) {
+                applyCoupon(true);
+            }
         }
 
         // Form submission
@@ -1159,21 +1182,54 @@
             submitBtn.disabled = true;
             
             const formData = new FormData(this);
+            const isEnglish = document.body.classList.contains('en');
+            
+            // Get selected program info for arrival_date
+            const selectedProgramRadio = document.querySelector('input[name="program"]:checked');
+            let arrivalDate = '';
+            if (selectedProgramRadio) {
+                const startDate = selectedProgramRadio.dataset.start;
+                const start = new Date(startDate);
+                start.setDate(start.getDate() - 1);
+                arrivalDate = start.toISOString().split('T')[0];
+            }
+
+            // Map data to match Google Sheet headers exactly
             const data = {
-                timestamp: new Date().toISOString(),
-                language: document.body.classList.contains('en') ? 'en' : 'ar'
+                timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' }),
+                language: isEnglish ? 'en' : 'ar',
+                full_name: formData.get('full_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                whatsapp: formData.get('whatsapp'),
+                dob: formData.get('dob'),
+                nationality: formData.get('nationality'),
+                country: formData.get('country'),
+                gender: formData.get('gender'),
+                program: formData.get('program'),
+                arrival_date: arrivalDate,
+                accommodation: formData.get('accommodation'),
+                arabic_level: formData.get('arabic_level'),
+                goals: formData.get('goals'),
+                referral: formData.get('referral'),
+                requirements: formData.get('has_requirements') === 'yes' ? formData.get('requirements') : 'None',
+                notes: formData.get('notes'),
+                emergency_name: formData.get('emergency_name'),
+                emergency_relation: formData.get('emergency_relation'),
+                emergency_phone: formData.get('emergency_phone'),
+                // Additional tracking fields
+                referral_code: formData.get('referral_code'),
+                referral_source: formData.get('referral_source'),
+                referral_discount: formData.get('referral_discount')
             };
             
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-            
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                // Use URLSearchParams for better compatibility with Apps Script
+                const queryParams = new URLSearchParams(data).toString();
+                
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?${queryParams}`, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    mode: 'no-cors'
                 });
                 
                 // Show success
@@ -1204,12 +1260,12 @@
         }
 
         // Apply coupon/referral code
-        function applyCoupon() {
+        function applyCoupon(isRefresh = false) {
             const input = document.getElementById('couponInput');
             const result = document.getElementById('couponResult');
             const code = input.value.trim().toUpperCase();
             
-            if (!code) {
+            if (!code && !isRefresh) {
                 result.className = 'coupon-result error';
                 result.innerHTML = `
                     <i class="fas fa-exclamation-circle"></i>
@@ -1230,6 +1286,37 @@
                     ? (isArabic ? 'مجموعة' : 'Group') 
                     : (isArabic ? 'فردي' : 'Individual');
                 
+                // Calculate discounted price
+                const selectedProgramRadio = document.querySelector('input[name="program"]:checked');
+                let priceHtml = '';
+                
+                if (selectedProgramRadio) {
+                    const programId = selectedProgramRadio.value;
+                    const program = programsData.find(p => p.id === programId);
+                    if (program) {
+                        const originalPrice = Number(program.price);
+                        const discount = (originalPrice * referral.discount_percent) / 100;
+                        const finalPrice = originalPrice - discount;
+                        
+                        priceHtml = `
+                            <div style="margin-top: 8px; font-weight: 700; color: var(--primary-green); font-size: 1.1rem;">
+                                <span class="ar-text">السعر الجديد: $${finalPrice.toLocaleString()}</span>
+                                <span class="en-text">New Price: $${finalPrice.toLocaleString()}</span>
+                                <small style="font-weight: 400; font-size: 0.8rem; color: var(--gray); text-decoration: line-through; margin-left: 10px;">
+                                    $${originalPrice.toLocaleString()}
+                                </small>
+                            </div>
+                        `;
+                    }
+                } else {
+                    priceHtml = `
+                        <div style="margin-top: 8px; font-size: 0.85rem; color: var(--gray);">
+                            <span class="ar-text">(اختر برنامجاً لرؤية السعر بعد الخصم)</span>
+                            <span class="en-text">(Select a program to see discounted price)</span>
+                        </div>
+                    `;
+                }
+                
                 result.innerHTML = `
                     <i class="fas fa-check-circle"></i>
                     <div style="flex:1">
@@ -1242,6 +1329,7 @@
                             <span class="ar-text">عن طريق: ${referral.name_ar} (${typeLabel})</span>
                             <span class="en-text">Via: ${referral.name_en} (${typeLabel})</span>
                         </div>
+                        ${priceHtml}
                     </div>
                     <button type="button" class="coupon-remove" onclick="removeCoupon()" title="Remove">
                         <i class="fas fa-times"></i>

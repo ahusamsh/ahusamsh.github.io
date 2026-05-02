@@ -33,8 +33,8 @@
         "id": "horse_riding",
         "title_ar": "ركوب الخيل",
         "title_en": "Horse Riding",
-        "desc_ar": "تعلم ركوب الخيل العربي الأصيل",
-        "desc_en": "Learn to ride authentic Arabian horses",
+        "desc_ar": "ممارسة ركوب الخيل العربي الأصيل",
+        "desc_en": "Practice riding authentic Arabian horses",
         "image": "images/activity-horse.jpg",
         "category": "adventure",
         "visible": true
@@ -63,8 +63,8 @@
         "id": "coffee",
         "title_ar": "تجربة القهوة السعودية",
         "title_en": "Saudi Coffee Experience",
-        "desc_ar": "تعلم إعداد القهوة العربية الأصيلة",
-        "desc_en": "Learn to prepare authentic Arabic coffee",
+        "desc_ar": "ممارسة إعداد القهوة العربية الأصيلة",
+        "desc_en": "Experience preparing authentic Arabic coffee",
         "image": "images/activity-coffee.jpg",
         "category": "cultural",
         "visible": true
