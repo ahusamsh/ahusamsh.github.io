@@ -15,16 +15,16 @@
     
     <style>
         :root {
-            --primary-green: #1B4D3E;
-            --primary-gold: #C4A35A;
+            --primary-green: #2F473A;
+            --primary-gold: #B5A27A;
             --light-gold: #D4B86A;
-            --beige: #F5F0E6;
+            --beige: #F2EFE9;
             --white: #FFFFFF;
             --black: #1a1a1a;
             --gray: #666666;
             --light-gray: #f8f8f8;
-            --shadow: 0 10px 40px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --shadow: 0 10px 40px rgba(0,0,0,0.05);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -1718,6 +1718,22 @@
                 }
             });
         });
+    </script>
+    <!-- Analytics Tracking -->
+    <script>
+    (function(){
+        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script');
+        if (!ANALYTICS_URL) return;
+        let sid = sessionStorage.getItem('darb_sid');
+        if (!sid) { sid = Math.random().toString(36).substr(2,9) + Date.now().toString(36); sessionStorage.setItem('darb_sid', sid); }
+        const params = new URLSearchParams({
+            action: 'track', event_type: 'page_view', page: location.pathname.split('/').pop() || 'index.html',
+            referrer: document.referrer, user_agent: navigator.userAgent.substring(0,150),
+            language: navigator.language, screen_width: screen.width,
+            ref_code: new URLSearchParams(location.search).get('ref') || '', session_id: sid
+        });
+        fetch(ANALYTICS_URL + '?' + params.toString(), { method:'POST', mode:'no-cors' }).catch(()=>{});
+    })();
     </script>
 </body>
 </html>

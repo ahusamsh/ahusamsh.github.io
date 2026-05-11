@@ -88,6 +88,16 @@
         .empty-state { text-align:center; padding:40px; color:var(--gray); }
         .empty-state i { font-size:3rem; color:var(--gold); margin-bottom:15px; }
 
+        /* Stats */
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:15px; margin-bottom:25px; }
+        .mini-stat { background:var(--beige); border-radius:14px; padding:20px; text-align:center; }
+        .mini-stat i { font-size:1.5rem; color:var(--gold); margin-bottom:8px; }
+        .mini-stat .val { font-size:1.8rem; font-weight:800; color:var(--green); }
+        .mini-stat .lbl { font-size:0.82rem; color:var(--gray); margin-top:4px; }
+        .count-badge { display:inline-block; padding:2px 10px; border-radius:8px; font-size:0.8rem; font-weight:700; min-width:30px; text-align:center; }
+        .count-visits { background:#e3f2fd; color:#1565c0; }
+        .count-submits { background:#e8f5e9; color:#2e7d32; }
+
         /* Save Bar */
         .save-bar { position:fixed; bottom:0; left:0; right:0; background:var(--green); color:var(--white); padding:15px 5%; display:none; align-items:center; justify-content:center; gap:15px; z-index:100; box-shadow:0 -5px 20px rgba(0,0,0,0.2); }
         .save-bar.show { display:flex; }
@@ -106,8 +116,9 @@
 
         @media(max-width:768px) {
             .codes-table th:nth-child(3), .codes-table td:nth-child(3),
-            .codes-table th:nth-child(5), .codes-table td:nth-child(5) { display:none; }
+            .codes-table th:nth-child(7), .codes-table td:nth-child(7) { display:none; }
             .add-form { grid-template-columns:1fr; }
+            .stats-row { grid-template-columns:repeat(2,1fr); }
         }
     </style>
 </head>
@@ -137,6 +148,22 @@
 
         <!-- Panel -->
         <div class="panel" id="panel">
+            <!-- Stats Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-bar"></i> إحصائيات الأكواد</h2>
+                    <button class="btn btn-outline btn-sm" onclick="loadStats()"><i class="fas fa-sync-alt"></i> تحديث</button>
+                </div>
+                <div class="card-body">
+                    <div class="stats-row" id="statsRow">
+                        <div class="mini-stat"><i class="fas fa-eye"></i><div class="val" id="sTotalVisits">-</div><div class="lbl">زيارات عبر الأكواد</div></div>
+                        <div class="mini-stat"><i class="fas fa-paper-plane"></i><div class="val" id="sTotalSubmits">-</div><div class="lbl">طلبات عبر الأكواد</div></div>
+                        <div class="mini-stat"><i class="fas fa-trophy"></i><div class="val" id="sTopCode">-</div><div class="lbl">أكثر كود استخداماً</div></div>
+                        <div class="mini-stat"><i class="fas fa-percentage"></i><div class="val" id="sConvRate">-</div><div class="lbl">معدل التحويل</div></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Add New Code -->
             <div class="card">
                 <div class="card-header">
@@ -224,10 +251,12 @@
     <script>
         const REPO = 'ahusamsh/ahusamsh.github.io';
         const FILE_PATH = 'data/referrals.json';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJNuHSeNu9E2ccg1Wsg4fU2kwiixoo6n1mFR9SFn6WW_uKRgA5Uz4BcOwe2HXN7QBo/exec';
         let token = '';
         let codes = [];
         let fileSha = '';
         let hasChanges = false;
+        let codeStats = {};
 
         // Login
         function login() {
@@ -241,6 +270,7 @@
             document.getElementById('loginBox').style.display = 'none';
             document.getElementById('panel').classList.add('show');
             loadCodes();
+            loadStats();
         }
 
         // Check saved token
@@ -293,6 +323,8 @@
                                 <td>${c.name_ar}<br><small style="color:var(--gray)">${c.name_en}</small></td>
                                 <td><span class="type-badge ${c.type}">${c.type === 'group' ? 'مجموعة' : 'فردي'}</span></td>
                                 <td><span class="discount-badge">${c.discount_percent}%</span></td>
+                                <td><span class="count-badge count-visits">${codeStats[c.code]?.visits || 0}</span></td>
+                                <td><span class="count-badge count-submits">${codeStats[c.code]?.submits || 0}</span></td>
                                 <td>
                                     <span class="status-dot ${c.active ? 'active' : 'inactive'}"></span>
                                     ${c.active ? 'مفعّل' : 'معطّل'}
@@ -416,6 +448,56 @@
         function shareWhatsApp() {
             const link = document.getElementById('generatedLink').value;
             window.open(`https://wa.me/?text=${encodeURIComponent('سجّل في برنامج درب لمعايشة العربية في المدينة المنورة! 🕌\n\n' + link)}`, '_blank');
+        }
+
+        // Load stats from analytics
+        async function loadStats() {
+            const analyticsUrl = localStorage.getItem('darb_analytics_script');
+            if (analyticsUrl) {
+                try {
+                    const res = await fetch(`${analyticsUrl}?action=getData&t=${Date.now()}`);
+                    const data = await res.json();
+                    if (data.summary && data.summary.ref_codes) {
+                        const rc = data.summary.ref_codes;
+                        let totalV = 0;
+                        Object.entries(rc).forEach(([code, count]) => {
+                            if (!codeStats[code]) codeStats[code] = { visits: 0, submits: 0 };
+                            codeStats[code].visits = count;
+                            totalV += count;
+                        });
+                        document.getElementById('sTotalVisits').textContent = totalV;
+                    }
+                } catch(e) { console.log('Analytics not available'); }
+            }
+
+            // Also try to get form submission stats from applications sheet
+            try {
+                const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getApplicationStats&t=${Date.now()}`, { mode: 'cors' });
+                const data = await res.json();
+                if (data && data.ref_codes) {
+                    let totalS = 0;
+                    Object.entries(data.ref_codes).forEach(([code, count]) => {
+                        if (!codeStats[code]) codeStats[code] = { visits: 0, submits: 0 };
+                        codeStats[code].submits = count;
+                        totalS += count;
+                    });
+                    document.getElementById('sTotalSubmits').textContent = totalS;
+                    const totalV = parseInt(document.getElementById('sTotalVisits').textContent) || 0;
+                    const conv = totalV > 0 ? ((totalS / totalV) * 100).toFixed(1) + '%' : '0%';
+                    document.getElementById('sConvRate').textContent = conv;
+
+                    // Find top code
+                    let topCode = '-';
+                    let topCount = 0;
+                    Object.entries(codeStats).forEach(([code, s]) => {
+                        const total = (s.visits || 0) + (s.submits || 0);
+                        if (total > topCount) { topCount = total; topCode = code; }
+                    });
+                    document.getElementById('sTopCode').textContent = topCode;
+                }
+            } catch(e) { console.log('App stats not available'); }
+
+            renderTable();
         }
 
         // Toast

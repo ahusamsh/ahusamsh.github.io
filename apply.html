@@ -1196,6 +1196,7 @@
 
             // Map data to match Google Sheet headers exactly
             const data = {
+                sheet: 'applications',
                 timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' }),
                 language: isEnglish ? 'en' : 'ar',
                 full_name: formData.get('full_name'),
@@ -1217,7 +1218,6 @@
                 emergency_name: formData.get('emergency_name'),
                 emergency_relation: formData.get('emergency_relation'),
                 emergency_phone: formData.get('emergency_phone'),
-                // Additional tracking fields
                 referral_code: formData.get('referral_code'),
                 referral_source: formData.get('referral_source'),
                 referral_discount: formData.get('referral_discount')
@@ -1386,6 +1386,31 @@
             await Promise.all([loadPrograms(), loadReferrals()]);
             checkUrlReferral();
         });
+    </script>
+    <!-- Analytics Tracking -->
+    <script>
+    (function(){
+        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script');
+        if (!ANALYTICS_URL) return;
+        let sid = sessionStorage.getItem('darb_sid');
+        if (!sid) { sid = Math.random().toString(36).substr(2,9) + Date.now().toString(36); sessionStorage.setItem('darb_sid', sid); }
+        function trackEvent(type) {
+            const params = new URLSearchParams({
+                action:'track', event_type:type, page:'apply.html',
+                referrer:document.referrer, user_agent:navigator.userAgent.substring(0,150),
+                language:navigator.language, screen_width:screen.width,
+                ref_code:new URLSearchParams(location.search).get('ref')||'', session_id:sid
+            });
+            fetch(ANALYTICS_URL+'?'+params.toString(),{method:'POST',mode:'no-cors'}).catch(()=>{});
+        }
+        trackEvent('page_view');
+        trackEvent('form_open');
+        const form = document.getElementById('applicationForm');
+        if(form) {
+            const origSubmit = form.onsubmit;
+            form.addEventListener('submit', function(){ trackEvent('form_submit'); });
+        }
+    })();
     </script>
 </body>
 </html>
