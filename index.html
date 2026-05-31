@@ -51,6 +51,11 @@
         body.en .ar-text { display: none; }
         body.en .en-text { display: block; }
 
+        span.ar-text { display: inline; }
+        span.en-text { display: none; }
+        body.en span.ar-text { display: none; }
+        body.en span.en-text { display: inline; }
+
         /* Navigation */
         .navbar {
             position: fixed;
@@ -1571,7 +1576,7 @@
             container.innerHTML = visiblePrograms.map(program => `
                 <div class="program-card" data-aos="fade-up">
                     <div class="program-image">
-                        <img src="${program.image || 'images/program-default.jpg'}" alt="${program.title_ar}" onerror="this.src='images/program-default.jpg'">
+                        <img src="${program.image || 'images/hero-madinah.jpg'}" alt="${program.title_ar}" onerror="this.src='images/hero-madinah.jpg'">
                         <span class="program-badge ${program.registration_open ? '' : 'closed'}">
                             <span class="ar-text">${program.registration_open ? 'التسجيل مفتوح' : 'التسجيل مغلق'}</span>
                             <span class="en-text">${program.registration_open ? 'Open' : 'Closed'}</span>
@@ -1615,7 +1620,7 @@
             container.innerHTML = visibleActivities.map(activity => `
                 <div class="activity-card" data-aos="fade-up">
                     <div class="activity-image">
-                        <img src="${activity.image || 'images/activity-default.jpg'}" alt="${activity.title_ar}" onerror="this.src='images/activity-default.jpg'">
+                        <img src="${activity.image || 'images/hero-madinah.jpg'}" alt="${activity.title_ar}" onerror="this.src='images/hero-madinah.jpg'">
                     </div>
                     <div class="activity-content">
                         <h4>
@@ -1722,7 +1727,7 @@
     <!-- Analytics Tracking -->
     <script>
     (function(){
-        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script');
+        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script') || GOOGLE_SCRIPT_URL;
         if (!ANALYTICS_URL) return;
         let sid = sessionStorage.getItem('darb_sid');
         if (!sid) { sid = Math.random().toString(36).substr(2,9) + Date.now().toString(36); sessionStorage.setItem('darb_sid', sid); }

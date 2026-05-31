@@ -1390,7 +1390,7 @@
     <!-- Analytics Tracking -->
     <script>
     (function(){
-        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script');
+        const ANALYTICS_URL = localStorage.getItem('darb_analytics_script') || GOOGLE_SCRIPT_URL;
         if (!ANALYTICS_URL) return;
         let sid = sessionStorage.getItem('darb_sid');
         if (!sid) { sid = Math.random().toString(36).substr(2,9) + Date.now().toString(36); sessionStorage.setItem('darb_sid', sid); }
