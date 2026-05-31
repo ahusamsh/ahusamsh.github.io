@@ -1,9 +1,9 @@
-// ============================================
-// Google Apps Script - Analytics Tracker for Darb | Path
-// Deploy this as a Web App in Google Apps Script
-// ============================================
+// =========================================================================
+// Google Apps Script - Unified Script (Applications + Analytics + Referrals)
+// Deploy this as a Web App in Google Apps Script (extensions -> Apps Script)
+// =========================================================================
 
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // Replace with your Google Sheet ID
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // Replace with your Google Sheet ID or leave empty to use active spreadsheet
 
 function doGet(e) {
   return handleRequest(e);
@@ -18,20 +18,40 @@ function handleRequest(e) {
   const action = params.action;
 
   try {
+    // 1. If action is track (Analytics page views / form opens)
     if (action === 'track') {
       return trackEvent(params);
-    } else if (action === 'getData') {
+    } 
+    // 2. If action is getData (Retrieve dashboard data)
+    else if (action === 'getData') {
       return getData(params);
+    } 
+    // 3. If action is getApplicationStats (Retrieve referrals submissions counts for admin)
+    else if (action === 'getApplicationStats') {
+      return getApplicationStats();
     }
-    return jsonResponse({ error: 'Unknown action' });
+    // 4. Default: If sheet is 'applications' or it's a form submission (has full_name)
+    else if (params.sheet === 'applications' || (!action && params.full_name)) {
+      return saveApplication(params);
+    }
+
+    return jsonResponse({ error: 'Unknown action or invalid parameters' });
   } catch (err) {
     return jsonResponse({ error: err.message });
   }
 }
 
-// Track a page visit or event
+// Get Active Spreadsheet
+function getSpreadsheet() {
+  if (SPREADSHEET_ID && SPREADSHEET_ID !== 'YOUR_SPREADSHEET_ID_HERE') {
+    return SpreadsheetApp.openById(SPREADSHEET_ID);
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
+
+// 1. Track a page visit or event
 function trackEvent(params) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = getSpreadsheet();
   let sheet = ss.getSheetByName('analytics');
 
   // Create sheet if not exists
@@ -61,12 +81,12 @@ function trackEvent(params) {
     params.session_id || ''
   ]);
 
-  return jsonResponse({ status: 'ok' });
+  return jsonResponse({ status: 'ok', message: 'Event tracked successfully' });
 }
 
-// Get analytics data for dashboard
+// 2. Get analytics data for dashboard
 function getData(params) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = getSpreadsheet();
   const sheet = ss.getSheetByName('analytics');
 
   if (!sheet || sheet.getLastRow() < 2) {
@@ -138,7 +158,8 @@ function getData(params) {
 
     // Ref codes
     if (e.ref_code) {
-      summary.ref_codes[e.ref_code] = (summary.ref_codes[e.ref_code] || 0) + 1;
+      const codeUpper = String(e.ref_code).trim().toUpperCase();
+      summary.ref_codes[codeUpper] = (summary.ref_codes[codeUpper] || 0) + 1;
     }
 
     // Languages
@@ -148,6 +169,86 @@ function getData(params) {
   });
 
   return jsonResponse({ summary: summary, total_events: events.length });
+}
+
+// 3. Get application stats (Referral code submissions counts)
+function getApplicationStats() {
+  const ss = getSpreadsheet();
+  const sheet = ss.getSheetByName('applications');
+  const stats = { ref_codes: {} };
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    return jsonResponse(stats);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const refCodeIndex = headers.indexOf('referral_code');
+
+  if (refCodeIndex === -1) {
+    return jsonResponse(stats);
+  }
+
+  const rows = data.slice(1);
+  rows.forEach(row => {
+    const code = row[refCodeIndex];
+    if (code) {
+      const codeUpper = String(code).trim().toUpperCase();
+      if (codeUpper) {
+        stats.ref_codes[codeUpper] = (stats.ref_codes[codeUpper] || 0) + 1;
+      }
+    }
+  });
+
+  return jsonResponse(stats);
+}
+
+// 4. Save form application submission
+function saveApplication(params) {
+  const ss = getSpreadsheet();
+  let sheet = ss.getSheetByName('applications');
+
+  // Create sheet if not exists
+  if (!sheet) {
+    sheet = ss.insertSheet('applications');
+    sheet.appendRow([
+      'timestamp', 'language', 'full_name', 'email', 'phone', 'whatsapp',
+      'dob', 'nationality', 'country', 'gender', 'program', 'arrival_date',
+      'accommodation', 'arabic_level', 'goals', 'referral', 'requirements',
+      'notes', 'emergency_name', 'emergency_relation', 'emergency_phone',
+      'referral_code', 'referral_source', 'referral_discount'
+    ]);
+    sheet.getRange(1, 1, 1, 24).setFontWeight('bold');
+  }
+
+  sheet.appendRow([
+    params.timestamp || Utilities.formatDate(new Date(), 'Asia/Riyadh', 'yyyy-MM-dd HH:mm:ss'),
+    params.language || '',
+    params.full_name || '',
+    params.email || '',
+    params.phone || '',
+    params.whatsapp || '',
+    params.dob || '',
+    params.nationality || '',
+    params.country || '',
+    params.gender || '',
+    params.program || '',
+    params.arrival_date || '',
+    params.accommodation || '',
+    params.arabic_level || '',
+    params.goals || '',
+    params.referral || '',
+    params.requirements || '',
+    params.notes || '',
+    params.emergency_name || '',
+    params.emergency_relation || '',
+    params.emergency_phone || '',
+    params.referral_code || '',
+    params.referral_source || '',
+    params.referral_discount || ''
+  ]);
+
+  return jsonResponse({ result: 'success', message: 'Data saved to applications sheet' });
 }
 
 function getEmptySummary() {
