@@ -1156,11 +1156,11 @@
                                 <span class="en-text">${program.title_en}</span>
                             </div>
                             ${program.is_flexible ? 
-                                \`<div class="program-dates"><span class="ar-text">مواعيد ومدة مرنة</span><span class="en-text">Flexible Dates & Duration</span></div>
-                                 <div class="program-price"><span class="ar-text">يبدأ من</span><span class="en-text">Starts from</span> $1,499</div>\`
+                                '<div class="program-dates"><span class="ar-text">مواعيد ومدة مرنة</span><span class="en-text">Flexible Dates & Duration</span></div>' +
+                                '<div class="program-price"><span class="ar-text">يبدأ من</span><span class="en-text">Starts from</span> $1,499</div>'
                             : 
-                                \`<div class="program-dates">${program.start_date} — ${program.end_date}</div>
-                                 <div class="program-price">$${Number(program.price).toLocaleString()}</div>\`
+                                '<div class="program-dates">' + program.start_date + ' — ' + program.end_date + '</div>' +
+                                '<div class="program-price">$' + Number(program.price).toLocaleString() + '</div>'
                             }
                             <span class="program-status ${program.registration_open ? 'open' : 'closed'}">
                                 <span class="ar-text">${program.registration_open ? 'التسجيل مفتوح' : 'مغلق'}</span>
