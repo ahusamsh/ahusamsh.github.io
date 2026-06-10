@@ -1205,6 +1205,8 @@
                 // Set flexible selects as required
                 document.getElementById('arrivalDateSelect').required = true;
                 document.getElementById('durationSelect').required = true;
+                document.getElementById('confirmArrival').required = false;
+                document.getElementById('confirmAvailability').required = false;
                 
             } else {
                 flexField.classList.remove('show');
@@ -1217,6 +1219,8 @@
                 // Show confirmation boxes
                 document.getElementById('arrivalConfirmation').style.display = 'block';
                 document.getElementById('availabilityConfirmation').style.display = 'block';
+                document.getElementById('confirmArrival').required = true;
+                document.getElementById('confirmAvailability').required = true;
                 
                 // Calculate arrival date (day before program starts)
                 const start = new Date(startDate);
