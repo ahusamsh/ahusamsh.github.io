@@ -595,6 +595,48 @@
                         </div>
                     </div>
 
+                    <!-- Flexible Dates Section (Hidden by default) -->
+                    <div class="conditional-field" id="flexibleDatesField" style="background: rgba(47, 71, 58, 0.05); border: 1px solid rgba(47, 71, 58, 0.1);">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>
+                                    <span class="ar-text">تاريخ الوصول (يوم السبت) <span class="required">*</span></span>
+                                    <span class="en-text">Arrival Date (Saturday) <span class="required">*</span></span>
+                                </label>
+                                <select id="arrivalDateSelect" name="arrival_date_flex" onchange="updateFlexibleOptions()">
+                                    <option value="">-- اختر / Select --</option>
+                                    <optgroup label="أغسطس / August">
+                                        <option value="2026-08-01">1 أغسطس 2026 / Aug 1</option>
+                                        <option value="2026-08-08">8 أغسطس 2026 / Aug 8</option>
+                                        <option value="2026-08-15">15 أغسطس 2026 / Aug 15</option>
+                                        <option value="2026-08-22">22 أغسطس 2026 / Aug 22</option>
+                                        <option value="2026-08-29">29 أغسطس 2026 / Aug 29</option>
+                                    </optgroup>
+                                    <optgroup label="سبتمبر / September">
+                                        <option value="2026-09-05">5 سبتمبر 2026 / Sep 5</option>
+                                        <option value="2026-09-12">12 سبتمبر 2026 / Sep 12</option>
+                                        <option value="2026-09-19">19 سبتمبر 2026 / Sep 19</option>
+                                        <option value="2026-09-26">26 سبتمبر 2026 / Sep 26</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="ar-text">مدة البرنامج <span class="required">*</span></span>
+                                    <span class="en-text">Program Duration <span class="required">*</span></span>
+                                </label>
+                                <select id="durationSelect" name="duration_flex" onchange="updateFlexiblePrice()" disabled>
+                                    <option value="">-- اختر تاريخ الوصول أولاً / Select arrival first --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--red); margin-top: 10px; font-weight: 600; text-align: center;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span class="ar-text">ملاحظة: السعر الإجمالي لا يشمل تذاكر الطيران</span>
+                            <span class="en-text">Note: Total price does not include flight tickets</span>
+                        </div>
+                    </div>
+
                     <!-- تأكيد تاريخ الوصول -->
                     <div class="confirmation-box" id="arrivalConfirmation" style="display: none;">
                         <div class="checkbox-option">
@@ -1105,14 +1147,21 @@
                             ${!program.registration_open ? 'disabled' : ''} 
                             data-start="${program.start_date}" 
                             data-end="${program.end_date}"
+                            data-flex="${program.is_flexible || false}"
+                            data-price="${program.price}"
                             onchange="updateProgramDates(this)" required>
                         <label for="program_${program.id}">
                             <div class="program-title">
                                 <span class="ar-text">${program.title_ar}</span>
                                 <span class="en-text">${program.title_en}</span>
                             </div>
-                            <div class="program-dates">${program.start_date} — ${program.end_date}</div>
-                            <div class="program-price">$${Number(program.price).toLocaleString()}</div>
+                            ${program.is_flexible ? 
+                                \`<div class="program-dates"><span class="ar-text">مواعيد ومدة مرنة</span><span class="en-text">Flexible Dates & Duration</span></div>
+                                 <div class="program-price"><span class="ar-text">يبدأ من</span><span class="en-text">Starts from</span> $1,499</div>\`
+                            : 
+                                \`<div class="program-dates">${program.start_date} — ${program.end_date}</div>
+                                 <div class="program-price">$${Number(program.price).toLocaleString()}</div>\`
+                            }
                             <span class="program-status ${program.registration_open ? 'open' : 'closed'}">
                                 <span class="ar-text">${program.registration_open ? 'التسجيل مفتوح' : 'مغلق'}</span>
                                 <span class="en-text">${program.registration_open ? 'Open' : 'Closed'}</span>
@@ -1145,29 +1194,100 @@
 
         // Update dates when program selected
         function updateProgramDates(radio) {
-            const startDate = radio.dataset.start;
-            const endDate = radio.dataset.end;
+            const isFlexible = radio.dataset.flex === 'true';
+            const flexField = document.getElementById('flexibleDatesField');
             
-            // Show confirmation boxes
-            document.getElementById('arrivalConfirmation').style.display = 'block';
-            document.getElementById('availabilityConfirmation').style.display = 'block';
-            
-            // Calculate arrival date (day before program starts)
-            const start = new Date(startDate);
-            start.setDate(start.getDate() - 1);
-            const arrivalDate = start.toISOString().split('T')[0];
-            
-            const isArabic = !document.body.classList.contains('en');
-            
-            document.getElementById('arrivalDateText').textContent = isArabic 
-                ? `تاريخ الوصول المطلوب: ${arrivalDate}`
-                : `Required arrival date: ${arrivalDate}`;
-            
-            document.getElementById('programDatesText').textContent = isArabic
-                ? `فترة البرنامج: ${startDate} إلى ${endDate}`
-                : `Program period: ${startDate} to ${endDate}`;
+            if (isFlexible) {
+                flexField.classList.add('show');
+                document.getElementById('arrivalConfirmation').style.display = 'none';
+                document.getElementById('availabilityConfirmation').style.display = 'none';
+                
+                // Set flexible selects as required
+                document.getElementById('arrivalDateSelect').required = true;
+                document.getElementById('durationSelect').required = true;
+                
+            } else {
+                flexField.classList.remove('show');
+                document.getElementById('arrivalDateSelect').required = false;
+                document.getElementById('durationSelect').required = false;
+                
+                const startDate = radio.dataset.start;
+                const endDate = radio.dataset.end;
+                
+                // Show confirmation boxes
+                document.getElementById('arrivalConfirmation').style.display = 'block';
+                document.getElementById('availabilityConfirmation').style.display = 'block';
+                
+                // Calculate arrival date (day before program starts)
+                const start = new Date(startDate);
+                start.setDate(start.getDate() - 1);
+                const arrivalDate = start.toISOString().split('T')[0];
+                
+                const isArabic = !document.body.classList.contains('en');
+                
+                document.getElementById('arrivalDateText').textContent = isArabic 
+                    ? `تاريخ الوصول المطلوب: ${arrivalDate}`
+                    : `Required arrival date: ${arrivalDate}`;
+                
+                document.getElementById('programDatesText').textContent = isArabic
+                    ? `فترة البرنامج: ${startDate} إلى ${endDate}`
+                    : `Program period: ${startDate} to ${endDate}`;
+            }
 
             // Refresh coupon price if already applied
+            if (document.getElementById('couponInput').readOnly) {
+                applyCoupon(true);
+            }
+        }
+
+        const durationPrices = {
+            1: 1499,
+            2: 2599,
+            3: 3599,
+            4: 4399
+        };
+
+        function updateFlexibleOptions() {
+            const arrDate = document.getElementById('arrivalDateSelect').value;
+            const durSelect = document.getElementById('durationSelect');
+            const isArabic = !document.body.classList.contains('en');
+            
+            durSelect.innerHTML = `<option value="">-- ${isArabic ? 'اختر المدة' : 'Select Duration'} --</option>`;
+            
+            if (!arrDate) {
+                durSelect.disabled = true;
+                updateFlexiblePrice();
+                return;
+            }
+            
+            durSelect.disabled = false;
+            
+            // Determine max weeks based on start date (End of Sept limits)
+            let maxWeeks = 4;
+            if (arrDate === '2026-09-12') maxWeeks = 3;
+            if (arrDate === '2026-09-19') maxWeeks = 2;
+            if (arrDate === '2026-09-26') maxWeeks = 1;
+
+            for (let i = 1; i <= maxWeeks; i++) {
+                const weekTextAr = i === 1 ? 'أسبوع واحد' : (i === 2 ? 'أسبوعين' : `${i} أسابيع`);
+                const weekTextEn = i === 1 ? '1 Week' : `${i} Weeks`;
+                durSelect.innerHTML += `<option value="${i}">${isArabic ? weekTextAr : weekTextEn} - $${durationPrices[i].toLocaleString()}</option>`;
+            }
+            
+            updateFlexiblePrice();
+        }
+
+        function updateFlexiblePrice() {
+            const selectedProgramRadio = document.querySelector('input[name="program"]:checked');
+            if (selectedProgramRadio && selectedProgramRadio.dataset.flex === 'true') {
+                const durVal = document.getElementById('durationSelect').value;
+                if (durVal) {
+                    selectedProgramRadio.dataset.price = durationPrices[durVal];
+                } else {
+                    selectedProgramRadio.dataset.price = "1499";
+                }
+            }
+            
             if (document.getElementById('couponInput').readOnly) {
                 applyCoupon(true);
             }
@@ -1187,11 +1307,21 @@
             // Get selected program info for arrival_date
             const selectedProgramRadio = document.querySelector('input[name="program"]:checked');
             let arrivalDate = '';
+            let finalProgramString = formData.get('program');
+            
             if (selectedProgramRadio) {
-                const startDate = selectedProgramRadio.dataset.start;
-                const start = new Date(startDate);
-                start.setDate(start.getDate() - 1);
-                arrivalDate = start.toISOString().split('T')[0];
+                if (selectedProgramRadio.dataset.flex === 'true') {
+                    arrivalDate = document.getElementById('arrivalDateSelect').value;
+                    const durationWeeks = document.getElementById('durationSelect').value;
+                    const programTitle = isEnglish ? 'Summer 2026 Program' : 'برنامج صيف 2026';
+                    const durationText = isEnglish ? `${durationWeeks} Weeks` : `${durationWeeks} أسبوع/أسابيع`;
+                    finalProgramString = `${programTitle} - ${durationText} - Arrival: ${arrivalDate}`;
+                } else {
+                    const startDate = selectedProgramRadio.dataset.start;
+                    const start = new Date(startDate);
+                    start.setDate(start.getDate() - 1);
+                    arrivalDate = start.toISOString().split('T')[0];
+                }
             }
 
             // Map data to match Google Sheet headers exactly
@@ -1207,7 +1337,7 @@
                 nationality: formData.get('nationality'),
                 country: formData.get('country'),
                 gender: formData.get('gender'),
-                program: formData.get('program'),
+                program: finalProgramString,
                 arrival_date: arrivalDate,
                 accommodation: formData.get('accommodation'),
                 arabic_level: formData.get('arabic_level'),
@@ -1294,7 +1424,10 @@
                     const programId = selectedProgramRadio.value;
                     const program = programsData.find(p => p.id === programId);
                     if (program) {
-                        const originalPrice = Number(program.price);
+                        const originalPrice = selectedProgramRadio.dataset.flex === 'true' 
+                            ? Number(selectedProgramRadio.dataset.price)
+                            : Number(program.price);
+                        
                         const discount = (originalPrice * referral.discount_percent) / 100;
                         const finalPrice = originalPrice - discount;
                         

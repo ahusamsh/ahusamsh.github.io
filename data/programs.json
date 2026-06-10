@@ -30,6 +30,7 @@
         "image": "images/hero-madinah.jpg",
         "registration_open": true,
         "visible": true,
+        "is_flexible": true,
         "description_ar": "برنامج متكامل من 2 أغسطس إلى 31 أغسطس يتضمن معهد اللغة، حلقات المسجد النبوي ورحلات متنوعة",
         "description_en": "Comprehensive program from Aug 2 to Aug 31 including language institute, Prophet's Mosque circles and various trips"
     }
