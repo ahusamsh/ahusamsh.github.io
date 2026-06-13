@@ -1573,7 +1573,9 @@
                 return;
             }
             
-            container.innerHTML = visiblePrograms.map(program => `
+            container.innerHTML = visiblePrograms.map(program => {
+                const isFlexible = program.is_flexible || false;
+                return `
                 <div class="program-card" data-aos="fade-up">
                     <div class="program-image">
                         <img src="${program.image || 'images/hero-madinah.jpg'}" alt="${program.title_ar}" onerror="this.src='images/hero-madinah.jpg'">
@@ -1588,12 +1590,24 @@
                             <span class="en-text">${program.title_en}</span>
                         </h3>
                         <div class="program-meta">
-                            <span><i class="fas fa-calendar"></i> ${program.start_date} - ${program.end_date}</span>
-                            <span><i class="fas fa-clock"></i> <span class="ar-text">${program.duration_ar}</span><span class="en-text">${program.duration_en}</span></span>
+                            ${isFlexible ? `
+                                <span><i class="fas fa-calendar"></i> <span class="ar-text">مواعيد مرنة (أغسطس)</span><span class="en-text">Flexible Dates (August)</span></span>
+                                <span><i class="fas fa-clock"></i> <span class="ar-text">من أسبوع إلى 4 أسابيع</span><span class="en-text">1 to 4 Weeks</span></span>
+                            ` : `
+                                <span><i class="fas fa-calendar"></i> ${program.start_date} - ${program.end_date}</span>
+                                <span><i class="fas fa-clock"></i> <span class="ar-text">${program.duration_ar}</span><span class="en-text">${program.duration_en}</span></span>
+                            `}
                             <span><i class="fas fa-users"></i> <span class="ar-text">عدد محدود</span><span class="en-text">Limited seats</span></span>
                         </div>
                         <div class="program-price">
-                            $${Number(program.price).toLocaleString()} <span> <span class="ar-text">للبرنامج</span><span class="en-text">total</span></span>
+                            ${isFlexible ? `
+                                <span style="font-size: 0.9rem; font-weight: 400; color: var(--gray); display: block; margin-bottom: 2px;">
+                                    <span class="ar-text">يبدأ من</span><span class="en-text">Starts from</span>
+                                </span>
+                                $1,499
+                            ` : `
+                                $${Number(program.price).toLocaleString()} <span> <span class="ar-text">للبرنامج</span><span class="en-text">total</span></span>
+                            `}
                         </div>
                         <button class="program-btn" ${program.registration_open ? `onclick="location.href='apply.html?program=${program.id}'"` : 'disabled'}>
                             <span class="ar-text">${program.registration_open ? 'سجّل الآن' : 'التسجيل مغلق'}</span>
@@ -1601,7 +1615,8 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             AOS.refresh();
         }
