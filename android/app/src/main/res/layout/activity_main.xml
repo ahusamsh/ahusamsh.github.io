@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.github.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_bg">
+
+    <android.webkit.WebView
+        android:id="@+id/webView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Settings Container -->
+    <ScrollView
+        android:id="@+id/settingsContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/logo"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:contentDescription="Darb Path Logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="إعدادات لوحة التحكم"
+                android:textColor="@color/primary_gold"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="رابط Google Apps Script (التتبع والتحليلات):"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:gravity="right" />
+
+            <EditText
+                android:id="@+id/etScriptUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_bg"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray"
+                android:hint="https://script.google.com/macros/s/.../exec"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:inputType="textUri"
+                android:layout_marginBottom="16dp"
+                android:gravity="left" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="رمز الوصول الشخصي GitHub Token (لإدارة الأكواد):"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:gravity="right" />
+
+            <EditText
+                android:id="@+id/etGithubToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_bg"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray"
+                android:hint="ghp_xxxxxxxxxxxxxxxxxxxx"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:inputType="textPassword"
+                android:layout_marginBottom="24dp"
+                android:gravity="left" />
+
+            <Button
+                android:id="@+id/btnSaveSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="حفظ الإعدادات ومزامنتها"
+                android:backgroundTint="@color/primary_green"
+                android:textColor="@color/white"
+                android:padding="12dp"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvAppInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:textSize="12sp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="سيقوم التطبيق بالتحقق في الخلفية كل 15 دقيقة للتنبيه بالمسجلين الجدد." />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/bottom_nav_menu"
+        android:background="@color/card_bg"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
