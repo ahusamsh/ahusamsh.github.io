@@ -23,8 +23,10 @@ jobs:
 
       - name: Generate Gradle Wrapper
         run: |
-          cd android
           gradle wrapper --gradle-version 8.2
+          mv gradlew android/
+          mv gradlew.bat android/
+          mv gradle android/
 
       - name: Build Debug APK
         run: |
