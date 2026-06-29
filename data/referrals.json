@@ -1,10 +1,18 @@
 [
     {
         "code": "AH10",
-        "name_ar": "أبوحسام",
+        "name_ar": "Ø£Ø¨ÙØ­Ø³Ø§Ù",
         "name_en": "ahusam",
         "type": "individual",
         "discount_percent": 10,
+        "active": true
+    },
+    {
+        "code": "OK5",
+        "name_ar": "عثمان كمال",
+        "name_en": "OTHMAN KAMAL",
+        "type": "individual",
+        "discount_percent": 5,
         "active": true
     }
 ]
