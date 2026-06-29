@@ -1,15 +1,15 @@
 [
     {
         "code": "AH10",
-        "name_ar": "Ø£Ø¨ÙØ­Ø³Ø§Ù",
+        "name_ar": "ÃÂ£ÃÂ¨ÃÂÃÂ­ÃÂ³ÃÂ§ÃÂ",
         "name_en": "ahusam",
         "type": "individual",
         "discount_percent": 10,
-        "active": true
+        "active": false
     },
     {
         "code": "OK5",
-        "name_ar": "عثمان كمال",
+        "name_ar": "Ø¹Ø«ÙØ§Ù ÙÙØ§Ù",
         "name_en": "OTHMAN KAMAL",
         "type": "individual",
         "discount_percent": 5,
