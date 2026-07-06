@@ -24,12 +24,27 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Accept Android SDK licenses
+      run: yes | sdkmanager --licenses || true
+
+    - name: Install Android SDK components
+      run: |
+        sdkmanager "platforms;android-33" "build-tools;33.0.2"
+
+    - name: Create Gradle wrapper
+      working-directory: android
+      run: |
+        # Install Gradle
+        wget -q https://services.gradle.org/distributions/gradle-8.4-bin.zip -O /tmp/gradle.zip
+        unzip -q /tmp/gradle.zip -d /tmp
+        export PATH="/tmp/gradle-8.4/bin:$PATH"
+        # Generate the wrapper
+        gradle wrapper
+        chmod +x gradlew
 
     - name: Build Debug APK
       working-directory: android
-      run: gradle assembleDebug
+      run: ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
