@@ -42,13 +42,25 @@ jobs:
         gradle wrapper
         chmod +x gradlew
 
-    - name: Build Debug APK
+    - name: Build Release APK
       working-directory: android
-      run: ./gradlew assembleDebug --no-daemon
+      run: ./gradlew assembleRelease --no-daemon
+
+    - name: Sign APK
+      working-directory: android
+      run: |
+        # Generate a keystore
+        keytool -genkey -v -keystore release.keystore -alias release -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Darb, OU=Darb, O=Darb, L=Riyadh, S=Riyadh, C=SA"
+        # Find the release APK
+        APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" | grep -v unaligned | head -n 1)
+        # Sign it
+        $ANDROID_HOME/build-tools/33.0.2/apksigner sign --ks release.keystore --ks-pass pass:password --key-pass pass:password "$APK_PATH"
+        # Move it to a predictable location
+        mv "$APK_PATH" app-release-signed.apk
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: DarbPathAdmin-debug
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+        name: DarbPathAdmin-Release
+        path: android/app-release-signed.apk
         retention-days: 30
