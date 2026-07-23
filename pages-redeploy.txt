@@ -1,0 +1,2 @@
+Trigger GitHub Pages redeploy after restoring the production site.
+Timestamp: 2026-07-23
