@@ -7,7 +7,41 @@ function quranDone(){return state.quran.filter(x=>["memorized","mastered"].inclu
 function periodLabel(period){return ({morning:"الصباح",after_school:"بعد المدرسة",evening:"المساء",anytime:"أي وقت"})[period]||"اليوم"}
 let syncTimer;
 function scheduleSync(){ clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(false),900); }
-async function scriptRequest(payload){ const response=await fetch(apiUrl(),{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});const text=await response.text();let data;try{data=JSON.parse(text)}catch{throw new Error("استجابة Google Script غير صالحة")};if(!data.ok)throw new Error(data.error||"فشلت المزامنة");return data; }
+function scriptRequest(payload){
+  return new Promise((resolve,reject)=>{
+    const requestId=newId();
+    const iframe=document.createElement("iframe");
+    iframe.hidden=true;
+    iframe.name=`hero-api-${requestId}`;
+    const cleanup=()=>{clearTimeout(timer);window.removeEventListener("message",onMessage);iframe.remove()};
+    const onMessage=event=>{
+      const data=event.data;
+      if(event.source!==iframe.contentWindow||!data||data.source!=="little-hero-api"||data.requestId!==requestId)return;
+      cleanup();
+      if(!data.ok)reject(new Error(data.error||"فشلت المزامنة"));else resolve(data);
+    };
+    const timer=setTimeout(()=>{cleanup();reject(new Error("تعذر الوصول إلى Google Sheet"))},20000);
+    window.addEventListener("message",onMessage);
+    document.body.appendChild(iframe);
+    if(payload.action==="load"){
+      const separator=apiUrl().includes("?")?"&":"?";
+      iframe.src=`${apiUrl()}${separator}mode=load&requestId=${encodeURIComponent(requestId)}`;
+      return;
+    }
+    const form=document.createElement("form");
+    form.hidden=true;
+    form.method="POST";
+    form.action=apiUrl();
+    form.target=iframe.name;
+    const input=document.createElement("input");
+    input.name="payload";
+    input.value=JSON.stringify({...payload,requestId});
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  });
+}
 async function syncNow(showToast=true){ if(!syncEnabled()||!isOnline()||ui.syncing)return;ui.syncing=true;render();try{const result=await scriptRequest({action:"sync",state,device:navigator.userAgent.slice(0,120)});state.lastSync=result.syncedAt||new Date().toISOString();writeJSON(STORAGE_KEY,state);localStorage.removeItem(QUEUE_KEY);if(showToast)toast("تمت المزامنة مع Google Sheet ✓")}catch(err){localStorage.setItem(QUEUE_KEY,"1");if(showToast)toast(err.message)}finally{ui.syncing=false;render()} }
 async function pullRemote(){ if(!syncEnabled())throw new Error("أدخل إعدادات Google Script أولًا");ui.syncing=true;render();try{const data=await scriptRequest({action:"load"});if(data.state){state={...createDemoState(),...data.state};saveLocal(false);toast("تم تحميل البيانات من Google Sheet ✓")}}finally{ui.syncing=false;render()} }
 function render() {
