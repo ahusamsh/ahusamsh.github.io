@@ -1,0 +1,37 @@
+= 80 ? "واو! اقتربت من إكمال رحلة اليوم." : "كل إنجاز صغير يصنع بطلًا كبيرًا."}</p>
+      <div class="progress-wrap"><div class="progress"><span style="width:${percent}%"></span></div><strong>${percent}%</strong></div>
+    </section>
+    <section class="stats">
+      <div class="stat"><strong>${state.points}</strong><span>نجمة</span></div>
+      <div class="stat"><strong>${state.prayers.filter(x=>x.done).length}/5</strong><span>صلوات</span></div>
+      <div class="stat"><strong>${quranDone()}</strong><span>سور محفوظة</span></div>
+    </section>
+    ${ui.tab === "today" ? renderToday() : ui.tab === "prayers" ? renderPrayers() : ui.tab === "quran" ? renderQuran() : renderRewards()}
+  `;
+}
+function renderToday() {
+  return `<section class="section"><div class="section-head"><h2>مهمات اليوم</h2><span class="section-note">اضغط بعد الإنجاز</span></div><div class="grid">
+    ${state.routines.map(x=>`<button class="task-card ${x.done?"done":""}" data-action="routine" data-id="${x.id}"><span class="card-icon">${esc(x.icon)}</span><span class="card-title">${esc(x.title)}</span><span class="card-meta">${periodLabel(x.period)} · +${x.points} نجوم</span><span class="check">${x.done?"✓":""}</span></button>`).join("")}
+  </div></section>
+  <section class="section"><div class="section-head"><h2>صلوات اليوم</h2><button class="ghost-btn" data-action="go-tab" data-tab="prayers">عرض الكل</button></div>${renderPrayerGrid()}</section>`;
+}
+function renderPrayerGrid() {
+  return `<div class="prayers">${state.prayers.map(x=>`<button class="prayer-card ${x.done?"done":""}" data-action="prayer" data-name="${x.name}"><span class="card-icon">${x.icon}</span><span class="card-title">${x.label}</span><span class="check">${x.done?"✓":""}</span></button>`).join("")}</div>`;
+}
+function renderPrayers() {
+  return `<section class="section"><div class="section-head"><h2>صلواتي</h2><span class="section-note">+2 للصلاة، +3 في وقتها</span></div>${renderPrayerGrid()}
+    <div class="panel" style="margin-top:12px"><p style="margin:0;color:var(--muted)">بعد تحديد الصلاة، اضغط عليها مرة ثانية لتغيير حالة «في وقتها»، ومرة ثالثة لإلغاء التحديد.</p></div>
+  </section>`;
+}
+function renderQuran() {
+  return `<section class="section"><div class="section-head"><h2>رحلتي مع القرآن</h2><span class="section-note">تقدم خطوة خطوة</span></div><div class="quran-list">
+    ${state.quran.map(x=>`<div class="quran-card"><div class="quran-info"><h3>سورة ${esc(x.surahName)}</h3><p>رقم السورة ${x.surahNumber} · حتى ${STAGE_POINTS[x.stage]||0} نجوم</p></div><select class="stage-select" data-action="quran-stage" data-id="${x.id}">${STAGES.map(([v,l])=>`<option value="${v}" ${v===x.stage?"selected":""}>${l}</option>`).join("")}</select></div>`).join("")}
+  </div></section>`;
+}
+function renderRewards() {
+  return `<section class="section"><div class="section-head"><h2>متجر النجوم</h2><span class="points-pill">رصيدك ${state.points} ⭐</span></div><div class="reward-list">
+    ${state.rewards.map(x=>`<div class="reward-card"><div class="reward-info"><h3>${esc(x.icon)} ${esc(x.title)}</h3><p>${x.cost} نجمة · يحتاج موافقة الوالد</p></div><button class="primary-btn" data-action="redeem" data-id="${x.id}" ${state.points < x.cost ? "disabled" : ""}>اطلبها</button></div>`).join("")}
+  </div></section>`;
+}
+function renderNav() {
+  const tabs = [["today","🏠","اليوم"],["prayers","🕌","الصلاة"],["quran","📖","القرآن"],[
