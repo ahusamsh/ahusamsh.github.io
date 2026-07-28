@@ -17,8 +17,14 @@ function doGet(e) {
   try {
     const db = getDb_();
     const secret = getSecret_();
-    if (e && e.parameter && e.parameter.mode === 'health') {
+    const mode = String((e && e.parameter && e.parameter.mode) || '');
+    if (mode === 'health') {
       return json_({ ok: true, service: 'little-hero-routine', spreadsheetUrl: db.getUrl(), time: new Date().toISOString() });
+    }
+    if (mode === 'load') {
+      const key = String((e && e.parameter && e.parameter.key) || '');
+      if (!key || key !== secret) throw new Error('رابط الربط غير صحيح');
+      return messageHtml_(load_(), String(e.parameter.requestId || ''));
     }
     const serviceUrl = ScriptApp.getService().getUrl();
     const connectionUrl = `${serviceUrl}?key=${encodeURIComponent(secret)}`;
@@ -27,21 +33,26 @@ function doGet(e) {
       .setTitle('تجهيز رحلة البطل')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   } catch (error) {
+    const requestId = String((e && e.parameter && e.parameter.requestId) || '');
+    if (requestId) return messageHtml_({ ok: false, error: String(error.message || error) }, requestId);
     return HtmlService.createHtmlOutput(`<h2>تعذر التجهيز</h2><pre>${escapeHtml_(String(error.message || error))}</pre>`);
   }
 }
 
 function doPost(e) {
+  let requestId = '';
   try {
-    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const raw = String((e && e.parameter && e.parameter.payload) || (e && e.postData && e.postData.contents) || '{}');
+    const body = JSON.parse(raw);
+    requestId = String(body.requestId || '');
     const key = String((e && e.parameter && e.parameter.key) || body.key || '');
     if (!key || key !== getSecret_()) throw new Error('رابط الربط غير صحيح');
     getDb_();
-    if (body.action === 'sync') return sync_(body);
-    if (body.action === 'load') return load_();
+    if (body.action === 'sync') return messageHtml_(sync_(body), requestId);
+    if (body.action === 'load') return messageHtml_(load_(), requestId);
     throw new Error('عملية غير معروفة');
   } catch (error) {
-    return json_({ ok: false, error: String(error.message || error) });
+    return messageHtml_({ ok: false, error: String(error.message || error) }, requestId);
   }
 }
 
@@ -91,4 +102,4 @@ function sync_(body) {
 
   replaceRows_(ss, SHEETS.routines, [
     ['id','child_id','الرمز','المهمة','الفترة','النقاط','الترتيب','نشط','تاريخ الإنشاء','آخر تحديث'],
-   
+  
