@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>تجهيز Google Sheet — رحلة البطل</title>
+  <style>
+    *{box-sizing:border-box}body{font-family:system-ui,Tahoma,sans-serif;background:#f5f2e8;color:#173f5f;margin:0;padding:20px}.wrap{max-width:700px;margin:25px auto}.card{background:#fff;border-radius:24px;padding:24px;box-shadow:0 14px 44px #173f5f18;margin-bottom:14px}h1,h2{margin-top:0}.step{display:flex;gap:13px;align-items:flex-start}.num{background:#f6c85f;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:900;flex:none}.btn{border:0;border-radius:14px;padding:13px 16px;background:#173f5f;color:#fff;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.light{background:#e9f0f3;color:#173f5f}.done{background:#dff3e9;color:#245d49;padding:12px;border-radius:12px;display:none;margin-top:10px}code{font-family:ui-monospace,monospace}p{line-height:1.8;color:#60737e}
+  </style>
+</head>
+<body><main class="wrap"><section class="card"><h1>ربط التطبيق بـGoogle Sheet</h1><p>لن ترفع ملفًا ولن تنشئ الجداول يدويًا. السكربت ينشئ كل شيء تلقائيًا.</p></section>
+<section class="card step"><span class="num">1</span><div><h2>انسخ السكربت</h2><p>اضغط الزر، ثم افتح Apps Script والصقه بدل الكود الموجود.</p><button id="copy" class="btn">نسخ الكود</button> <a class="btn light" href="https://script.google.com/home/projects/create" target="_blank">فتح Apps Script</a><div id="copied" class="done">تم نسخ الكود ✅</div></div></section>
+<section class="card step"><span class="num">2</span><div><h2>انشره كتطبيق ويب</h2><p><b>نشر ← عملية نشر جديدة ← تطبيق ويب</b><br>التنفيذ باسم: <b>أنا</b> — الوصول: <b>أي شخص</b>.</p></div></section>
+<section class="card step"><span class="num">3</span><div><h2>افتح رابط النشر</h2><p>ستظهر صفحة خضراء فيها زر <b>فتح التطبيق وربطه تلقائيًا</b>. اضغطه وانتهينا.</p></div></section></main>
+<script>
+document.getElementById('copy').addEventListener('click', async () => {
+  const files=['./gs-parts/01.txt','./gs-parts/02.txt','./gs-parts/03.txt','./gs-parts/04.txt','./gs-parts/05.txt'];
+  const text=(await Promise.all(files.map(file=>fetch(file).then(r=>r.text())))).join('');
+  await navigator.clipboard.writeText(text);
+  document.getElementById('copied').style.display='block';
+});
+</script></body></html>
