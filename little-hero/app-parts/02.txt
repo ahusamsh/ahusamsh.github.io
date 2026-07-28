@@ -1,0 +1,38 @@
+oints||0)-spent); }
+function saveLocal(queue=true){ state.points=computedPoints();writeJSON(STORAGE_KEY,state);if(queue){localStorage.setItem(QUEUE_KEY,"1");scheduleSync();} }
+function toast(message){ui.toast=message;render();setTimeout(()=>{if(ui.toast===message){ui.toast="";render()}},1800)}
+function isOnline(){return navigator.onLine}
+function completion(){const done=state.routines.filter(x=>x.done).length+state.prayers.filter(x=>x.done).length,total=state.routines.length+state.prayers.length;return total?Math.round(done/total*100):0}
+function quranDone(){return state.quran.filter(x=>["memorized","mastered"].includes(x.stage)).length}
+function periodLabel(period){return ({morning:"الصباح",after_school:"بعد المدرسة",evening:"المساء",anytime:"أي وقت"})[period]||"اليوم"}
+let syncTimer;
+function scheduleSync(){ clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(false),900); }
+async function scriptRequest(payload){ const response=await fetch(apiUrl(),{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});const text=await response.text();let data;try{data=JSON.parse(text)}catch{throw new Error("استجابة Google Script غير صالحة")};if(!data.ok)throw new Error(data.error||"فشلت المزامنة");return data; }
+async function syncNow(showToast=true){ if(!syncEnabled()||!isOnline()||ui.syncing)return;ui.syncing=true;render();try{const result=await scriptRequest({action:"sync",state,device:navigator.userAgent.slice(0,120)});state.lastSync=result.syncedAt||new Date().toISOString();writeJSON(STORAGE_KEY,state);localStorage.removeItem(QUEUE_KEY);if(showToast)toast("تمت المزامنة مع Google Sheet ✓")}catch(err){localStorage.setItem(QUEUE_KEY,"1");if(showToast)toast(err.message)}finally{ui.syncing=false;render()} }
+async function pullRemote(){ if(!syncEnabled())throw new Error("أدخل إعدادات Google Script أولًا");ui.syncing=true;render();try{const data=await scriptRequest({action:"load"});if(data.state){state={...createDemoState(),...data.state};saveLocal(false);toast("تم تحميل البيانات من Google Sheet ✓")}}finally{ui.syncing=false;render()} }
+function render() {
+  ensureToday();
+    const percent = completion();
+  app.innerHTML = `
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">★</span><span>رحلة البطل</span><span class="sync-badge ${isOnline()?"online":""}">${syncEnabled() ? (ui.syncing?"مزامنة…":(isOnline()?"متصل":"دون اتصال")) : "محلي"}</span></div>
+        <button class="mode-btn" data-action="parent-toggle">${ui.parent ? "وضع الطفل 👦" : "لوحة الوالد 🔒"}</button>
+      </header>
+      ${!syncEnabled() ? `<div class="demo-banner">البيانات محفوظة على الجهاز. افتح لوحة الوالد لربط Google Sheet.</div>` : ""}
+      ${ui.parent ? renderParent() : renderChild(percent)}
+    </main>
+    ${!ui.parent ? renderNav() : ""}
+    ${ui.modal ? renderModal() : ""}
+    ${ui.toast ? `<div class="toast">${esc(ui.toast)}</div>` : ""}
+  `;
+  bindForms();
+}
+
+function renderChild(percent) {
+  const greeting = new Date().getHours() < 12 ? "صباح الخير" : new Date().getHours() < 18 ? "مساء النشاط" : "مساء الخير";
+  return `
+    <section class="hero">
+      <small>${new Intl.DateTimeFormat("ar-SA", {weekday:"long",day:"numeric",month:"long",timeZone:"Asia/Riyadh"}).format(new Date())}</small>
+      <h1>${greeting} يا ${esc(state.child.displayName)} 👋</h1>
+      <p>${percent >
