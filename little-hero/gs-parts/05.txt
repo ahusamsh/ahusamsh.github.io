@@ -1,3 +1,10 @@
 a}.ok{font-size:56px}.btn{display:block;text-decoration:none;text-align:center;background:#173f5f;color:#fff;padding:14px;border-radius:14px;font-weight:800;margin-top:12px}.light{background:#eef3f5;color:#173f5f}h1{margin:8px 0}p{line-height:1.8;color:#60737e}
   </style></head><body><main class="card"><div class="ok">✅</div><h1>تم تجهيز رحلة البطل</h1><p>تم إنشاء Google Sheet والتبويبات تلقائيًا. لا تحتاج نسخ مفتاح أو إدخال إعدادات يدويًا.</p><a class="btn" href="${escapeHtml_(appConnectUrl)}" target="_top">فتح التطبيق وربطه تلقائيًا</a><a class="btn light" href="${escapeHtml_(spreadsheetUrl)}" target="_blank">فتح قاعدة البيانات</a></main></body></html>`;
 }
+
+function messageHtml_(data, requestId) {
+  const message = Object.assign({}, data, { source: 'little-hero-api', requestId: String(requestId || '') });
+  const payload = JSON.stringify(message).replace(/</g, '\\u003c');
+  return HtmlService.createHtmlOutput(`<script>window.parent.postMessage(${payload}, '*');<\/script>`)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
