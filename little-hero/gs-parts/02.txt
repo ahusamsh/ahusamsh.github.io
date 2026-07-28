@@ -32,13 +32,13 @@
     ['id','child_id','العملية','التفاصيل_json','الجهاز','وقت الإنشاء']);
   refreshDashboard_(ss);
   SpreadsheetApp.flush();
-  return json_({ ok: true, syncedAt: now, spreadsheetUrl: ss.getUrl() });
+  return { ok: true, syncedAt: now, spreadsheetUrl: ss.getUrl() };
 }
 
 function load_() {
   const ss = getDb_();
   const raw = getSetting_(ss, 'current_state_json');
-  return json_({ ok: true, state: raw ? JSON.parse(raw) : null, syncedAt: getSetting_(ss, 'last_sync') || null, spreadsheetUrl: ss.getUrl() });
+  return { ok: true, state: raw ? JSON.parse(raw) : null, syncedAt: getSetting_(ss, 'last_sync') || null, spreadsheetUrl: ss.getUrl() };
 }
 
 function buildPoints_(state, now) {
