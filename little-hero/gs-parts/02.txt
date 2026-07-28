@@ -1,0 +1,52 @@
+  ...(state.routines || []).map((x,i)=>[x.id,state.child?.id || 'child-1',x.icon,x.title,x.period,Number(x.points||0),i+1,true,'',now])
+  ]);
+
+  const date = state.date || Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  replaceRows_(ss, SHEETS.tasks, [
+    ['id','child_id','routine_id','التاريخ','مكتملة','النقاط','وقت الإنجاز','الجهاز','آخر تحديث'],
+    ...(state.routines || []).map(x=>[`${date}-${x.id}`,state.child?.id || 'child-1',x.id,date,Boolean(x.done),x.done?Number(x.points||0):0,x.done?now:'',device,now])
+  ]);
+
+  replaceRows_(ss, SHEETS.prayers, [
+    ['id','child_id','التاريخ','الصلاة','مكتملة','في_وقتها','النقاط','وقت الإنجاز','الجهاز','آخر تحديث'],
+    ...(state.prayers || []).map(x=>[`${date}-${x.name}`,state.child?.id || 'child-1',date,x.name,Boolean(x.done),Boolean(x.onTime),x.done?(x.onTime?3:2):0,x.done?now:'',device,now])
+  ]);
+
+  replaceRows_(ss, SHEETS.quran, [
+    ['id','child_id','رقم_السورة','اسم_السورة','المرحلة','النقاط','الترتيب','آخر مراجعة','آخر تحديث'],
+    ...(state.quran || []).map((x,i)=>[x.id,state.child?.id || 'child-1',Number(x.surahNumber),x.surahName,x.stage,stagePoints_(x.stage),x.sortOrder||i+1,now,now])
+  ]);
+
+  replaceRows_(ss, SHEETS.rewards, [
+    ['id','child_id','الرمز','المكافأة','التكلفة','نشط','تاريخ الإنشاء','آخر تحديث'],
+    ...(state.rewards || []).map(x=>[x.id,state.child?.id || 'child-1',x.icon,x.title,Number(x.cost||0),x.active!==false,'',now])
+  ]);
+
+  replaceRows_(ss, SHEETS.redemptions, [
+    ['id','child_id','reward_id','التكلفة','الحالة','وقت الطلب','وقت القرار','آخر تحديث'],
+    ...(state.redemptions || []).map(x=>[x.id,state.child?.id || 'child-1',x.rewardId,Number(x.cost||0),x.status,x.requestedAt||'',x.decidedAt||'',now])
+  ]);
+
+  replaceRows_(ss, SHEETS.points, buildPoints_(state, now));
+  appendRow_(ss, SHEETS.events, [Utilities.getUuid(),state.child?.id || 'child-1','sync',JSON.stringify({date,points:state.points}),device,now],
+    ['id','child_id','العملية','التفاصيل_json','الجهاز','وقت الإنشاء']);
+  refreshDashboard_(ss);
+  SpreadsheetApp.flush();
+  return json_({ ok: true, syncedAt: now, spreadsheetUrl: ss.getUrl() });
+}
+
+function load_() {
+  const ss = getDb_();
+  const raw = getSetting_(ss, 'current_state_json');
+  return json_({ ok: true, state: raw ? JSON.parse(raw) : null, syncedAt: getSetting_(ss, 'last_sync') || null, spreadsheetUrl: ss.getUrl() });
+}
+
+function buildPoints_(state, now) {
+  const rows = [['id','child_id','المبلغ','النوع','المصدر','source_id','السبب','التاريخ','وقت الإنشاء']];
+  const childId = state.child?.id || 'child-1';
+  const date = state.date || Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  (state.routines || []).filter(x=>x.done).forEach(x=>rows.push([`${date}-task-${x.id}`,childId,Number(x.points||0),'earned','routine',x.id,x.title,date,now]));
+  (state.prayers || []).filter(x=>x.done).forEach(x=>rows.push([`${date}-prayer-${x.name}`,childId,x.onTime?3:2,'earned','prayer',x.name,`صلاة ${x.label||x.name}`,date,now]));
+  (state.quran || []).filter(x=>stagePoints_(x.stage)>0).forEach(x=>rows.push([`quran-${x.id}-${x.stage}`,childId,stagePoints_(x.stage),'earned','quran',x.id,`سورة ${x.surahName}`,date,now]));
+  if (Number(state.bonusPoints||0)) rows.push([`${date}-bonus`,childId,Number(state.bonusPoints),'bonus','parent','bonus','نجوم تشجيعية',date,now]);
+  (state.redemptions || []).filter(x=>x.status!=='rejected').forEach(x=>row

@@ -1,0 +1,94 @@
+/**
+ * رحلة البطل — Google Apps Script API
+ * مشروع مستقل: ينشئ ملف Google Sheet تلقائيًا عند أول فتح.
+ * بعد النشر افتح رابط /exec واضغط «فتح التطبيق وربطه تلقائيًا».
+ */
+const APP_URL = 'https://ahusamsh.github.io/little-hero/';
+const TZ = 'Asia/Riyadh';
+const DB_TITLE = 'رحلة البطل — قاعدة البيانات';
+
+const SHEETS = {
+  settings: 'الإعدادات', children: 'الأطفال', routines: 'المهام', tasks: 'إنجاز_المهام',
+  prayers: 'الصلوات', quran: 'القرآن', rewards: 'المكافآت', redemptions: 'طلبات_المكافآت',
+  points: 'سجل_النقاط', events: 'سجل_الأحداث', dashboard: 'لوحة_المتابعة'
+};
+
+function doGet(e) {
+  try {
+    const db = getDb_();
+    const secret = getSecret_();
+    if (e && e.parameter && e.parameter.mode === 'health') {
+      return json_({ ok: true, service: 'little-hero-routine', spreadsheetUrl: db.getUrl(), time: new Date().toISOString() });
+    }
+    const serviceUrl = ScriptApp.getService().getUrl();
+    const connectionUrl = `${serviceUrl}?key=${encodeURIComponent(secret)}`;
+    const appConnectUrl = `${APP_URL}?connect=${encodeURIComponent(connectionUrl)}`;
+    return HtmlService.createHtmlOutput(setupHtml_(db.getUrl(), appConnectUrl))
+      .setTitle('تجهيز رحلة البطل')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (error) {
+    return HtmlService.createHtmlOutput(`<h2>تعذر التجهيز</h2><pre>${escapeHtml_(String(error.message || error))}</pre>`);
+  }
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const key = String((e && e.parameter && e.parameter.key) || body.key || '');
+    if (!key || key !== getSecret_()) throw new Error('رابط الربط غير صحيح');
+    getDb_();
+    if (body.action === 'sync') return sync_(body);
+    if (body.action === 'load') return load_();
+    throw new Error('عملية غير معروفة');
+  } catch (error) {
+    return json_({ ok: false, error: String(error.message || error) });
+  }
+}
+
+function getDb_() {
+  const props = PropertiesService.getScriptProperties();
+  const storedId = props.getProperty('DB_ID');
+  if (storedId) {
+    try {
+      const existing = SpreadsheetApp.openById(storedId);
+      ensureStructure_(existing);
+      return existing;
+    } catch (_) {
+      props.deleteProperty('DB_ID');
+    }
+  }
+  const ss = SpreadsheetApp.create(DB_TITLE);
+  props.setProperty('DB_ID', ss.getId());
+  const first = ss.getSheets()[0];
+  first.setName(SHEETS.settings);
+  ensureStructure_(ss);
+  seedDefaults_(ss);
+  return ss;
+}
+
+function getSecret_() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = props.getProperty('FAMILY_KEY');
+  if (!secret) {
+    secret = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+    props.setProperty('FAMILY_KEY', secret);
+  }
+  return secret;
+}
+
+function sync_(body) {
+  const state = body.state || {};
+  const now = new Date().toISOString();
+  const device = String(body.device || '').slice(0, 150);
+  const ss = getDb_();
+  setSetting_(ss, 'current_state_json', JSON.stringify(state));
+  setSetting_(ss, 'last_sync', now);
+
+  replaceRows_(ss, SHEETS.children, [
+    ['id','الاسم','نشط','تاريخ الإنشاء','آخر تحديث'],
+    [state.child?.id || 'child-1', state.child?.displayName || 'بطلنا', true, '', now]
+  ]);
+
+  replaceRows_(ss, SHEETS.routines, [
+    ['id','child_id','الرمز','المهمة','الفترة','النقاط','الترتيب','نشط','تاريخ الإنشاء','آخر تحديث'],
+   

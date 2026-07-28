@@ -1,0 +1,73 @@
+فية',20,true,now,now],
+    ['reward-4','child-1','🌳','نزهة عائلية',30,true,now,now]
+  ]);
+  setSetting_(ss, 'created_at', now);
+  setSetting_(ss, 'schema_version', '2');
+  refreshDashboard_(ss);
+}
+
+function refreshDashboard_(ss) {
+  const sh = ss.getSheetByName(SHEETS.dashboard);
+  sh.clearContents();
+  sh.getRange('A1:B11').setValues([
+    ['رحلة البطل — لوحة المتابعة',''],['',''],['المؤشر','القيمة'],
+    ['اسم الطفل', `=IFERROR('${SHEETS.children}'!B2,"")`],
+    ['تاريخ اليوم', '=TEXT(TODAY(),"yyyy-mm-dd")'],
+    ['المهام المكتملة اليوم', `=COUNTIFS('${SHEETS.tasks}'!D:D,TEXT(TODAY(),"yyyy-mm-dd"),'${SHEETS.tasks}'!E:E,TRUE)`],
+    ['الصلوات المكتملة اليوم', `=COUNTIFS('${SHEETS.prayers}'!C:C,TEXT(TODAY(),"yyyy-mm-dd"),'${SHEETS.prayers}'!E:E,TRUE)`],
+    ['إجمالي النقاط', `=SUM('${SHEETS.points}'!C:C)`],
+    ['طلبات بانتظار الموافقة', `=COUNTIF('${SHEETS.redemptions}'!E:E,"pending")`],
+    ['آخر مزامنة', `=IFERROR(VLOOKUP("last_sync",'${SHEETS.settings}'!A:B,2,FALSE),"")`],
+    ['رابط التطبيق', APP_URL]
+  ]);
+  sh.getRange('A1:B1').merge().setBackground('#F6C85F').setFontColor('#173F5F').setFontWeight('bold').setFontSize(16).setHorizontalAlignment('center');
+  sh.getRange('A3:B3').setBackground('#173F5F').setFontColor('#FFFFFF').setFontWeight('bold');
+  sh.setFrozenRows(3);
+  sh.setColumnWidth(1, 220);
+  sh.setColumnWidth(2, 360);
+}
+
+function replaceRows_(ss, name, rows) {
+  const sh = ss.getSheetByName(name);
+  sh.clearContents();
+  if (!rows.length) return;
+  sh.getRange(1,1,rows.length,rows[0].length).setValues(rows);
+  formatHeader_(sh, rows[0].length);
+  sh.autoResizeColumns(1, rows[0].length);
+}
+
+function formatHeader_(sh, columns) {
+  sh.setFrozenRows(1);
+  sh.getRange(1,1,1,columns).setFontWeight('bold').setBackground('#173F5F').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+}
+
+function appendRow_(ss, name, row, headers) {
+  const sh = ss.getSheetByName(name);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(headers);
+    formatHeader_(sh, headers.length);
+  }
+  sh.appendRow(row);
+}
+
+function setSetting_(ss, key, value) {
+  const sh = ss.getSheetByName(SHEETS.settings);
+  const values = sh.getDataRange().getValues();
+  for (let i=1;i<values.length;i++) if (values[i][0] === key) { sh.getRange(i+1,2).setValue(value); return; }
+  sh.appendRow([key,value,'يُدار تلقائيًا بواسطة Apps Script']);
+}
+
+function getSetting_(ss, key) {
+  const sh = ss.getSheetByName(SHEETS.settings);
+  const values = sh.getDataRange().getValues();
+  for (let i=1;i<values.length;i++) if (values[i][0] === key) return values[i][1];
+  return '';
+}
+
+function stagePoints_(stage) { return ({not_started:0,listened:1,reading:2,memorized:5,mastered:8})[stage] || 0; }
+function json_(data) { return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON); }
+function escapeHtml_(value) { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function setupHtml_(spreadsheetUrl, appConnectUrl) {
+  return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+  body{font-family:system-ui,Tahoma,sans-serif;background:#f5f2e8;color:#173f5f;margin:0;padding:24px}.card{max-width:620px;margin:40px auto;background:#fff;border-radius:24px;padding:28px;box-shadow:0 16px 50px #173f5f1

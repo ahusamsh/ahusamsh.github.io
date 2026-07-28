@@ -1,0 +1,14 @@
+{
+  "name": "رحلة البطل",
+  "short_name": "البطل",
+  "description": "متابعة الروتين والصلوات والقرآن والمكافآت للأطفال",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f2e8",
+  "theme_color": "#173f5f",
+  "icons": [
+    {"src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

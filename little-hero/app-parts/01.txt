@@ -1,0 +1,37 @@
+const CONFIG = window.APP_CONFIG || {};
+const STORAGE_KEY = "little-hero-state-v2";
+const PIN_KEY = "little-hero-parent-pin-v1";
+const API_URL_KEY = "little-hero-google-script-url";
+const QUEUE_KEY = "little-hero-sync-pending";
+const app = document.querySelector("#app");
+
+const PRAYERS = [
+  ["fajr", "الفجر", "🌅"], ["dhuhr", "الظهر", "☀️"], ["asr", "العصر", "🌤️"],
+  ["maghrib", "المغرب", "🌇"], ["isha", "العشاء", "🌙"]
+];
+const STAGES = [
+  ["not_started", "لم أبدأ"], ["listened", "استمعت"], ["reading", "أقرأ بمساعدة"],
+  ["memorized", "حفظت"], ["mastered", "أتقنت ⭐"]
+];
+const STAGE_POINTS = { not_started: 0, listened: 1, reading: 2, memorized: 5, mastered: 8 };
+const DEFAULT_ROUTINES = [
+  ["🛏️", "رتبت سريري", "morning", 2], ["🪥", "غسلت أسناني", "morning", 2],
+  ["🎒", "جهزت حقيبتي", "morning", 2], ["📚", "أنجزت واجبي", "after_school", 4],
+  ["🧸", "رتبت ألعابي", "evening", 3], ["🤝", "ساعدت أسرتي", "anytime", 3],
+  ["🌙", "قرأت أذكار النوم", "evening", 3]
+];
+const DEFAULT_QURAN = [[114,"الناس"],[113,"الفلق"],[112,"الإخلاص"],[111,"المسد"],[110,"النصر"],[109,"الكافرون"],[108,"الكوثر"]];
+const DEFAULT_REWARDS = [["📖","اختيار قصة النوم",10],["🍽️","اختيار وجبة العشاء",15],["🎮","نصف ساعة لعب إضافية",20],["🌳","نزهة عائلية",30]];
+
+let ui = { tab:"today", parent:false, modal:null, toast:"", syncing:false };
+let state = readJSON(STORAGE_KEY, createDemoState());
+function apiUrl(){ return localStorage.getItem(API_URL_KEY) || String(CONFIG.googleScriptUrl || ""); }
+function syncEnabled(){ return Boolean(apiUrl()); }
+function todayKey(){ return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Riyadh",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date()); }
+function newId(){ return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`; }
+function readJSON(key,fallback){ try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch{return fallback} }
+function writeJSON(key,value){ localStorage.setItem(key,JSON.stringify(value)); }
+function esc(value=""){ return String(value).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
+function createDemoState(){ return {date:todayKey(),family:{id:"family-1",name:"أسرتنا"},child:{id:"child-1",displayName:"بطلنا"},routines:DEFAULT_ROUTINES.map(([icon,title,period,points],i)=>({id:`routine-${i+1}`,icon,title,period,points,done:false})),prayers:PRAYERS.map(([name,label,icon])=>({name,label,icon,done:false,onTime:false})),quran:DEFAULT_QURAN.map(([surahNumber,surahName],i)=>({id:`quran-${surahNumber}`,surahNumber,surahName,stage:"not_started",sortOrder:i+1})),rewards:DEFAULT_REWARDS.map(([icon,title,cost],i)=>({id:`reward-${i+1}`,icon,title,cost,active:true})),redemptions:[],bonusPoints:0,points:0,streak:1,lastSync:null}; }
+function ensureToday(){ if(state.date===todayKey())return;state.date=todayKey();state.routines.forEach(x=>x.done=false);state.prayers=PRAYERS.map(([name,label,icon])=>({name,label,icon,done:false,onTime:false}));saveLocal(false); }
+function computedPoints(){ const routines=state.routines.reduce((n,x)=>n+(x.done?Number(x.points||0):0),0);const prayers=state.prayers.reduce((n,x)=>n+(x.done?(x.onTime?3:2):0),0);const quran=state.quran.reduce((n,x)=>n+(STAGE_POINTS[x.stage]||0),0);const spent=state.redemptions.reduce((n,x)=>n+(x.status!=="rejected"?Number(x.cost||0):0),0);return Math.max(0,routines+prayers+quran+Number(state.bonusP
