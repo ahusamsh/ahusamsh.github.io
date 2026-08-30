@@ -1,40 +1,63 @@
 /**
- * Investment HQ — read-only Google Sheets API for the PWA.
+ * Investment HQ — read-only Google Sheets endpoint for the PWA.
  * Deploy as Web App: Execute as "Me"; access "Anyone".
- * Set Script Properties:
+ * Script Properties:
  *   MASTER_SHEET_ID = <Investment HQ Master spreadsheet id>
- *   ACCESS_TOKEN    = <same private token you keep on your device>
+ *   ACCESS_TOKEN    = <private dashboard API token>
+ *
+ * Supports JSON and JSONP. JSONP is used by the GitHub Pages dashboard
+ * so live sync works across origins without relying on CORS headers.
  */
 function doGet(e) {
+  let payload;
   try {
     const props = PropertiesService.getScriptProperties();
     const expected = String(props.getProperty('ACCESS_TOKEN') || '');
     const supplied = String((e && e.parameter && e.parameter.token) || '');
+
     if (!expected || !safeEqual_(supplied, expected)) {
-      return json_({ ok: false, error: 'Unauthorized' });
+      payload = { ok: false, error: 'Unauthorized' };
+      return output_(payload, e);
     }
 
     const spreadsheetId = String(props.getProperty('MASTER_SHEET_ID') || '');
-    if (!spreadsheetId) return json_({ ok: false, error: 'MASTER_SHEET_ID is not configured' });
+    if (!spreadsheetId) {
+      payload = { ok: false, error: 'MASTER_SHEET_ID is not configured' };
+      return output_(payload, e);
+    }
 
     const ss = SpreadsheetApp.openById(spreadsheetId);
-    const projects = normalizeProjects_(readTable_(ss, 'Projects'));
-    const actions = normalizeActions_(readTable_(ss, 'Actions'));
-    const communications = readTable_(ss, 'Communications');
-    const money = readTable_(ss, 'Money');
-
-    return json_({
+    payload = {
       ok: true,
       generatedAt: new Date().toISOString(),
       source: 'Investment HQ - Master Control Center',
-      projects: projects,
-      actions: actions,
-      communications: communications,
-      money: money
-    });
+      projects: normalizeProjects_(readTable_(ss, 'Projects')),
+      actions: normalizeActions_(readTable_(ss, 'Actions')),
+      communications: readTable_(ss, 'Communications'),
+      money: readTable_(ss, 'Money')
+    };
   } catch (err) {
-    return json_({ ok: false, error: String(err && err.message || err) });
+    payload = { ok: false, error: String(err && err.message || err) };
   }
+
+  return output_(payload, e);
+}
+
+function output_(data, e) {
+  const callback = String((e && e.parameter && e.parameter.callback) || '').trim();
+  const json = JSON.stringify(data).replace(/<\//g, '<\\/');
+
+  if (callback) {
+    if (!/^[A-Za-z_$][0-9A-Za-z_$]*$/.test(callback)) {
+      return ContentService.createTextOutput('/* invalid callback */')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(callback + '(' + json + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
+  return ContentService.createTextOutput(json)
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function readTable_(ss, name) {
@@ -87,11 +110,6 @@ function normalizeActions_(rows) {
     relatedCompany: r['Related Company'] || '',
     owner: r['Owner'] || ''
   }));
-}
-
-function json_(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function safeEqual_(a, b) {
