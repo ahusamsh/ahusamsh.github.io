@@ -7,7 +7,7 @@
   <meta name="description" content="Investment HQ — لوحة استعراض مشاريع الاستثمار">
   <title>Investment HQ</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=8">
+  <link rel="stylesheet" href="./styles.css?v=9">
   <script>
     (async()=>{
       try{
@@ -52,6 +52,7 @@
       <div class="top-actions">
         <span id="syncBadge" class="sync-badge snapshot">جارٍ الفحص…</span>
         <button id="refreshBtn" class="icon-btn" title="تحديث العرض" aria-label="تحديث العرض">↻</button>
+        <small style="display:block;width:100%;text-align:left;color:#6f7d8b;font-size:10px;letter-spacing:.12em">BUILD v9</small>
       </div>
     </header>
 
@@ -71,10 +72,7 @@
 
       <section class="section-block">
         <div class="section-head">
-          <div>
-            <p class="eyebrow">PORTFOLIO</p>
-            <h2>المشاريع</h2>
-          </div>
+          <div><p class="eyebrow">PORTFOLIO</p><h2>المشاريع</h2></div>
           <div class="filters">
             <button class="filter active" data-filter="all">الكل</button>
             <button class="filter" data-filter="Critical">حرج</button>
@@ -86,12 +84,7 @@
       </section>
 
       <section class="section-block compact">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">WORKFLOW</p>
-            <h2>طريقة العمل</h2>
-          </div>
-        </div>
+        <div class="section-head"><div><p class="eyebrow">WORKFLOW</p><h2>طريقة العمل</h2></div></div>
         <div class="system-grid">
           <article class="system-row"><span>ChatGPT</span><strong>تنفيذ ومتابعة المشاريع</strong></article>
           <article class="system-row"><span>Google Sheets</span><strong>السجل الرسمي للبيانات</strong></article>
@@ -111,23 +104,14 @@
 
   <template id="projectTemplate">
     <article class="project-card">
-      <div class="project-top">
-        <div>
-          <span class="project-id"></span>
-          <h3 class="project-title"></h3>
-          <p class="project-sub"></p>
-        </div>
-        <span class="priority-badge"></span>
-      </div>
+      <div class="project-top"><div><span class="project-id"></span><h3 class="project-title"></h3><p class="project-sub"></p></div><span class="priority-badge"></span></div>
       <div class="stage"></div>
-      <div class="project-meta">
-        <span class="market"></span>
-        <span class="deadline"></span>
-      </div>
+      <div class="project-meta"><span class="market"></span><span class="deadline"></span></div>
       <div class="next-action"></div>
     </article>
   </template>
 
-  <script src="./app-v8.js?v=8" defer></script>
+  <script src="./app-v8.js?v=9" defer></script>
+  <script src="./sync-status.js?v=9" defer></script>
 </body>
 </html>
