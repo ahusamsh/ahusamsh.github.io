@@ -1,0 +1,15 @@
+INVESTMENT HQ — LIVE SYNC SETUP
+
+1) Open the Investment HQ Master Google Sheet.
+2) Extensions → Apps Script.
+3) Paste Code.gs.
+4) Project Settings → Script Properties:
+   MASTER_SHEET_ID = 1sQLqBbuwpoE5IlHyymjkO4OGSW4glT_u5tZ66yESE1k
+   ACCESS_TOKEN    = your private access token (do not commit it to GitHub)
+5) Deploy → New deployment → Web app.
+   Execute as: Me
+   Who has access: Anyone
+6) Copy the Web App URL.
+7) In the PWA: Settings → paste Web App URL + ACCESS_TOKEN → Save.
+
+The endpoint is read-only. The Master Google Sheet remains the source of truth.
