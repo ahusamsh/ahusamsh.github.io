@@ -96,7 +96,7 @@ function installEmailSyncTrigger() {
   const props = PropertiesService.getScriptProperties();
   const spreadsheetId = String(props.getProperty('MASTER_SHEET_ID') || '');
   if (!spreadsheetId) throw new Error('MASTER_SHEET_ID is not configured');
-  GmailApp.getInboxThreads(0,1); // forces Gmail authorization
+  GmailApp.getInboxThreads(0,1);
   const ss = SpreadsheetApp.openById(spreadsheetId);
   syncEmailTracker_(ss, readTable_(ss,'Projects'), props);
   ScriptApp.getProjectTriggers().forEach(function(t){
@@ -122,7 +122,7 @@ function syncEmailTracker_(ss, projectRows, props) {
 
   projectRows.forEach(function(p){
     const projectId = String(p['Project ID'] || '').trim();
-    const projectName = String(p['Project'] || '').trim();
+    const projectName = String(p['Arabic Name'] || p['Project'] || '').trim();
     const labelName = String(p['Gmail Label'] || '').trim();
     if (!projectId || !labelName) return;
     const label = GmailApp.getUserLabelByName(labelName);
@@ -216,16 +216,20 @@ function readTable_(ss, name) {
 }
 
 function normalizeProjects_(rows) {
-  const ar = {
-    'Bitumen':'البيتومين','Sulfur':'الكبريت','Electric Buses':'الحافلات الكهربائية','Solar Irrigation':'الري الشمسي',
-    'Soda Ash':'كربونات الصوديوم','Dates Export':'تصدير التمور','WaterAid Nigeria Bwari Brokerage':'ووترإيد نيجيريا — بواري',
-    'Ghana Tablets 2500':'أجهزة لوحية — غانا','UK Packing Cubes':'مكعبات تنظيم الأمتعة — بريطانيا','US FIBC Brokerage':'أكياس FIBC — أمريكا',
-    'UK Filters':'فلاتر صناعية — بريطانيا','Canada Dairy':'معدات ألبان — كندا','Belgium Cold Chain':'سلسلة تبريد — بلجيكا'
-  };
   return rows.map(function(r){ return {
-    id:r['Project ID']||'', name:r['Project']||'', nameAr:ar[r['Project']]||r['Project']||'', category:r['Category']||'', market:r['Market']||'',
-    status:r['Status']||'', priority:r['Priority']||'', stage:r['Stage']||'', deadline:r['Deadline']||'', score:r['Score']||'',
-    nextAction:r['Next Action']||'', lastUpdate:r['Last Update']||'', gmailLabel:r['Gmail Label']||''
+    id:r['Project ID']||'',
+    name:r['Project']||'',
+    nameAr:r['Arabic Name']||r['Project']||'',
+    category:r['Category']||'',
+    market:r['Market']||'',
+    status:r['Status']||'',
+    priority:r['Priority']||'',
+    stage:r['Stage']||'',
+    deadline:r['Deadline']||'',
+    score:r['Score']||'',
+    nextAction:r['Next Action']||'',
+    lastUpdate:r['Last Update']||'',
+    gmailLabel:r['Gmail Label']||''
   }; });
 }
 
