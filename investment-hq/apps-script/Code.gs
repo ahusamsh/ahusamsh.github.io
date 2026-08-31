@@ -6,19 +6,21 @@
  *   MASTER_SHEET_ID = <Investment HQ Master spreadsheet id>
  *   ACCESS_TOKEN    = <private dashboard API token>
  *
- * Uses HtmlService + top-level POST relay to avoid ContentService redirect/404,
- * CORS, JSONP and iframe restrictions.
+ * HtmlService is sandboxed by Google. Automatic top-level navigation is
+ * blocked, so the relay returns a single user-activated target=_top link.
  */
 
 const DASHBOARD_URL_ = 'https://darbpath.com/investment-hq/';
 
 function doGet() {
   return HtmlService.createHtmlOutput(
-    '<!doctype html><meta charset="utf-8">' +
+    '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>Investment HQ</title>' +
-    '<p style="font-family:system-ui;text-align:center;margin-top:20vh">Investment HQ relay is ready.</p>' +
-    '<script>setTimeout(function(){location.replace(' + JSON.stringify(DASHBOARD_URL_) + ');},700);</script>'
+    '<base target="_top"><title>Investment HQ</title></head><body style="margin:0;background:#0b1016;color:#fff;font-family:system-ui">' +
+    '<main style="min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box">' +
+    '<div style="text-align:center"><h2>Investment HQ</h2><p style="color:#9aa7b5">الربط جاهز.</p>' +
+    '<a href="' + DASHBOARD_URL_ + '" target="_top" style="display:inline-block;margin-top:16px;padding:14px 22px;border-radius:14px;background:#67dfa2;color:#07120d;text-decoration:none;font-weight:700">فتح لوحة المتابعة</a>' +
+    '</div></main></body></html>'
   ).setTitle('Investment HQ Relay');
 }
 
@@ -39,15 +41,29 @@ function relayOutput_(payload, e) {
   const gz = Utilities.gzip(Utilities.newBlob(envelope, 'application/json'));
   const encoded = Utilities.base64EncodeWebSafe(gz.getBytes()).replace(/=+$/, '');
   const destination = DASHBOARD_URL_ + '#ihq=' + encoded + '&n=' + nonce;
+  const safeHref = escapeHtml_(destination);
 
-  const html = '<!doctype html><html><head><meta charset="utf-8">' +
+  const html = '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>Investment HQ</title></head><body>' +
-    '<p style="font-family:system-ui;text-align:center;margin-top:20vh">جارٍ تحديث لوحة المتابعة…</p>' +
-    '<script>location.replace(' + JSON.stringify(destination) + ');</script>' +
-    '</body></html>';
+    '<base target="_top"><title>Investment HQ</title></head>' +
+    '<body style="margin:0;background:#0b1016;color:#fff;font-family:system-ui">' +
+    '<main style="min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box">' +
+    '<section style="width:min(92vw,420px);padding:28px;border:1px solid #263341;border-radius:24px;background:#101821;text-align:center;box-sizing:border-box">' +
+    '<div style="font-size:38px">✓</div>' +
+    '<h2 style="margin:12px 0 8px">تم جلب البيانات</h2>' +
+    '<p style="margin:0;color:#9aa7b5;line-height:1.8">اضغط الزر للعودة إلى لوحة المتابعة وتطبيق التحديث.</p>' +
+    '<a href="' + safeHref + '" target="_top" rel="noreferrer" style="display:block;margin-top:22px;padding:15px 18px;border-radius:14px;background:#67dfa2;color:#07120d;text-decoration:none;font-weight:800">فتح لوحة المتابعة</a>' +
+    '</section></main></body></html>';
 
   return HtmlService.createHtmlOutput(html).setTitle('Investment HQ Relay');
+}
+
+function escapeHtml_(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 function buildPayload_(e) {
