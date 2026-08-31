@@ -1,19 +1,33 @@
 /**
  * Investment HQ — read-only Google Sheets endpoint for the GitHub PWA.
+ * Direct architecture: GitHub PWA -> Apps Script -> Google Sheets.
  * Deploy as Web App: Execute as "Me"; access "Anyone".
  * Script Properties:
  *   MASTER_SHEET_ID = <Investment HQ Master spreadsheet id>
  *   ACCESS_TOKEN    = <private dashboard API token>
  *
- * mode=bridge returns a tiny HTML page that posts the payload to
- * https://darbpath.com. This avoids CORS/JSONP issues on Android while
- * keeping the architecture direct: GitHub PWA -> Apps Script -> Sheets.
+ * Supports JSON and JSONP. The PWA uses JSONP with retries because Google
+ * Apps Script ContentService currently has intermittent redirect/404 issues.
  */
 function doGet(e) {
   const payload = buildPayload_(e);
-  const mode = String((e && e.parameter && e.parameter.mode) || '');
-  if (mode === 'bridge') return bridgeOutput_(payload, e);
-  return ContentService.createTextOutput(JSON.stringify(payload))
+  return output_(payload, e);
+}
+
+function output_(data, e) {
+  const callback = String((e && e.parameter && e.parameter.callback) || '').trim();
+  const json = JSON.stringify(data).replace(/<\//g, '<\\/');
+
+  if (callback) {
+    if (!/^[A-Za-z_$][0-9A-Za-z_$]*$/.test(callback)) {
+      return ContentService.createTextOutput('/* invalid callback */')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(callback + '(' + json + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
+  return ContentService.createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -22,12 +36,15 @@ function buildPayload_(e) {
     const props = PropertiesService.getScriptProperties();
     const expected = String(props.getProperty('ACCESS_TOKEN') || '');
     const supplied = String((e && e.parameter && e.parameter.token) || '');
+
     if (!expected || !safeEqual_(supplied, expected)) {
       return { ok: false, error: 'Unauthorized' };
     }
 
     const spreadsheetId = String(props.getProperty('MASTER_SHEET_ID') || '');
-    if (!spreadsheetId) return { ok: false, error: 'MASTER_SHEET_ID is not configured' };
+    if (!spreadsheetId) {
+      return { ok: false, error: 'MASTER_SHEET_ID is not configured' };
+    }
 
     const ss = SpreadsheetApp.openById(spreadsheetId);
     return {
@@ -42,22 +59,6 @@ function buildPayload_(e) {
   } catch (err) {
     return { ok: false, error: String(err && err.message || err) };
   }
-}
-
-function bridgeOutput_(payload, e) {
-  const nonce = String((e && e.parameter && e.parameter.nonce) || '').replace(/[^0-9a-f]/gi, '').slice(0, 64);
-  const message = { type: 'investment-hq-live', nonce: nonce, payload: payload };
-  const json = JSON.stringify(message)
-    .replace(/</g, '\\u003c')
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029');
-
-  const html = '<!doctype html><meta charset="utf-8">' +
-    '<script>window.top.postMessage(' + json + ',"https://darbpath.com");</script>';
-
-  return HtmlService.createHtmlOutput(html)
-    .setTitle('Investment HQ Bridge')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function readTable_(ss, name) {
