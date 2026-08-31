@@ -1,0 +1,51 @@
+/* BUILD v24 — strict mobile viewport containment */
+html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+body{min-width:0}
+.app,#app,main,.topbar,.chat-bar,.metrics,.section,.section-head,.section-tools,.focus-list,.upcoming-list,.waiting-list,.projects-list,.project-row,.project-main,.project-numbers,.modal,.modal-panel,.modal-head,.timeline-list,.timeline-event,.timeline-body,.commands-list{min-width:0;max-width:100%}
+.app{width:100%;max-width:1360px;overflow-x:hidden}
+.topbar>*{min-width:0}.brand{min-width:0;overflow:hidden}.brand h1,.brand-path{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-actions{flex:0 0 auto;min-width:max-content}
+.chat-bar{width:100%;overflow:hidden}.chat-btn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.metrics{width:100%}.metric{min-width:0}
+.section{width:100%;overflow:hidden}.section-head>*{min-width:0}
+.focus-row,.project-row,.waiting-row{width:100%;overflow:hidden}
+.row-open,.project-main,.waiting-row button{min-width:0;max-width:100%;overflow:hidden}
+.row-title,.row-sub,.project-next,.waiting-row small,.timeline-body,.timeline-body h4,.timeline-body p,.project-current strong,.command-btn span,.command-btn small{overflow-wrap:anywhere;word-break:break-word}
+.project-numbers{max-width:100%;overflow:hidden}
+.mobile-bar{width:auto;max-width:calc(100vw - 18px)}
+.modal{width:100vw;max-width:100vw;overflow:hidden}.modal-panel{width:100%;max-width:100vw;overflow-x:hidden}.modal-head>div{min-width:0}.modal-head h2{overflow-wrap:anywhere}
+.timeline-body a{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:520px){
+  .app{width:100%;max-width:100vw;padding-left:9px;padding-right:9px}
+  .topbar{width:100%;max-width:100%}
+  .top-actions{gap:4px}.top-btn,.icon-btn{flex:0 0 auto}
+  .chat-bar{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .section-head{width:100%}
+  #projectsSection .section-head{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:7px}
+  #projectsSection .section-tools{width:100%;display:grid;grid-template-columns:1fr;justify-items:stretch}
+  #projectsSection .last-sync{justify-self:start}
+  #projectsSection .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;max-width:100%;overflow:hidden;gap:3px}
+  #projectsSection .filter{min-width:0;padding:5px 2px;overflow:hidden;text-overflow:ellipsis}
+  .project-row{grid-template-columns:minmax(0,1fr)}
+  .project-title{max-width:100%;flex-wrap:wrap}
+  .project-next{width:100%;max-width:100%;white-space:normal;overflow:visible;text-overflow:clip}
+  .project-numbers{width:100%;display:flex;flex-wrap:wrap;gap:7px;white-space:normal;overflow:visible}
+  .project-numbers span{white-space:nowrap}
+  .project-numbers .arrow{margin-right:auto;flex:0 0 auto}
+  .focus-row{grid-template-columns:minmax(0,1fr)}
+  .row-side{max-width:100%;display:flex;flex-wrap:wrap;justify-content:flex-start}
+  .waiting-row{grid-template-columns:minmax(0,1fr) auto}
+  .waiting-row>span{max-width:72px;overflow:hidden;text-overflow:ellipsis}
+  .mini-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .commands-list{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .command-btn{min-width:0;overflow:hidden}
+  .modal{padding:0}.modal-panel{max-width:100vw;width:100vw;padding-left:10px;padding-right:10px}
+}
+@media(max-width:360px){
+  .app{padding-left:7px;padding-right:7px}
+  .brand-path{display:none}
+  .topbar{gap:4px}.brand h1{font-size:15px}.top-btn,.icon-btn{padding:6px;font-size:8px}
+  .chat-btn{font-size:8px;padding:7px 1px}
+  .metric{padding:8px}.metric strong{font-size:21px}.metric span{font-size:9px}
+  .commands-list{grid-template-columns:minmax(0,1fr)}
+}
