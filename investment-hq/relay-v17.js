@@ -1,8 +1,8 @@
-// Investment HQ direct Apps Script top-level relay — BUILD v17
+// Investment HQ direct Apps Script top-level relay — BUILD v21
 // GitHub PWA -> POST Apps Script -> Google Sheets -> compressed URL fragment -> GitHub PWA.
 (() => {
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMYBJmdGhdYD-x649Dqauh8-vt_zjZkL9Ve-z00L0w2djsxwtOsf_eLIRWQATLFA1Zhw/exec';
-  const NONCE_KEY = 'ihq_relay_nonce_v17';
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzEcf3pIZ7LSqCEs-SJw6F5wleAbC6uhGVUbcmb9Uuvz1spZGHf1IyTe8737yQGPZSkaQ/exec';
+  const NONCE_KEY = 'ihq_relay_nonce_v21';
   let relayPayload = null;
   let relayError = null;
 
