@@ -3,99 +3,149 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1016">
-  <meta name="description" content="Investment HQ — لوحة استعراض مشاريع الاستثمار">
-  <title>Investment HQ</title>
-  <link rel="manifest" href="./manifest.webmanifest?v=17">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Investment HQ — تقرير متابعة المشاريع الاستثمارية">
+  <title>Investment HQ | تقرير المتابعة</title>
+  <link rel="manifest" href="./manifest.webmanifest?v=18">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=17">
+  <link rel="stylesheet" href="./styles.css?v=18">
 </head>
 <body>
   <div id="lockScreen" class="lock-screen">
     <section class="lock-card">
-      <div class="brand-mark">IH</div>
-      <div>
-        <p class="eyebrow">INVESTMENT HQ</p>
-        <h1>مركز متابعة المشاريع</h1>
-        <p class="muted">أدخل مفتاح الوصول لعرض بيانات المشاريع على هذا الجهاز.</p>
-      </div>
+      <div class="lock-path">C:\INVESTMENT\HQ\AUTH&gt;</div>
+      <h1>مركز متابعة الاستثمار</h1>
+      <p>واجهة داخلية للعرض والمراقبة. أدخل مفتاح الوصول لفك بيانات الجهاز.</p>
       <form id="unlockForm" class="unlock-form">
         <label for="accessKey">مفتاح الوصول</label>
-        <input id="accessKey" type="password" autocomplete="current-password" required>
+        <input id="accessKey" type="password" autocomplete="current-password" required placeholder="••••••••••••">
+        <button class="btn" type="submit">[ فتح التقرير ]</button>
         <label class="check-row"><input id="rememberKey" type="checkbox" checked><span>تذكّر المفتاح على هذا الجهاز</span></label>
-        <button class="btn primary" type="submit">فتح الداشبورد</button>
         <p id="lockError" class="form-error" aria-live="polite"></p>
       </form>
-      <p class="security-note">الداشبورد للعرض فقط. تنفيذ أعمال المشاريع يتم داخل محادثات ChatGPT.</p>
+      <p class="security-note">العرض فقط — التنفيذ والمتابعة التشغيلية تتم داخل محادثات ChatGPT، وGoogle Sheets هو السجل الرسمي.</p>
     </section>
   </div>
 
   <div id="app" class="app hidden">
-    <header class="topbar">
+    <header class="terminal-header">
       <div>
-        <p class="eyebrow">INVESTMENT HQ</p>
-        <h1>لوحة المتابعة</h1>
+        <div class="cmd-path">C:\INVESTMENT\HQ\REPORT&gt;</div>
+        <h1 class="page-title">تقرير متابعة المشاريع الاستثمارية</h1>
+        <p class="page-subtitle">مركز موحد للمتابعة — عرض مباشر من السجل الرسمي</p>
       </div>
-      <div class="top-actions">
-        <span id="syncBadge" class="sync-badge snapshot">جارٍ الفحص…</span>
-        <button id="refreshBtn" class="icon-btn" title="تحديث العرض" aria-label="تحديث العرض">↻</button>
-        <small style="display:block;width:100%;text-align:left;color:#6f7d8b;font-size:10px;letter-spacing:.12em">BUILD v17</small>
+      <div class="header-status">
+        <span id="syncBadge" class="system-status pending">● جارٍ فحص الاتصال…</span>
+        <span class="build-tag">BUILD v18 / READ ONLY</span>
       </div>
     </header>
 
     <main>
-      <section class="hero-grid" id="metricsGrid"></section>
-
-      <section class="attention-card">
-        <div class="section-head">
-          <div><p class="eyebrow">CURRENT FOLLOW-UP</p><h2>المتابعات الجارية</h2></div>
-          <span id="attentionCount" class="count-pill">0</span>
+      <section class="report-section" aria-labelledby="summaryTitle">
+        <div class="section-title-row">
+          <div>
+            <p class="section-kicker">01 — PORTFOLIO SUMMARY</p>
+            <h2 id="summaryTitle" class="section-title">ملخص المحفظة</h2>
+          </div>
+          <span class="section-meta">البيانات تُحتسب تلقائيًا من جميع المشاريع الحالية</span>
         </div>
-        <div id="attentionList" class="attention-list"></div>
+        <div id="metricsGrid" class="metrics-grid"></div>
       </section>
 
-      <section class="section-block">
-        <div class="section-head">
-          <div><p class="eyebrow">PORTFOLIO</p><h2>المشاريع</h2></div>
-          <div class="filters">
-            <button class="filter active" data-filter="all">الكل</button>
-            <button class="filter" data-filter="Critical">حرج</button>
-            <button class="filter" data-filter="High">مرتفع</button>
-            <button class="filter" data-filter="Medium">متوسط</button>
+      <section class="report-section" aria-labelledby="followupTitle">
+        <div class="section-title-row">
+          <div>
+            <p class="section-kicker">02 — CURRENT FOLLOW-UP</p>
+            <h2 id="followupTitle" class="section-title">المتابعات الجارية</h2>
+          </div>
+          <span class="section-meta">إجمالي المتابعات: <strong id="attentionCount">0</strong></span>
+        </div>
+        <div class="table-wrap">
+          <table class="report-table followup-table">
+            <thead>
+              <tr>
+                <th class="sticky-col">#</th>
+                <th>المشروع</th>
+                <th>الإجراء الحالي</th>
+                <th>الأولوية</th>
+                <th>الموعد / الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="attentionBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="actionsTitle">
+        <div class="section-title-row">
+          <div>
+            <p class="section-kicker">03 — REPORT ACTIONS</p>
+            <h2 id="actionsTitle" class="section-title">أوامر التقرير</h2>
+          </div>
+          <span class="section-meta">لا توجد عمليات بيع أو تعديل من هذه الواجهة</span>
+        </div>
+        <div class="command-bar">
+          <button id="refreshBtn" class="cmd-btn primary-command">[ مزامنة الآن ]</button>
+          <button id="showAllBtn" class="cmd-btn">[ عرض كل المشاريع ]</button>
+          <button id="installBtn" class="cmd-btn">[ تثبيت التطبيق ]</button>
+          <button id="lockBtn" class="cmd-btn">[ قفل التقرير ]</button>
+        </div>
+        <p class="command-hint">عند المزامنة يتم جلب آخر نسخة من Google Sheets عبر Apps Script. أي مشروع جديد مسجّل في الـMaster يظهر تلقائيًا دون تعديل برمجي للواجهة.</p>
+      </section>
+
+      <section id="projectsSection" class="report-section" aria-labelledby="projectsTitle">
+        <div class="section-title-row">
+          <div>
+            <p class="section-kicker">04 — PROJECT REGISTER</p>
+            <h2 id="projectsTitle" class="section-title">سجل المشاريع</h2>
+          </div>
+          <div class="filters" aria-label="تصفية المشاريع">
+            <button class="filter active" data-filter="all">[ الكل ]</button>
+            <button class="filter" data-filter="Critical">[ حرج ]</button>
+            <button class="filter" data-filter="High">[ مرتفع ]</button>
+            <button class="filter" data-filter="Medium">[ متوسط ]</button>
+            <span class="section-meta">المعروض: <strong id="projectCountLabel">0 / 0</strong></span>
           </div>
         </div>
-        <div id="projectsGrid" class="projects-grid"></div>
-      </section>
-
-      <section class="section-block compact">
-        <div class="section-head"><div><p class="eyebrow">WORKFLOW</p><h2>طريقة العمل</h2></div></div>
-        <div class="system-grid">
-          <article class="system-row"><span>ChatGPT</span><strong>تنفيذ ومتابعة المشاريع</strong></article>
-          <article class="system-row"><span>Google Sheets</span><strong>السجل الرسمي للبيانات</strong></article>
-          <article class="system-row"><span>Dashboard</span><strong>عرض ومراقبة فقط</strong></article>
-          <article class="system-row"><span id="lastUpdatedLabel">—</span><strong>آخر تحديث للبيانات</strong></article>
+        <div class="table-wrap">
+          <table class="report-table project-table">
+            <thead>
+              <tr>
+                <th class="sticky-col">المعرف</th>
+                <th>المشروع</th>
+                <th>السوق</th>
+                <th>المرحلة</th>
+                <th>الأولوية</th>
+                <th>الموعد</th>
+                <th>المتابعة الحالية</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="projectsBody"></tbody>
+          </table>
         </div>
       </section>
-    </main>
 
-    <nav class="bottom-nav" aria-label="التنقل">
-      <button class="nav-item active" data-scroll="top"><span>⌂</span><small>الرئيسية</small></button>
-      <button class="nav-item" data-scroll="projects"><span>◫</span><small>المشاريع</small></button>
-      <button class="nav-item" id="installBtn"><span>⇩</span><small>تثبيت</small></button>
-      <button class="nav-item" id="lockBtn"><span>⌁</span><small>قفل</small></button>
-    </nav>
+      <section class="report-section" aria-labelledby="systemTitle">
+        <div class="section-title-row">
+          <div>
+            <p class="section-kicker">05 — SYSTEM STATUS</p>
+            <h2 id="systemTitle" class="section-title">حالة النظام ومصدر البيانات</h2>
+          </div>
+        </div>
+        <div class="system-grid">
+          <div class="system-cell"><span class="system-label">مصدر البيانات</span><strong id="sourceLabel" class="system-value">—</strong></div>
+          <div class="system-cell"><span class="system-label">إجمالي المشاريع</span><strong id="totalProjectsLabel" class="system-value">0</strong></div>
+          <div class="system-cell"><span class="system-label">إجمالي الإجراءات</span><strong id="totalActionsLabel" class="system-value">0</strong></div>
+          <div class="system-cell"><span class="system-label">آخر تحديث مباشر</span><strong id="lastUpdatedLabel" class="system-value live-value">—</strong></div>
+        </div>
+        <div class="footer-line"><span>GITHUB PWA → GOOGLE APPS SCRIPT → GOOGLE SHEETS</span><span>INVESTMENT HQ / INTERNAL REPORT</span></div>
+      </section>
+    </main>
   </div>
 
-  <template id="projectTemplate">
-    <article class="project-card">
-      <div class="project-top"><div><span class="project-id"></span><h3 class="project-title"></h3><p class="project-sub"></p></div><span class="priority-badge"></span></div>
-      <div class="stage"></div>
-      <div class="project-meta"><span class="market"></span><span class="deadline"></span></div>
-      <div class="next-action"></div>
-    </article>
-  </template>
-
-  <script src="./app-v10.js?v=17" defer></script>
-  <script src="./relay-v17.js?v=17" defer></script>
+  <script src="./app-v18.js?v=18" defer></script>
+  <script src="./relay-v18.js?v=18" defer></script>
 </body>
 </html>
