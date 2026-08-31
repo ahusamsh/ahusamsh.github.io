@@ -53,7 +53,7 @@ function bridgeOutput_(payload, e) {
     .replace(/\u2029/g, '\\u2029');
 
   const html = '<!doctype html><meta charset="utf-8">' +
-    '<script>window.top.postMessage(' + json + ',"https://darbpath.com");<\/script>';
+    '<script>window.top.postMessage(' + json + ',"https://darbpath.com");</script>';
 
   return HtmlService.createHtmlOutput(html)
     .setTitle('Investment HQ Bridge')
