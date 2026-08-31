@@ -1,6 +1,15 @@
-// Investment HQ direct Apps Script top-level relay — BUILD v21
+// Investment HQ direct Apps Script top-level relay — BUILD v24
 // GitHub PWA -> POST Apps Script -> Google Sheets -> compressed URL fragment -> GitHub PWA.
 (() => {
+  // Strict mobile viewport fix loaded independently so old HTML caches cannot keep the wide layout.
+  if (!document.querySelector('link[data-ihq-mobile-fix]')) {
+    const mobileFix = document.createElement('link');
+    mobileFix.rel = 'stylesheet';
+    mobileFix.href = './mobile-fix-v24.css?v=24';
+    mobileFix.dataset.ihqMobileFix = '24';
+    document.head.appendChild(mobileFix);
+  }
+
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzEcf3pIZ7LSqCEs-SJw6F5wleAbC6uhGVUbcmb9Uuvz1spZGHf1IyTe8737yQGPZSkaQ/exec';
   const NONCE_KEY = 'ihq_relay_nonce_v21';
   let relayPayload = null;
