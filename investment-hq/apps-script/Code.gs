@@ -1,34 +1,53 @@
 /**
- * Investment HQ — read-only Google Sheets endpoint for the GitHub PWA.
+ * Investment HQ — read-only Google Sheets relay for the GitHub PWA.
  * Direct architecture: GitHub PWA -> Apps Script -> Google Sheets.
  * Deploy as Web App: Execute as "Me"; access "Anyone".
  * Script Properties:
  *   MASTER_SHEET_ID = <Investment HQ Master spreadsheet id>
  *   ACCESS_TOKEN    = <private dashboard API token>
  *
- * Supports JSON and JSONP. The PWA uses JSONP with retries because Google
- * Apps Script ContentService currently has intermittent redirect/404 issues.
+ * Uses HtmlService + top-level POST relay to avoid ContentService redirect/404,
+ * CORS, JSONP and iframe restrictions.
  */
-function doGet(e) {
-  const payload = buildPayload_(e);
-  return output_(payload, e);
+
+const DASHBOARD_URL_ = 'https://darbpath.com/investment-hq/';
+
+function doGet() {
+  return HtmlService.createHtmlOutput(
+    '<!doctype html><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Investment HQ</title>' +
+    '<p style="font-family:system-ui;text-align:center;margin-top:20vh">Investment HQ relay is ready.</p>' +
+    '<script>setTimeout(function(){location.replace(' + JSON.stringify(DASHBOARD_URL_) + ');},700);</script>'
+  ).setTitle('Investment HQ Relay');
 }
 
-function output_(data, e) {
-  const callback = String((e && e.parameter && e.parameter.callback) || '').trim();
-  const json = JSON.stringify(data).replace(/<\//g, '<\\/');
-
-  if (callback) {
-    if (!/^[A-Za-z_$][0-9A-Za-z_$]*$/.test(callback)) {
-      return ContentService.createTextOutput('/* invalid callback */')
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
-    }
-    return ContentService.createTextOutput(callback + '(' + json + ');')
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+function doPost(e) {
+  const mode = String((e && e.parameter && e.parameter.mode) || '');
+  if (mode !== 'relay') {
+    return relayOutput_({ ok: false, error: 'Invalid relay mode' }, e);
   }
+  return relayOutput_(buildPayload_(e), e);
+}
 
-  return ContentService.createTextOutput(json)
-    .setMimeType(ContentService.MimeType.JSON);
+function relayOutput_(payload, e) {
+  const nonce = String((e && e.parameter && e.parameter.nonce) || '')
+    .replace(/[^0-9a-f]/gi, '')
+    .slice(0, 64);
+
+  const envelope = JSON.stringify({ payload: payload });
+  const gz = Utilities.gzip(Utilities.newBlob(envelope, 'application/json'));
+  const encoded = Utilities.base64EncodeWebSafe(gz.getBytes()).replace(/=+$/, '');
+  const destination = DASHBOARD_URL_ + '#ihq=' + encoded + '&n=' + nonce;
+
+  const html = '<!doctype html><html><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Investment HQ</title></head><body>' +
+    '<p style="font-family:system-ui;text-align:center;margin-top:20vh">جارٍ تحديث لوحة المتابعة…</p>' +
+    '<script>location.replace(' + JSON.stringify(destination) + ');</script>' +
+    '</body></html>';
+
+  return HtmlService.createHtmlOutput(html).setTitle('Investment HQ Relay');
 }
 
 function buildPayload_(e) {
