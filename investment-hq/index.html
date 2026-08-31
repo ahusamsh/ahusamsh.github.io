@@ -41,7 +41,15 @@
     <main>
       <section id="metrics" class="metrics" aria-label="المؤشرات"></section>
 
-      <section id="mailSection" class="section">
+      <section class="section">
+        <div class="section-head">
+          <h2>رسائل لم يردوا عليها</h2>
+          <span id="waitingCount" class="count">0</span>
+        </div>
+        <div id="waitingList" class="mail-list"></div>
+      </section>
+
+      <section class="section">
         <div class="section-head">
           <h2>رسائل تحتاج ردك</h2>
           <span id="mailCount" class="count">0</span>
