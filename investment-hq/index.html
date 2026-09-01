@@ -6,14 +6,15 @@
   <meta name="theme-color" content="#000000">
   <meta name="color-scheme" content="dark">
   <title>الاستثمار</title>
-  <link rel="manifest" href="./manifest.webmanifest?v=25">
+  <link rel="manifest" href="./manifest.webmanifest?v=26">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles-v25.css?v=25">
+  <link rel="stylesheet" href="./styles-v23.css?v=26">
+  <link rel="stylesheet" href="./mobile-fix-v24.css?v=26">
 </head>
 <body>
   <div id="lockScreen" class="lock-screen">
     <section class="lock-card">
-      <div class="brand-path">C:\استثمار\دخول&gt;</div>
+      <div class="cmd">C:\استثمار\دخول&gt;</div>
       <h1>الاستثمار</h1>
       <form id="unlockForm" class="unlock-form">
         <label for="accessKey">مفتاح الوصول</label>
@@ -27,34 +28,55 @@
 
   <div id="app" class="app hidden">
     <header class="topbar">
-      <div class="brand"><div class="brand-path">C:\استثمار&gt;</div><h1>الاستثمار</h1></div>
-      <div class="top-actions"><span id="syncBadge" class="sync-status syncing">● تحديث</span><button id="commandsBtn" type="button">الأوامر</button><button id="refreshBtn" type="button" aria-label="تحديث">↻</button></div>
+      <div class="brand">
+        <div class="brand-path">C:\استثمار\لوحة&gt;</div>
+        <h1>الاستثمار</h1>
+      </div>
+      <div class="top-actions">
+        <span id="syncBadge" class="sync-status syncing">● جارٍ التحديث</span>
+        <button id="commandsBtn" class="top-btn" type="button">الأوامر</button>
+        <button id="refreshBtn" class="icon-btn" type="button" aria-label="تحديث">↻</button>
+      </div>
     </header>
 
     <nav id="chatBar" class="chat-bar" aria-label="المحادثات المعتمدة"></nav>
 
     <main>
-      <section id="summary" class="summary" aria-label="ملخص جميع المشاريع"></section>
+      <section id="metrics" class="metrics" aria-label="المؤشرات المهمة"></section>
 
       <section class="section">
-        <div class="section-head"><h2>يحتاجك الآن</h2><span id="attentionCount" class="count">0</span></div>
-        <div id="attentionList"></div>
-        <button id="attentionListMore" class="more-btn hidden" type="button"></button>
+        <div class="section-head"><h2>يحتاجك الآن <span id="attentionCount" class="count">0</span></h2></div>
+        <div id="attentionList" class="focus-list"></div>
+        <button id="attentionMore" class="more-btn hidden" type="button"></button>
       </section>
 
       <section class="section">
-        <div class="section-head"><h2>آخر العمليات</h2><span id="operationsCount" class="count">0</span></div>
-        <div id="operationsList"></div>
-        <button id="operationsListMore" class="more-btn hidden" type="button"></button>
+        <div class="section-head"><h2>المتابعات القريبة <span id="upcomingCount" class="count">0</span></h2></div>
+        <div id="upcomingList" class="upcoming-list"></div>
+        <button id="upcomingMore" class="more-btn hidden" type="button"></button>
       </section>
 
-      <section class="section">
+      <section class="section" id="projectsSection">
         <div class="section-head">
-          <h2>المشاريع</h2>
-          <div class="projects-tools"><span id="lastSync" class="last-sync">—</span><div class="filters"><button class="filter active" data-filter="all" type="button">الكل</button><button class="filter" data-filter="Critical" type="button">حرج</button><button class="filter" data-filter="High" type="button">مرتفع</button><button class="filter" data-filter="Medium" type="button">متوسط</button></div><span id="projectsCount" class="count">0</span></div>
+          <h2>المشاريع <span id="projectsCount" class="count">0</span></h2>
+          <div class="section-tools">
+            <span id="lastSync" class="last-sync">—</span>
+            <div class="filters">
+              <button class="filter active" data-filter="all" type="button">الكل</button>
+              <button class="filter" data-filter="Critical" type="button">حرج</button>
+              <button class="filter" data-filter="High" type="button">مرتفع</button>
+              <button class="filter" data-filter="Medium" type="button">متوسط</button>
+            </div>
+          </div>
         </div>
-        <div id="projectsList"></div>
-        <button id="projectsListMore" class="more-btn hidden" type="button"></button>
+        <div id="projectsList" class="projects-list"></div>
+        <button id="projectsMore" class="more-btn hidden" type="button"></button>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2>بانتظار الطرف الآخر <span id="waitingCount" class="count">0</span></h2></div>
+        <div id="waitingList" class="waiting-list"></div>
+        <button id="waitingMore" class="more-btn hidden" type="button"></button>
       </section>
     </main>
 
@@ -63,25 +85,24 @@
 
   <div id="projectModal" class="modal hidden">
     <section class="modal-panel">
-      <header class="modal-head"><div><span id="projectId" class="pid"></span><h2 id="projectTitle"></h2></div><button class="close-btn" data-close type="button">×</button></header>
-      <div id="projectProgress"></div>
-      <div id="projectStats" class="project-stats"></div>
+      <header class="modal-head"><div><span id="projectId" class="pid"></span><h2 id="projectTitle"></h2></div><button class="close-btn" data-close type="button" aria-label="إغلاق">×</button></header>
+      <div id="projectStats"></div>
       <div id="projectCurrent" class="project-current"></div>
-      <div id="selectedEvent"></div>
-      <section class="modal-section"><h3>خط سير المشروع</h3><div id="timelineList"></div></section>
-      <section class="modal-section"><h3>أوامر المشروع</h3><div id="projectCommands"></div></section>
+      <section class="modal-section"><h3>خط سير المشروع</h3><div id="timelineList" class="timeline-list"></div></section>
+      <section class="modal-section"><h3>أوامر المشروع</h3><div id="projectCommands" class="commands-list"></div></section>
     </section>
   </div>
 
   <div id="commandsModal" class="modal hidden">
     <section class="modal-panel">
-      <header class="modal-head"><h2>أوامر جميع المشاريع</h2><button class="close-btn" data-close type="button">×</button></header>
+      <header class="modal-head"><h2 id="commandsTitle">أوامر جميع المشاريع</h2><button class="close-btn" data-close type="button" aria-label="إغلاق">×</button></header>
       <div id="commandsList" class="commands-list modal-section"></div>
     </section>
   </div>
 
   <div id="toast" class="toast"></div>
-  <script src="./app-v25.js?v=25" defer></script>
-  <script src="./relay-v17.js?v=25" defer></script>
+
+  <script src="./app-v23.js?v=26" defer></script>
+  <script src="./relay-v17.js?v=26" defer></script>
 </body>
 </html>
