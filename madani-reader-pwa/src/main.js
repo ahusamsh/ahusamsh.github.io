@@ -8,7 +8,7 @@ const state={pages:{},links:{},pdf:null,page:17,pilot:null,selected:null,segment
 const bookUrl="https://files.a-alqasim.com/books/AbdulMuhsin/AlQaaidahAlMadaniyahAlQiraaah.pdf";
 async function load(){try{const [a,b,pilot]=await Promise.all([fetch("./data/demo-pages.json").then(x=>x.json()),fetch("./data/page-links.json").then(x=>x.json()),fetch("./data/pilot-audio.json").then(x=>x.json())]);state.pilot=pilot;state.pages={...a.pages,...pilot.pages};state.links=b;state.segments={...pilot.segments,...state.segments};syncPageAudio();status("جهزنا 90 مقطعًا لأول ثلاث صفحات تعليمية. افتح صفحة مراجعة التقسيم للاستماع واعتماد كل مقطع.");}catch(e){status("تعذر فتح بيانات الصفحات: "+e.message)}
 for(const n of [17,18,19]){const op=document.createElement("option");op.value=n;op.textContent=state.pilot?.pages[n]?"الكتاب "+state.pilot.pages[n].printedPage+" — PDF "+n:"PDF "+n;$("page").append(op)}$("page").value=state.page;drawZones();renderPilotImage();if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});}
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>{x.classList.toggle("active",x===b);x.setAttribute("aria-selected",String(x===b))});document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="view-"+b.dataset.tab))});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>{x.classList.toggle("active",x===b);x.setAttribute("aria-selected",String(x===b))});document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="view-"+b.dataset.tab));if(b.dataset.tab==="camera")startCamera();else if(state.videoStream)stopCamera();});
 let pdfObjectURL=null;
 $("book-file").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);pdfObjectURL=URL.createObjectURL(file);state.pdf=await pdfjs.getDocument({url:pdfObjectURL}).promise;$("page").replaceChildren();for(let n=1;n<=state.pdf.numPages;n++){const o=document.createElement("option");o.value=n;o.textContent="PDF "+n;$("page").append(o)}$("page").value=state.page;status("تم فتح الكتاب محليًا: "+state.pdf.numPages+" صفحة");renderPDF()}catch(err){status("تعذر عرض PDF: "+err.message)}};
 function setPage(n){cancelPlayback();state.page=Math.max(state.pdf?1:17,Math.min(state.pdf?state.pdf.numPages:19,Number(n)||17));$("page").value=state.page;$("prev").disabled=state.page===(state.pdf?1:17);$("next").disabled=state.page===(state.pdf?state.pdf.numPages:19);state.selected=null;state.lastPlayed="";syncPageAudio();drawZones();if(state.pdf)renderPDF();else renderPilotImage();status("الصفحة "+state.page+(state.pages[state.page]?" — مناطق لمس تجريبية":" — لم تُجهّز مناطق كلمات بعد"));}
@@ -47,8 +47,45 @@ $("approve-mark").onclick=()=>{if(!state.selected)return;const s=state.segments[
 $("export-data").onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,segments:state.segments},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="madani-audio-segments.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $("import-data").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{state.segments={...state.segments,...sanitizeImport(JSON.parse(await f.text()))};localStorage.setItem("madani_segments_pilot_v2",JSON.stringify(state.segments));status("تم استيراد التوقيتات من الملف")}catch(e){status("ملف التوقيت غير صالح")}};
 try{state.segments=sanitizeImport({schema:1,segments:JSON.parse(localStorage.getItem("madani_segments_pilot_v2")||"{}")})}catch(e){}
-$("camera-on").onclick=async()=>{try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280}},audio:false});state.videoStream=stream;$("video").srcObject=stream;await $("video").play();$("camera-placeholder").hidden=true;sizeCanvas();requestAnimationFrame(track);status("الكاميرا تعمل؛ اضبط زوايا الصفحة الأربعة")}catch(e){status("تعذر تشغيل الكاميرا: "+e.message)}};
-$("camera-off").onclick=()=>{state.videoStream?.getTracks().forEach(t=>t.stop());state.videoStream=null;state.handEnabled=false;state.handTask?.close?.();state.handTask=null;$("camera-placeholder").hidden=false;status("أوقفت الكاميرا")};
+async function startCamera(){
+ const placeholder=$("camera-placeholder"),stage=$("camera-stage");
+ if(state.videoStream?.getVideoTracks().some(t=>t.readyState==="live")){placeholder.hidden=true;return}
+ stage.dataset.cameraState="loading";placeholder.hidden=false;placeholder.textContent="جارٍ تشغيل الكاميرا... وافق على إذن الوصول إذا طلب المتصفح ذلك.";
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+   stage.dataset.cameraState="error";placeholder.textContent="تعذر الوصول للكاميرا. افتح الموقع في Chrome باستخدام HTTPS، ثم اسمح له باستخدام الكاميرا.";status("الكاميرا غير متاحة لهذا المتصفح أو الاتصال");return;
+ }
+ let stream;
+ try{
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280}},audio:false});
+   state.videoStream=stream;
+   $("video").srcObject=stream;
+   await $("video").play();
+   placeholder.hidden=true;stage.dataset.cameraState="ready";
+   sizeCanvas();requestAnimationFrame(track);
+   status("تم تشغيل الكاميرا بنجاح. اضبط زوايا الصفحة ثم فعّل تتبع الإصبع.");
+ }catch(e){
+   stream?.getTracks().forEach(t=>t.stop());state.videoStream=null;$("video").srcObject=null;
+   stage.dataset.cameraState="error";placeholder.hidden=false;
+   const reasons={
+     NotAllowedError:"تم رفض إذن الكاميرا. في Chrome اضغط رمز إعدادات الموقع بجوار العنوان، واختر أذونات الموقع ← الكاميرا ← سماح، ثم أعد المحاولة.",
+     PermissionDeniedError:"الكاميرا محظورة من أذونات المتصفح؛ اسمح لها من إعدادات الموقع ثم أعد المحاولة.",
+     NotFoundError:"لم يعثر المتصفح على كاميرا متاحة على الجهاز.",
+     NotReadableError:"الكاميرا مستخدمة في تطبيق آخر أو لم يتمكن الهاتف من فتحها. أغلق التطبيقات التي تستخدمها وأعد المحاولة.",
+     OverconstrainedError:"الكاميرا لا تدعم الإعدادات المطلوبة. جرّب متصفح Chrome."
+   };
+   const message=reasons[e.name]||("تعذر تشغيل الكاميرا ("+(e.name||"خطأ غير معروف")+"). تحقق من الأذونات وأعد المحاولة.");
+   placeholder.textContent=message;status(message);
+ }
+}
+function stopCamera(){
+ state.videoStream?.getTracks().forEach(t=>t.stop());state.videoStream=null;
+ state.handEnabled=false;state.handTask?.close?.();state.handTask=null;$("video").srcObject=null;
+ $("camera-stage").dataset.cameraState="idle";
+ $("camera-placeholder").textContent="الكاميرا متوقفة. اضغط «تشغيل الكاميرا الخلفية» للبدء.";
+ $("camera-placeholder").hidden=false;status("تم إيقاف الكاميرا.");
+}
+$("camera-on").onclick=startCamera;
+$("camera-off").onclick=stopCamera;
 function sizeCanvas(){const c=$("camera-overlay"),v=$("video");c.width=v.videoWidth||640;c.height=v.videoHeight||480;}
 $("calibrate").onclick=()=>{state.corners=[];state.H=null;state.calibrating=true;$("camera-hint").textContent="المس الزوايا على الصورة: أعلى يسار ← أعلى يمين ← أسفل يمين ← أسفل يسار";status("بدأت معايرة الصفحة")};
 $("camera-overlay").addEventListener("pointerdown",e=>{if(!state.calibrating)return;const rect=e.currentTarget.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;state.corners.push({x,y});if(state.corners.length===4){state.H=homography(state.corners,[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}]);state.calibrating=false;$("camera-hint").textContent="تم ضبط الزوايا. فعّل تتبع الإصبع، أو المس موضع الكلمة في الصورة لتجربة المطابقة.";status("اكتملت معايرة زوايا الصفحة")}else status("تم تعيين الزاوية "+state.corners.length+" من 4")});
