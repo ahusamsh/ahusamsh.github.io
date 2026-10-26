@@ -1,0 +1,22 @@
+name: madani-reader-tests
+on:
+  push:
+    paths:
+      - 'madani-reader-pwa/**'
+  pull_request:
+    paths:
+      - 'madani-reader-pwa/**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: madani-reader-pwa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: npm test
+      - run: npm run build
