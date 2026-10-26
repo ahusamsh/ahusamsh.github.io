@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "url": "https://madani-reader-pilot-muzn2.vercel.app",
+  "checkedAt": "2026-10-26T13:35:21.913Z",
+  "decodedAudioFiles": 151,
+  "maxDurationErrorSeconds": 0.001916333333330078,
+  "cachedFiles": 171,
+  "checks": [
+    "public HTTPS without sign-in",
+    "90 word targets and 58 boxes",
+    "click-to-play on all three pages",
+    "page switch stops previous audio",
+    "unapproved clips stop when trial mode disabled",
+    "approval locked until playback completes",
+    "all 151 audio files decode and match expected durations",
+    "390px RTL mobile layout has no overflow",
+    "offline navigation and word/box audio playback"
+  ],
+  "notTested": [
+    "human listening approval",
+    "physical mobile device",
+    "camera finger tracking"
+  ]
+}
