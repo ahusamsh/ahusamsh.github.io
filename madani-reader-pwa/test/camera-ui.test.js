@@ -1,17 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-const css=readFileSync(new URL("../src/style.css",import.meta.url),"utf8");
+const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const main=readFileSync(new URL("../src/main.js",import.meta.url),"utf8");
-test("camera placeholder is truly hidden despite the ID display:grid rule",()=>{
-  assert.match(css,/#camera-placeholder\[hidden\]\s*\{\s*display:\s*none\s*!important\s*\}/);
+const moduleSource=readFileSync(new URL("../src/reader-module.js",import.meta.url),"utf8");
+test("student screen is camera only, no PDF or timeline editor",()=>{
+  assert.match(html,/reader-root/);
+  assert.doesNotMatch(html,/<select|book-file|audio-file|page-selector|data-tab/);
 });
-test("camera opens on user-initiated tab selection and retains retry button",()=>{
-  assert.match(main,/if\(b\.dataset\.tab==="camera"\)startCamera\(\)/);
-  assert.match(main,/\$\("camera-on"\)\.onclick=startCamera/);
+test("module has standalone mount, cleanup and QR-first phase",()=>{
+  assert.match(moduleSource,/export function mountMadaniReader/);
+  assert.match(moduleSource,/phase="scan"/);
+  assert.match(moduleSource,/function stop\(/);
+  assert.match(moduleSource,/async function destroy\(/);
+  assert.match(moduleSource,/lockFromQR/);
 });
-test("camera permissions and browser errors show an actionable message",()=>{
-  assert.match(main,/NotAllowedError/);
-  assert.match(main,/NotReadableError/);
-  assert.match(main,/placeholder\.textContent=msg/);
+test("student can begin with one camera click",()=>{
+  assert.match(moduleSource,/startButton\.addEventListener\("click",start\)/);
+  assert.match(main,/mountMadaniReader/);
 });
