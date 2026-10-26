@@ -13,5 +13,5 @@ test("camera opens on user-initiated tab selection and retains retry button",()=
 test("camera permissions and browser errors show an actionable message",()=>{
   assert.match(main,/NotAllowedError/);
   assert.match(main,/NotReadableError/);
-  assert.match(main,/placeholder\.textContent=message/);
+  assert.match(main,/placeholder\.textContent=msg/);
 });
