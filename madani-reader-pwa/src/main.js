@@ -5,26 +5,121 @@ import * as pdfjs from "pdfjs-dist";
 import workerURL from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 pdfjs.GlobalWorkerOptions.workerSrc=workerURL;
 const $=id=>document.getElementById(id),status=(s)=>{$("status").textContent=s};
-const state={pages:{},links:{},pdf:null,page:17,pilot:null,selected:null,segments:{},audioFiles:{},urls:{},corners:[],H:null,calibrating:false,videoStream:null,hand:null,handTask:null,handEnabled:false,lastHand:0,seen:null,seenAt:0,lastPlayed:""};
+const state={pages:{},links:{},pdf:null,page:17,pilot:null,wordLibrary:null,editions:null,editionCode:'ar',editionMap:null,selected:null,segments:{},audioFiles:{},urls:{},corners:[],H:null,calibrating:false,videoStream:null,hand:null,handTask:null,handEnabled:false,lastHand:0,seen:null,seenAt:0,lastPlayed:""};
 const bookUrl="https://files.a-alqasim.com/books/AbdulMuhsin/AlQaaidahAlMadaniyahAlQiraaah.pdf";
-async function load(){try{const [a,b,pilot]=await Promise.all([fetch("./data/demo-pages.json").then(x=>x.json()),fetch("./data/page-links.json").then(x=>x.json()),fetch("./data/pilot-audio.json").then(x=>x.json())]);state.pilot=pilot;state.pages={...a.pages,...pilot.pages};state.links=b;state.segments={...pilot.segments,...state.segments};syncPageAudio();status("جهزنا 90 مقطعًا لأول ثلاث صفحات تعليمية. افتح صفحة مراجعة التقسيم للاستماع واعتماد كل مقطع.");}catch(e){status("تعذر فتح بيانات الصفحات: "+e.message)}
-for(const n of [17,18,19]){const op=document.createElement("option");op.value=n;op.textContent=state.pilot?.pages[n]?"الكتاب "+state.pilot.pages[n].printedPage+" — PDF "+n:"PDF "+n;$("page").append(op)}$("page").value=state.page;drawZones();renderPilotImage();if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});}
+async function load(){
+ try{
+  const [demo,links,pilot,library,wordLibrary,editions]=await Promise.all([
+   fetch("./data/demo-pages.json").then(r=>r.json()),
+   fetch("./data/page-links.json").then(r=>r.json()),
+   fetch("./data/pilot-audio.json").then(r=>r.json()),
+   fetch("./data/audio-library.json").then(r=>r.ok?r.json():null).catch(()=>null),
+   fetch("./data/word-library.json").then(r=>r.ok?r.json():null).catch(()=>null),
+   fetch("./data/editions.json").then(r=>r.ok?r.json():null).catch(()=>null)
+  ]);
+  state.pilot=pilot;state.wordLibrary=wordLibrary;state.editions=editions;state.links=links;
+  if(!wordLibrary||!library||!editions){
+   state.pages={...demo.pages,...pilot.pages};
+   state.segments={...pilot.segments,...state.segments};
+   const selector=$("edition-language"),opt=document.createElement("option");opt.value="ar";opt.textContent="العربية";selector.append(opt);
+   for(const n of [17,18,19]){const o=document.createElement("option");o.value=n;o.textContent="PDF "+n;$("page").append(o)}
+   $("page").value=state.page;syncPageAudio();drawZones();renderPilotImage();
+   status("المكتبة الإضافية غير متاحة مؤقتًا؛ التجربة الأصلية للحروف ما زالت تعمل.");
+   return;
+  }
+  state.pages={...demo.pages};
+  for(const [n,p] of Object.entries(wordLibrary.pages)){
+   const canonical=library.pages[n];
+   if(!canonical)continue;
+   const zones=p.items.map(id=>wordLibrary.wordItems[id]).filter(item=>item?.box)
+    .map(item=>({id:item.id,text:item.arabicText,spokenText:item.spokenText,box:item.box}));
+   state.pages[n]={...canonical,zones,
+    localAudio:canonical.localAudio||canonical.audioSourceUrl||p.pageAudioUrl,
+    image:canonical.image};
+  }
+  state.pages={...state.pages,...pilot.pages};
+  state.segments={...wordLibrary.wordItems,...pilot.segments,...state.segments};
+  const selectLang=$("edition-language");
+  for(const l of Object.values(editions.locales)){
+   const o=document.createElement("option");o.value=l.code;
+   o.textContent=l.nameArabic+" / "+l.nameEnglish;selectLang.append(o);
+  }
+  $("page").replaceChildren();
+  for(let n=1;n<=104;n++){
+   const o=document.createElement("option");o.value=n;
+   o.textContent=state.pages[n]?.printedPage?"صفحة "+state.pages[n].printedPage+" — PDF "+n:"PDF "+n;
+   $("page").append(o);
+  }
+  $("page").value=state.page;
+  syncPageAudio();drawZones();renderPilotImage();renderWordList();
+  status("المكتبة الصوتية: "+Object.keys(wordLibrary.wordItems).length+
+    " عنصر ومقطع توقيت. الربط الآلي غير معتمد سمعيًا.");
+ }catch(e){status("تعذر تشغيل المكتبة: "+e.message);console.error(e)}
+ if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+$("edition-language").onchange=async e=>{
+ const lang=e.target.value;
+ state.editionCode=lang;state.editionMap=null;
+ if(lang!=="ar"){
+  try{const response=await fetch("./data/edition-maps/"+lang+".json");
+   if(!response.ok)throw Error("تعذر فتح خريطة الطبعة");
+   state.editionMap=await response.json();
+  }catch(e){status("لا توجد خريطة تحقق لهذه الترجمة: "+e.message)}
+ }
+ if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);
+ pdfObjectURL=null;state.pdf=null;
+ renderPilotImage();drawZones();renderWordList();
+ status(lang==="ar"?"طبعة عربية":"اختر ملف PDF الرسمي للترجمة من جهازك؛ الصوت عربي مشترك، وتُخفى مواضع اللمس غير المتحققة.");
+};
+function activeZones(){
+ const zones=state.pages[state.page]?.zones||[];
+ if(state.editionCode==="ar")return zones;
+ if(!state.pdf)return [];
+ const mapping=state.editionMap?.verifiedPages?.[String(state.page)]?.zoneBoxes;
+ if(!mapping)return [];
+ return zones.filter(z=>mapping[z.id]).map(z=>({...z,box:mapping[z.id]}));
+}
+function renderWordList(){
+ const area=$("word-library-items");if(!area)return;
+ area.replaceChildren();
+ const wordLibrary=state.wordLibrary;
+ const p=wordLibrary?.pages[String(state.page)];
+ if(!p)return;
+ const filter=($("word-filter").value||"").trim();
+ const ids=[...new Set([...(p.items||[]),...(p.unplaced||[])])];
+ $("word-count").textContent=ids.length+" عنصر صوتي للصفحة؛ المطابقة الآلية تحتاج استماعًا.";
+ const fragment=document.createDocumentFragment();
+ for(const id of ids){
+  const w=wordLibrary.wordItems[id];
+  if(!w||filter&&!w.arabicText.includes(filter))continue;
+  const btn=document.createElement("button");btn.className="word-entry";
+  btn.textContent=w.arabicText;
+  btn.title=(w.box?"مربوط بموضع مرئي":"توقيت موجود دون موضع معتمد")+
+    " • "+w.start+"–"+w.end+" ثانية";
+  btn.setAttribute("aria-label","استمع "+w.arabicText);
+  btn.dataset.placed=String(Boolean(w.box));
+  btn.onclick=()=>select({id:w.id,text:w.arabicText,spokenText:w.spokenText,box:w.box||[]});
+  fragment.append(btn);
+ }
+ area.append(fragment);
+}
+$("word-filter").oninput=renderWordList;
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>{x.classList.toggle("active",x===b);x.setAttribute("aria-selected",String(x===b))});document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id==="view-"+b.dataset.tab));if(b.dataset.tab==="camera")startCamera();else if(state.videoStream)stopCamera();});
 let pdfObjectURL=null;
-$("book-file").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);pdfObjectURL=URL.createObjectURL(file);state.pdf=await pdfjs.getDocument({url:pdfObjectURL}).promise;$("page").replaceChildren();for(let n=1;n<=state.pdf.numPages;n++){const o=document.createElement("option");o.value=n;o.textContent="PDF "+n;$("page").append(o)}$("page").value=state.page;status("تم فتح الكتاب محليًا: "+state.pdf.numPages+" صفحة");renderPDF()}catch(err){status("تعذر عرض PDF: "+err.message)}};
-function setPage(n){cancelPlayback();state.page=Math.max(state.pdf?1:17,Math.min(state.pdf?state.pdf.numPages:19,Number(n)||17));$("page").value=state.page;$("prev").disabled=state.page===(state.pdf?1:17);$("next").disabled=state.page===(state.pdf?state.pdf.numPages:19);state.selected=null;state.lastPlayed="";syncPageAudio();drawZones();if(state.pdf)renderPDF();else renderPilotImage();status("الصفحة "+state.page+(state.pages[state.page]?" — مناطق لمس تجريبية":" — لم تُجهّز مناطق كلمات بعد"));}
+$("book-file").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);pdfObjectURL=URL.createObjectURL(file);state.pdf=await pdfjs.getDocument({url:pdfObjectURL}).promise;$("page").value=state.page;status("تم فتح PDF محليًا. مواقع الكلمات تتبع طبعة اللغة المختارة.");renderPDF()}catch(err){status("تعذر عرض PDF: "+err.message)}};
+function setPage(n){cancelPlayback();state.page=Math.max(1,Math.min(104,Number(n)||17));$("page").value=state.page;$("prev").disabled=state.page===1;$("next").disabled=state.page===104;state.selected=null;state.lastPlayed="";syncPageAudio();drawZones();renderWordList();if(state.pdf)renderPDF();else renderPilotImage();status("الصفحة "+state.page+" • "+activeZones().length+" مواضع قابلة للمس؛ المقاطع غير معتمدة سمعيًا");}
 $("page").onchange=e=>setPage(e.target.value);$("prev").onclick=()=>setPage(state.page-1);$("next").onclick=()=>setPage(state.page+1);
-async function renderPDF(){if(!state.pdf)return;const canvas=$("pdf-canvas"),p=await state.pdf.getPage(Math.min(state.page,state.pdf.numPages));const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42));const view=p.getViewport({scale:w/p.view[2]});const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(view.width*dpr);canvas.height=Math.round(view.height*dpr);canvas.style.width=view.width+"px";canvas.style.height=view.height+"px";$("paper").style.width=view.width+"px";$("paper").style.height=view.height+"px";$("pdf-placeholder").hidden=true;await p.render({canvasContext:canvas.getContext("2d"),viewport:p.getViewport({scale:w*dpr/p.view[2]})}).promise;drawZones();}
-function drawZones(){const layer=$("word-layer");layer.replaceChildren();for(const z of state.pages[state.page]?.zones||[]){const b=document.createElement("button");b.className="wordzone";b.title=z.text;b.setAttribute("aria-label","نطق "+z.text);b.style.left=(z.box[0]*100)+"%";b.style.top=(z.box[1]*100)+"%";b.style.width=(z.box[2]*100)+"%";b.style.height=(z.box[3]*100)+"%";b.dataset.id=z.id;b.onclick=()=>select(z);layer.append(b)}layer.classList.toggle("hide-zones",!$("show-zones").checked)}
+async function renderPDF(){if(!state.pdf)return;const canvas=$("pdf-canvas"),n=state.editionCode==="ar"?state.page:(state.editionMap?.verifiedPages?.[String(state.page)]?.pdfPage||state.page),p=await state.pdf.getPage(Math.min(n,state.pdf.numPages));const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42));const view=p.getViewport({scale:w/p.view[2]});const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(view.width*dpr);canvas.height=Math.round(view.height*dpr);canvas.style.width=view.width+"px";canvas.style.height=view.height+"px";$("paper").style.width=view.width+"px";$("paper").style.height=view.height+"px";$("pdf-placeholder").hidden=true;await p.render({canvasContext:canvas.getContext("2d"),viewport:p.getViewport({scale:w*dpr/p.view[2]})}).promise;drawZones();}
+function drawZones(){const layer=$("word-layer");layer.replaceChildren();for(const z of activeZones()){const b=document.createElement("button");b.className="wordzone";b.title=z.text;b.setAttribute("aria-label","نطق "+z.text);b.style.left=(z.box[0]*100)+"%";b.style.top=(z.box[1]*100)+"%";b.style.width=(z.box[2]*100)+"%";b.style.height=(z.box[3]*100)+"%";b.dataset.id=z.id;b.onclick=()=>select(z);layer.append(b)}layer.classList.toggle("hide-zones",!$("show-zones").checked)}
 $("show-zones").onchange=drawZones;$("trial-mode").onchange=cancelPlayback;
 function select(z){state.selected=z;$("selected-word").textContent=z.text;document.querySelectorAll(".wordzone").forEach(x=>x.classList.toggle("selected",x.dataset.id===z.id));const seg=state.segments[z.id];$("segment-state").textContent=seg?('بداية '+seg.start.toFixed(2)+' ث • نهاية '+seg.end.toFixed(2)+' ث • '+(seg.reviewed?"معتمد":"بانتظار الاعتماد")):"لم يُربط تسجيل معتمد لهذه الكلمة";if(validSegment(seg)||canPreview(z.id,seg))playSegment(z.id,seg);else status("حددت «"+z.text+"». لا يوجد مقطع صوتي معتمد لهذه الكلمة بعد.")}
 let stopTimer=null,preciseTimer=null,playbackGeneration=0;
 const clipPlayer=new Audio();
 function cancelPlayback(){playbackGeneration++;const a=$("player");a.pause();clipPlayer.pause();if(stopTimer)a.removeEventListener("timeupdate",stopTimer);stopTimer=null;clearTimeout(preciseTimer);preciseTimer=null;}
-function syncPageAudio(){cancelPlayback();const a=$("player"),src=state.urls[state.page]||state.pilot?.pages[state.page]?.localAudio;a.dataset.page=String(state.page);if(src)a.src=src;else a.removeAttribute("src");a.load();}
-function renderPilotImage(){if(state.pdf)return;const page=state.pilot?.pages[state.page],canvas=$("pdf-canvas");canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);$("pdf-placeholder").hidden=false;if(!page)return;const n=state.page,img=new Image();img.onload=()=>{if(state.pdf||state.page!==n)return;const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42)),h=w*img.naturalHeight/img.naturalWidth;canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;canvas.style.width=w+"px";canvas.style.height=h+"px";$("paper").style.width=w+"px";$("paper").style.height=h+"px";canvas.getContext("2d").drawImage(img,0,0);$("pdf-placeholder").hidden=true;drawZones()};img.src=page.image;}
+function syncPageAudio(){cancelPlayback();const a=$("player"),src=state.urls[state.page]||state.pages[state.page]?.localAudio||state.wordLibrary?.pages[String(state.page)]?.pageAudioUrl;a.dataset.page=String(state.page);if(src)a.src=src;else a.removeAttribute("src");a.load();}
+function renderPilotImage(){if(state.pdf)return;const page=state.pages[state.page],canvas=$("pdf-canvas");canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);$("pdf-placeholder").hidden=false;if(!page||!page.image||state.editionCode!=="ar")return;const n=state.page,img=new Image();img.onload=()=>{if(state.pdf||state.page!==n)return;const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42)),h=w*img.naturalHeight/img.naturalWidth;canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;canvas.style.width=w+"px";canvas.style.height=h+"px";$("paper").style.width=w+"px";$("paper").style.height=h+"px";canvas.getContext("2d").drawImage(img,0,0);$("pdf-placeholder").hidden=true;drawZones()};img.src=page.image;}
 
-function canPreview(id,seg){return $("trial-mode").checked&&state.pilot?.segments[id]===seg&&Number.isFinite(seg.start)&&Number.isFinite(seg.end)&&seg.start>=0&&seg.end>seg.start}
+function canPreview(id,seg){return $("trial-mode").checked&&(state.pilot?.segments[id]===seg||(!state.urls[state.page]&&state.wordLibrary?.wordItems[id]===seg))&&Number.isFinite(seg.start)&&Number.isFinite(seg.end)&&seg.start>=0&&seg.end>seg.start}
 async function playSegment(id,seg){
  cancelPlayback();const generation=playbackGeneration,audio=$("player");if((!validSegment(seg)&&!canPreview(id,seg))||Number(audio.dataset.page)!==state.page)return;
  if(!seg.reviewed)status("تشغيل تجريبي — هذا المقطع لم يُعتمد سمعيًا بعد.");
