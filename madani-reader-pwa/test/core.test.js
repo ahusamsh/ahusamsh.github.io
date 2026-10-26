@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {closestZone,homography,project,validSegment,sanitizeImport} from '../src/core.js';
+test('zone hit and miss',()=>{const z={id:'a',box:[.2,.3,.3,.2]};assert.equal(closestZone({x:.3,y:.35},[z]),z);assert.equal(closestZone({x:.9,y:.9},[z]),null)});
+test('smallest zone wins',()=>{const a={id:'a',box:[0,0,1,1]},b={id:'b',box:[.1,.1,.1,.1]};assert.equal(closestZone({x:.15,y:.15},[a,b]).id,'b')});
+test('perspective maps four corners',()=>{const src=[{x:.1,y:.2},{x:.9,y:.1},{x:.8,y:.9},{x:.2,y:.8}],dst=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}],H=homography(src,dst);assert.ok(H);for(let i=0;i<4;i++){const p=project(H,src[i]);assert.ok(Math.abs(p.x-dst[i].x)<1e-6);assert.ok(Math.abs(p.y-dst[i].y)<1e-6)}});
+test('invalid homography is rejected',()=>assert.equal(homography([{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}],Array(4).fill({x:0,y:0})),null));
+test('playback requires positive approved segment',()=>{assert.equal(validSegment({start:0,end:2,reviewed:false}),false);assert.equal(validSegment({start:0,end:2,reviewed:true}),true);assert.equal(validSegment({start:2,end:1,reviewed:true}),false)});
+test('sanitize rejects malformed imported boundaries',()=>{assert.deepEqual(sanitizeImport({schema:1,segments:{'p17-w1':{start:2,end:4,reviewed:true},bad:{start:2,end:3},'p17-w2':{start:5,end:1}}}),{'p17-w1':{start:2,end:4,reviewed:true}})})
