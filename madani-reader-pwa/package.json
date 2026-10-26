@@ -1,0 +1,1 @@
+{"name":"madani-reader-pwa","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"vite build","preview":"vite preview --host 0.0.0.0","test":"node --test test/*.test.js"},"dependencies":{"@mediapipe/tasks-vision":"0.10.22","pdfjs-dist":"4.10.38"},"devDependencies":{"vite":"5.4.21"}}
