@@ -4,3 +4,11 @@
 #video{background:#102820;object-fit:contain}
 #camera-stage[data-camera-state="loading"] #camera-placeholder{background:#102820}
 #camera-stage[data-camera-state="error"] #camera-placeholder{background:#27382f;color:#ffffff}
+
+.camera-primary{background:#0e634a;font-size:18px;padding:15px 19px;min-height:55px;box-shadow:0 3px 12px #13553a22}
+#view-camera .controls{justify-content:center}
+#camera-stage{min-height:55vh;max-height:78vh}
+#camera-stage[data-camera-state="ready"]{min-height:0}
+#camera-overlay{pointer-events:none}
+#camera-hint{background:#e5f0e8;padding:12px;border-radius:12px;font-size:15px;color:#165e43}
+@media(max-width:600px){.camera-primary{width:100%;font-size:17px!important}#camera-stage{min-height:55vh}}
