@@ -1,34 +1,57 @@
-# القاعدة المدنية الذكية — Madani Reader PWA
-## Status: engineering prototype, not a published educational product
-This PWA provides: PDF import rendered locally with pdfjs-dist; manually switchable pages; actual word bounding boxes extracted from the official 104-page PDF for pages 13, 17, 25, 69, 75; 91 pages of URL-linked audio/QR metadata extracted from the PDF annotations; page QR outbound link; local page-audio upload; time-range audio segment editor; touch-to-play **only for approved segments**; camera capture; four-corner page calibration via projective homography; optional MediaPipe hand-landmark finger location (loads model over the internet on first use); installable application shell.
+# القاعدة المدنية التفاعلية — تجربة الصفحات الثلاث
 
-### How to run
-1. `npm ci` (or `npm install` if lockfile is not yet available).
-2. `npm run dev`; visit the localhost URL. Camera access requires localhost or HTTPS.
-3. Choose the official PDF downloaded separately from https://files.a-alqasim.com/books/AbdulMuhsin/AlQaaidahAlMadaniyahAlQiraaah.pdf
-4. Select one of the pilot PDF pages 13,17,25,69,75; toggle touch zones; use page QR link.
-5. Download/obtain legitimately authorized page recording, load it via the Audio tab, tap a word, mark start/end while listening, then approve locally and export JSON for editorial review.
-6. To test camera, choose camera tab, enable camera, select correct page number, calibrate physical page corners in order top-left/top-right/bottom-right/bottom-left on **the screen image**, then enable finger tracking. A finger dwell of 700ms selects the mapped word.
+نسخة PWA تجريبية لربط موضع الحرف/الشكل في صفحة الكتاب بالتسجيل الرسمي، مع شاشة مراجعة لكل مربع ومقطع. عند لمس حرف داخل كلمة في الصفحات المستقبلية يُشغّل صوت الكلمة كاملة؛ أما هذه الصفحات الثلاث فتضم حروفًا وأشكالًا تعليمية منفردة.
 
-### Important technical limits
-- **NO independently verified word-level recordings yet**. Original QR short links can redirect to servers that deny automated access (observed HTTP 403). Page audio cannot be assumed to contain clean isolated words or fixed timing; segment boundaries need manual educational review.
-- **OCR bounding boxes are not verified**: PDF word extraction mishandles some mixed script, Arabic ligatures and small tokens, particularly pages 13 and 75. An instructor must correct all boundaries/text before production. No claims of 100% accuracy.
-- Calibration is manual: the camera does not yet reliably detect the page number, camera corners or whether a finger actually physically touches the page. Pointing works in prototype conditions only; real tablet/mobile tests necessary.
-- Camera stream is kept local and never uploaded. Uploaded PDF and WAV stay in the browser; page timing metadata is localStorage (which can be exported).
-- No official PDF, private recording, or copyright material is committed to this repository. Publish only after permission/approval.
-- MediaPipe WASM/model need internet on first invocation; full offline camera-hand tracking requires bundling these locally.
-- **Security**: unapproved segments remain silent. The PWA has no auth and no server data collection.
+## المنفذ في 26 أكتوبر 2026
 
-### Data files
-`public/data/demo-pages.json`: normalized PDF-coordinate pilot zones, auto-extracted with PyMuPDF from authoritative edition; `reviewed:false`.
-`public/data/page-links.json`: PDF annotation URLs, indexes are 1-based PDF page positions (different from printed folio numbers).
-Mapping JSON schema: `{"schema":1,"segments":{"p17-w12":{"start":0.5,"end":0.9,"reviewed":true}}}` as locally reviewed data, not yet formal approval.
+| صفحة الكتاب | صفحة PDF | المقاطع المفردة | المربعات الفعلية |
+|---|---|---|---|
+| 15 | 17 | 28 | 28 |
+| 16 | 18 | 30 | 14 |
+| 17 | 19 | 32 | 16 |
+| المجموع | 3 صفحات | 90 | 58 |
 
-### Next gates
-1. Confirm legal permission to package printed pages and sound recording assets.
-2. Acquire and review 3-5 official audio pages; align word clips with reliable start/end times (not inferred by text alone).
-3. Curate 100% word polygon mappings for sample pages with instructional expert; fix diacritic/object grouping.
-4. Evaluate finger tracking and perspective rectification on Android devices, in variable illumination.
-5. Bundle hand model offline and validate with tests on devices.
-6. Integrate this folder into its own institute-owned repo after GitHub repository creation is authorized/enabled. Current connected GitHub plugin offers file writes to accessible repos but **no create_repository operation**; this project resides in a feature branch of the accessible `ahusamsh/ahusamsh.github.io` repo as a safe, unmerged staging location.
-No existing site code is modified, and nothing is published or deployed.
+- التسجيل الأصلي: عبد الله الوائلي، من روابط QR الرسمية `QM015` و`QM016` و`QM017`.
+- 90 ملف MP3 للحروف/الأشكال، و58 ملف MP3 للمربعات، و3 تسجيلات صفحات كاملة.
+- خرائط لمس بصريّة من الطبعة الرسمية ذات 104 صفحات؛ ترتيب الأسطر من أعلى إلى أسفل والحروف من اليمين إلى اليسار. أشكال التاء الستة في الصفحة 16 لها ست مناطق مستقلة.
+- صفحة التجربة الرئيسية تعمل مباشرة بالصور والمقاطع المجهزة. وضع التجربة واضح ومفعّل؛ لا يغيّر حالة الاعتماد العلمي.
+- `pilot-review.html` يعرض الكلمات والمربعات، والتوقيتات، ويسمح باعتماد فردي محلي بعد انتهاء الاستماع، وتصدير JSON.
+- عند تغيير الصفحة يُوقف الصوت السابق ويُبدّل مصدره. تشغيل الصفحة كاملة يلغي مؤقت إيقاف الكلمة. الملفات المقصوصة تُشغّل مباشرة، فلا تعتمد على دقة حدث `timeupdate`.
+- تُجهّز صور الصفحات والمقاطع وأصول التطبيق للعمل دون اتصال بعد اكتمال التثبيت/التخزين الأول.
+- الكاميرا ومعايرة الزوايا وتتبع السبابة موجودة في النسخة التجريبية؛ اختيار الصفحة يدوي، ونموذج اليد يحتاج الإنترنت أول مرة.
+
+## التشغيل وإعادة إنتاج المقاطع
+
+1. Node.js 22 أو أحدث، وPython مع `pymupdf` و`imageio-ffmpeg`.
+2. `npm ci`
+3. `python scripts/build_pilot_audio.py`
+4. `npm test` ثم `npm run build`
+5. للتطوير: `npm run dev -- --host 127.0.0.1`. للتجربة المنشورة يُنشر مجلد `dist` فقط.
+6. ملف مراجعة مستقل يعمل دون خادم: `python scripts/pack_pilot_review.py --output Madani_First_Three_Pages_Review.html`.
+
+الملفات الأصلية والمقاطع والصور المولدة لا تُرفع إلى Git؛ الأداة تعيد تجهيزها محليًا، وتُضمّن في بناء نسخة التجربة المطلوب نشرها. `.gitignore` يستبعد `local-assets` و`public/pilot-media` و`dist`.
+
+## طريقة التقسيم وحدود الدقة
+
+`public/data/pilot-audio.json` يحمل مصدر كل صفحة وبصمته SHA-256، رقم الصفحة المطبوع ورقم PDF، مناطق الحروف والمربعات، والتوقيتات. الإعدادات: صمت أقل من ‎-45dB لمدة 0.3 ثانية، مع هامش 0.12 ثانية قبل النطق و0.15 بعده. تُفصل مقدمات التسجيل عن الحروف: أربعة مقاطع تمهيدية في التسجيلين 15 و16، ولا مقدمة في 17. تفشل الأداة إذا اختلف عدد وحدات النطق أو مناطق الصفحة عن العدد المتوقع؛ لا تحاول إخفاء النقص.
+
+تمت مراجعة صور الصفحات وربط الترتيب ومقارنة تفريغ آلي مساعد. التفريغ الآلي أخطأ في بعض أسماء الحروف وحذف بعض التكرارات، لذا لا يُستخدم بوصفه مراجعة سمعية بشرية أو اعتمادًا علميًا. **كل المقاطع المسلمة تبقى `reviewed:false`** حتى الاستماع واعتمادها. وضع التجربة يسمح بسماعها دون تحويلها إلى معتمدة.
+
+## التحقق
+
+- 11 اختبار Node ناجح: الهوية والترقيم، 90 منطقة، احتواء المربعات، ترتيب RTL، التاء المربوطة، الحدود الزمنية غير المتداخلة، وربط المصدر ومنع الاعتماد الضمني.
+- اختبار Chromium: فك ترميز 151 ملف صوتي؛ أقصى اختلاف في المدة نحو 0.002 ثانية؛ التنقل ومصدر الصوت؛ تعطيل زر الاعتماد قبل انتهاء الاستماع؛ عرض 390px دون تجاوز أفقي.
+- بناء Vite ناجح. تفاصيل التحقق في `docs/AUDIO_PILOT_VALIDATION.md`.
+- لم يُختبر جهاز Android حقيقي أو تتبع الإصبع في بيئة صفية. لا يوجد تعرّف تلقائي موثوق على رقم الصفحة أو لمس الورقة فعليًا.
+
+## بنية المشروع
+
+- `src/main.js`: واجهة الكتاب والكاميرا وإدارة الصوت.
+- `src/core.js`: اختيار المنطقة، تحويل المنظور، وفحص التوقيتات.
+- `public/data/pilot-audio.json`: خرائط الصفحات الثلاث وتوقيتاتها.
+- `public/pilot-review.html` و`public/pilot-review.js`: مراجعة المقاطع.
+- `scripts/build_pilot_audio.py`: تنزيل المصادر وتوليد الخرائط والمقاطع.
+- `scripts/prepare_offline.mjs`: تخزين أصول البناء والمقاطع دون اتصال.
+- `scripts/pack_pilot_review.py`: ملف HTML مستقل للمراجعة الداخلية.
+
+بيانات الاعتماد والتوقيتات المعدلة محلية في المتصفح، ولا تُرسل إلى خادم. بقية صفحات الكتاب ليست مقسّمة صوتيًا في هذا الإصدار. المستودع الحالي مساحة تطوير مؤقتة داخل `ahusamsh/ahusamsh.github.io` على فرع `feature/madani-reader-pwa`؛ ليس مستودعًا مستقلاً رسميًا للحرم. لا تُدمج هذه الملفات في الموقع الرئيسي لدرب.

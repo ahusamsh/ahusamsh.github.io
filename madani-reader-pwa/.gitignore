@@ -5,3 +5,6 @@ dist/
 *.wav
 *.mp3
 .DS_Store
+local-assets/
+public/pilot-media/
+dist/

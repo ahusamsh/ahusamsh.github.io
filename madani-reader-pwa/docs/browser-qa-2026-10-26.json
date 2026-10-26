@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "decodedAudioFiles": 151,
+  "maxDurationErrorSeconds": 0.001916333333330078,
+  "checks": [
+    "90 word targets and 58 boxes",
+    "approval disabled until clip completion",
+    "all 151 MP3 files decode with expected duration",
+    "390px RTL layout has no horizontal overflow",
+    "page change switches audio source",
+    "unmapped page clears source"
+  ],
+  "notTested": [
+    "human listening approval",
+    "Android physical device",
+    "camera finger tracking"
+  ]
+}
