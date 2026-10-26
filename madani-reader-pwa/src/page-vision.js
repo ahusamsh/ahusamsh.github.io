@@ -4,6 +4,7 @@
    All processing stays on device and unknown pages never select audio. */
 import jsQR from "jsqr";
 import {homography,project} from "./core.js";
+import {VisualPageMatcher} from "./visual-matcher.js";
 const MARKERS={
  "QM015":{page:17,box:[.054673,.021840,.082844,.058599]},
  "QM016":{page:18,box:[.862319,.021840,.082845,.058599]},
@@ -38,7 +39,7 @@ export function markerGeometry(rawValue,corners,frameWidth,frameHeight){
  return {page:marker.page,H,inliers:4,ratio:1,frameWidth,frameHeight,qrArea:area};
 }
 export class AutoPageVision{
- constructor(){this.templates=[];this.cv=null;this.busy=false;this.lastError=null;this.detector=null;this.canvas=null}
+ constructor(){this.templates=[];this.cv=null;this.busy=false;this.lastError=null;this.detector=null;this.canvas=null;this.matcher=null}
  async init(pageEntries=[]){
   // Only teach page identifiers backed by reviewed QR geometry.
   this.templates=pageEntries.map(([page])=>({page:Number(page)})).filter(x=>[17,18,19].includes(x.page));
@@ -48,6 +49,8 @@ export class AutoPageVision{
   }
   this.canvas=document.createElement("canvas");
   this.canvas.width=1000;
+  this.matcher=new VisualPageMatcher();
+  await this.matcher.init(pageEntries);
   return this.templates.map(x=>x.page);
  }
  async detect(video){
@@ -92,7 +95,9 @@ export class AutoPageVision{
      if(result&&this.templates.some(t=>t.page===result.page))return result;
     }
    }
-   return null;
+   // QR can be unreadable in ordinary classroom light. Match printed
+   // letter shapes and the whole page against the three reference pages.
+   return this.matcher?.detect(c)||null;
   }catch(e){this.lastError=e;throw e}finally{this.busy=false}
  }
  pointInPage(detection,tip){
@@ -101,5 +106,5 @@ export class AutoPageVision{
   if(!p||p.x<0||p.y<0||p.x>1||p.y>1)return null;
   return p;
  }
- dispose(){this.templates=[];this.canvas=null;this.detector=null;this.busy=false}
+ dispose(){this.matcher?.dispose();this.matcher=null;this.templates=[];this.canvas=null;this.detector=null;this.busy=false}
 }
