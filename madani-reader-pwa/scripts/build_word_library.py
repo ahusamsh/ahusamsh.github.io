@@ -120,4 +120,12 @@ for pdfnum in range(1,105):
 lib["statistics"]=dict(stat)
 output.parent.mkdir(parents=True,exist_ok=True)
 output.write_text(json.dumps(lib,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-print("RESULT",json.dumps({"pages":len(lib["pages"]),"items":len(lib["wordItems"]),**stat},ensure_ascii=False),flush=True)
+quality={"status":"machine-generated-unreviewed","canonicalPages":104,
+ "totalItems":len(lib["wordItems"]),"asrPages":stat["asrPages"],
+ "wordOccurrencesFromASR":stat["asrWordSegments"],
+ "visuallyLocatedASRWords":stat["visuallyLinkedAsr"],
+ "unplacedASRWords":stat["unplacedAsr"],
+ "existingPilotOrCountBasedLinks":stat["existing"],
+ "humanReviewed":0,"teachingAudioLanguage":"ar","translatedEditionCount":18}
+(ROOT/"public/data/word-library-validation.json").write_text(json.dumps(quality,ensure_ascii=False,indent=2),encoding="utf-8")
+print("RESULT",json.dumps(quality,ensure_ascii=False),flush=True)

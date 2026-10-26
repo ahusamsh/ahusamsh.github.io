@@ -58,17 +58,26 @@ async function load(){
  if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
 }
 $("edition-language").onchange=async e=>{
- const lang=e.target.value;
+ const lang=e.target.value, requestId=(state.editionRequestId||0)+1;
+ state.editionRequestId=requestId;
  state.editionCode=lang;state.editionMap=null;
- if(lang!=="ar"){
-  try{const response=await fetch("./data/edition-maps/"+lang+".json");
-   if(!response.ok)throw Error("تعذر فتح خريطة الطبعة");
-   state.editionMap=await response.json();
-  }catch(e){status("لا توجد خريطة تحقق لهذه الترجمة: "+e.message)}
- }
  if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);
  pdfObjectURL=null;state.pdf=null;
  renderPilotImage();drawZones();renderWordList();
+ if(lang!=="ar"){
+  try{
+   const response=await fetch("./data/edition-maps/"+lang+".json");
+   if(!response.ok)throw Error("تعذر فتح خريطة الطبعة");
+   const map=await response.json();
+   if(requestId!==state.editionRequestId)return;
+   state.editionMap=map;
+  }catch(err){
+   if(requestId!==state.editionRequestId)return;
+   status("لا توجد خريطة تحقق لهذه الترجمة: "+err.message);
+  }
+ }
+ if(state.pdf)renderPDF();else renderPilotImage();
+ drawZones();renderWordList();
  status(lang==="ar"?"طبعة عربية":"اختر ملف PDF الرسمي للترجمة من جهازك؛ الصوت عربي مشترك، وتُخفى مواضع اللمس غير المتحققة.");
 };
 function activeZones(){
