@@ -3,18 +3,18 @@
 <body><div id="app">
 <header class="top"><div class="brand"><div class="logo">م</div><div><strong>القاعدة المدنية الذكية</strong><small>قارئ الصفحات والكلمات • نموذج تجريبي</small></div></div><button id="install" class="ghost" hidden>تثبيت</button></header>
 <main>
-<section class="intro"><span class="eyebrow">إصدارات حلقات المسجد النبوي • نسخة تفاعلية تجريبية</span><h1>اقرأ من الكتاب الذي بين يديك</h1><p>وجّه الكاميرا إلى الصفحة، وأشر إلى الكلمة بإصبعك، أو افتح نسخة PDF والمس الكلمة على الشاشة. جرّب نطق الحروف والمربعات في الصفحات الثلاث المتاحة. التقسيمات الصوتية قيد المراجعة السمعية.</p><div class="status" id="status" role="status">جاهز للتجربة. 90 مقطعًا لأول ثلاث صفحات تعليمية جاهزة للمراجعة.</div></section>
-<div class="tabs" role="tablist"><button class="active" data-tab="book" aria-selected="true">الكتاب على الشاشة</button><button data-tab="camera" aria-selected="false">الإشارة بالكاميرا</button><button data-tab="audio" aria-selected="false">ربط الصوتيات</button></div>
-<section class="panel active" id="view-book">
+<section class="intro"><span class="eyebrow">إصدارات حلقات المسجد النبوي • نسخة تفاعلية تجريبية</span><h1>اقرأ من الكتاب الذي بين يديك</h1><p>اضغط تشغيل الكاميرا، ثم وجهها إلى صفحة من الكتاب وأشر إلى الحرف بإصبعك؛ سيتعرف التطبيق على الصفحة تلقائيًا ويشغّل تسجيل الحرف. تتوفر الصفحات 15 و16 و17 للتجربة.</p><div class="status" id="status" role="status">جاهز للتجربة. 90 مقطعًا لأول ثلاث صفحات تعليمية جاهزة للمراجعة.</div></section>
+<div class="tabs" role="tablist"><button data-tab="book" aria-selected="false">الكتاب على الشاشة</button><button class="active" data-tab="camera" aria-selected="true">الإشارة بالكاميرا</button><button data-tab="audio" aria-selected="false">ربط الصوتيات</button></div>
+<section class="panel" id="view-book">
 <div class="controls"><label class="file-button">اختيار PDF من الجهاز<input id="book-file" type="file" accept=".pdf,application/pdf" hidden/></label><label>صفحة PDF <select id="page"></select></label><button id="prev" class="ghost">السابقة</button><button id="next" class="ghost">التالية</button></div>
 <p class="hint">لا تُرفع ملفات الكتاب إلى أي خادم. تُفتح محليًا على جهازك. الصفحات المطبوعة 15 و16 و17 تقابل صفحات PDF 17 و18 و19.</p>
 <div class="page-wrap"><div id="paper"><canvas id="pdf-canvas" aria-label="صفحة الكتاب"></canvas><div id="word-layer" aria-label="مناطق كلمات قابلة للمس"></div></div><div id="pdf-placeholder">اختر ملف PDF الرسمي لعرض الصفحة. يمكنك الآن اختبار بيانات التحديد والصوتيات دون رفع أي ملفات.</div></div>
 <div class="controls"><a class="file-button" href="./pilot-review.html">مراجعة المقاطع التسعين</a><button id="read-page">استماع إلى تسجيل الصفحة</button><button id="qr-link" class="ghost">فتح رابط QR الأصلي</button><label class="check"><input id="trial-mode" type="checkbox" checked/> تشغيل المقاطع التجريبية</label><label class="check"><input id="show-zones" type="checkbox" checked/> إظهار مناطق اللمس</label></div></section>
-<section class="panel" id="view-camera">
-<div class="controls"><button id="camera-on">تشغيل الكاميرا الخلفية</button><button id="camera-off" class="ghost">إيقاف</button><button id="calibrate" class="ghost">ضبط زوايا الصفحة</button><button id="hand-on" class="ghost">تتبع الإصبع</button></div>
-<p class="hint">عند فتح هذا التبويب سيطلب التطبيق إذن تشغيل الكاميرا تلقائيًا. ثبّت الجوال أعلى الكتاب. لتحديد موضع الصفحة: اضغط «ضبط زوايا الصفحة» ثم المس على الصورة زوايا الورقة بالترتيب: أعلى اليسار، أعلى اليمين، أسفل اليمين، أسفل اليسار. بعد ذلك فعّل تتبع الإصبع.</p>
-<div id="camera-stage"><video id="video" autoplay playsinline muted></video><canvas id="camera-overlay"></canvas><div id="camera-placeholder">اضغط «تشغيل الكاميرا الخلفية» أو افتح تبويب الكاميرا للسماح بالتصوير. عند رفض الإذن ستظهر هنا خطوات إصلاحه.</div></div>
-<p class="hint" id="camera-hint">بعد الضبط، ثبت إصبعك نحو 0.7 ثانية عند الكلمة ليختارها التطبيق. اختر الصفحة يدويًا قبل المعايرة؛ التتبع بالكاميرا تجريبي.</p>
+<section class="panel active" id="view-camera">
+<div class="controls"><button id="camera-on" class="camera-primary">تشغيل الكاميرا والقراءة مباشرة</button><button id="camera-off" class="ghost">إيقاف</button></div>
+<p class="hint">لا حاجة لتحديد رقم الصفحة أو زواياها: ثبت الجوال فوق صفحة من الصفحات ١٥–١٧ من النسخة الحالية، وانتظر ظهور رقمها، ثم أشر بإصبعك إلى أحد الحروف.</p>
+<div id="camera-stage"><video id="video" autoplay playsinline muted></video><canvas id="camera-overlay"></canvas><div id="camera-placeholder">اضغط زر تشغيل الكاميرا، ثم اسمح بالتصوير. يبدأ التعرف على الصفحة وتتبع الإصبع تلقائيًا.</div></div>
+<p class="hint" id="camera-hint">مراحل العمل: تشغيل الكاميرا ← التعرف تلقائيًا على الصفحة ← الإشارة بالإصبع ← تشغيل الصوت. هذه تجربة للصفحات ١٥–١٧ فقط، والأصوات قيد المراجعة.</p>
 </section>
 <section class="panel" id="view-audio"><h2>إعداد النطق المعتمد</h2><p><a href="./pilot-review.html">فتح أول ثلاث صفحات والاستماع إلى كل مربع وحرف</a></p><p class="hint">روابط QR تقود إلى مواد الصفحات، ولا تعطي تلقائيًا توقيت بداية ونهاية كل كلمة. حمّل ملف صوت الصفحة بعد الحصول عليه بصورة مصرح بها، وحدد مقطع كل كلمة وراجعه.</p>
 <div class="controls"><label class="file-button">اختيار تسجيل للصفحة<input id="audio-file" type="file" accept="audio/*" hidden/></label><button id="open-qr" class="ghost">زيارة رابط QR للصفحة</button></div>
