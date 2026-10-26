@@ -1,5 +1,6 @@
 import "./style.css";
 import {closestZone,homography,project,validSegment,sanitizeImport} from "./core.js";
+import {AutoPageVision} from "./page-vision.js";
 import * as pdfjs from "pdfjs-dist";
 import workerURL from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 pdfjs.GlobalWorkerOptions.workerSrc=workerURL;
@@ -47,51 +48,157 @@ $("approve-mark").onclick=()=>{if(!state.selected)return;const s=state.segments[
 $("export-data").onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,segments:state.segments},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="madani-audio-segments.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $("import-data").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{state.segments={...state.segments,...sanitizeImport(JSON.parse(await f.text()))};localStorage.setItem("madani_segments_pilot_v2",JSON.stringify(state.segments));status("تم استيراد التوقيتات من الملف")}catch(e){status("ملف التوقيت غير صالح")}};
 try{state.segments=sanitizeImport({schema:1,segments:JSON.parse(localStorage.getItem("madani_segments_pilot_v2")||"{}")})}catch(e){}
+// Camera mode: a single tap starts both automatic page identification and
+// fingertip tracking. No page selector or four-corner calibration is required.
+state.cameraRun=0;
+state.autoVision=null;
+state.activeMatch=null;
+state.pageCandidate=null;
+state.pageCandidateCount=0;
+state.lastVision=0;
+state.lastRecognized=0;
+state.lastHand=0;
+state.autoStatus="";
+function announceAuto(message){
+ if(state.autoStatus!==message){
+  state.autoStatus=message;
+  $("camera-hint").textContent=message;
+  status(message);
+ }
+}
 async function startCamera(){
  const placeholder=$("camera-placeholder"),stage=$("camera-stage");
- if(state.videoStream?.getVideoTracks().some(t=>t.readyState==="live")){placeholder.hidden=true;return}
- stage.dataset.cameraState="loading";placeholder.hidden=false;placeholder.textContent="جارٍ تشغيل الكاميرا... وافق على إذن الوصول إذا طلب المتصفح ذلك.";
+ if(state.videoStream?.getVideoTracks().some(t=>t.readyState==="live"))return;
+ const run=++state.cameraRun;
+ stage.dataset.cameraState="loading";
+ placeholder.hidden=false;
+ placeholder.textContent="جارٍ تشغيل الكاميرا والتعرف على الصفحة تلقائيًا...";
  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
-   stage.dataset.cameraState="error";placeholder.textContent="تعذر الوصول للكاميرا. افتح الموقع في Chrome باستخدام HTTPS، ثم اسمح له باستخدام الكاميرا.";status("الكاميرا غير متاحة لهذا المتصفح أو الاتصال");return;
+  stage.dataset.cameraState="error";
+  placeholder.textContent="افتح هذا الموقع باستخدام Chrome وعنوان HTTPS، ثم اسمح باستخدام الكاميرا.";
+  announceAuto("الكاميرا غير متاحة في هذا المتصفح.");
+  return;
  }
- let stream;
+ let stream=null;
  try{
-   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280}},audio:false});
-   state.videoStream=stream;
-   $("video").srcObject=stream;
-   await $("video").play();
-   placeholder.hidden=true;stage.dataset.cameraState="ready";
-   sizeCanvas();requestAnimationFrame(track);
-   status("تم تشغيل الكاميرا بنجاح. اضبط زوايا الصفحة ثم فعّل تتبع الإصبع.");
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});
+  if(run!==state.cameraRun){stream.getTracks().forEach(t=>t.stop());return}
+  state.videoStream=stream;
+  $("video").srcObject=stream;
+  await $("video").play();
+  placeholder.hidden=true;stage.dataset.cameraState="ready";
+  sizeCanvas();
+  state.activeMatch=null;state.pageCandidate=null;state.pageCandidateCount=0;
+  state.lastRecognized=0;state.lastPlayed="";state.seen=null;
+  requestAnimationFrame(track);
+  announceAuto("وجّه الكاميرا إلى إحدى الصفحات التعليمية 15 أو 16 أو 17؛ سيتعرف التطبيق على الصفحة تلقائيًا.");
+  // Both models load automatically. Failure of one is reported separately.
+  const vision=new AutoPageVision();
+  state.autoVision=vision;
+  const sources=Object.entries(state.pilot?.pages||{}).map(([n,p])=>[Number(n),p.image]);
+  if(!sources.length)throw new Error("لم تُحمّل بيانات الصفحات التعليمية");
+  const recognition=vision.init(sources).then(()=>{
+   if(run!==state.cameraRun){vision.dispose();return}
+   announceAuto("التعرف على الصفحات جاهز. وجّه الكاميرا إلى الصفحة، ثم ضع السبابة على أي حرف.");
+  });
+  const hand=(async()=>{
+   const {FilesetResolver,HandLandmarker}=await import("@mediapipe/tasks-vision");
+   const resolver=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21/wasm");
+   const task=await HandLandmarker.createFromOptions(resolver,{
+    baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"CPU"},
+    runningMode:"VIDEO",numHands:1,minHandDetectionConfidence:.55,minTrackingConfidence:.5
+   });
+   if(run!==state.cameraRun){task.close();return}
+   state.handTask=task;state.handEnabled=true;
+  })();
+  const settled=await Promise.allSettled([recognition,hand]);
+  if(run!==state.cameraRun)return;
+  if(settled[0].status==="rejected")announceAuto("تعذر بدء التعرف على الصفحة: "+settled[0].reason.message);
+  else if(settled[1].status==="rejected")announceAuto("تعرفت على الصفحة ولكن تعذر تشغيل تتبع الإصبع: "+settled[1].reason.message);
+  else announceAuto("جاهز: وجّه الكاميرا إلى الصفحة ثم أشر بإصبعك إلى الحرف لسماعه. لا يلزم ضبط أي إعدادات.");
  }catch(e){
-   stream?.getTracks().forEach(t=>t.stop());state.videoStream=null;$("video").srcObject=null;
-   stage.dataset.cameraState="error";placeholder.hidden=false;
-   const reasons={
-     NotAllowedError:"تم رفض إذن الكاميرا. في Chrome اضغط رمز إعدادات الموقع بجوار العنوان، واختر أذونات الموقع ← الكاميرا ← سماح، ثم أعد المحاولة.",
-     PermissionDeniedError:"الكاميرا محظورة من أذونات المتصفح؛ اسمح لها من إعدادات الموقع ثم أعد المحاولة.",
-     NotFoundError:"لم يعثر المتصفح على كاميرا متاحة على الجهاز.",
-     NotReadableError:"الكاميرا مستخدمة في تطبيق آخر أو لم يتمكن الهاتف من فتحها. أغلق التطبيقات التي تستخدمها وأعد المحاولة.",
-     OverconstrainedError:"الكاميرا لا تدعم الإعدادات المطلوبة. جرّب متصفح Chrome."
-   };
-   const message=reasons[e.name]||("تعذر تشغيل الكاميرا ("+(e.name||"خطأ غير معروف")+"). تحقق من الأذونات وأعد المحاولة.");
-   placeholder.textContent=message;status(message);
+  stream?.getTracks().forEach(t=>t.stop());
+  if(run!==state.cameraRun)return;
+  state.videoStream=null;$("video").srcObject=null;
+  stage.dataset.cameraState="error";placeholder.hidden=false;
+  const reasons={
+   NotAllowedError:"الكاميرا مرفوضة. من إعدادات الموقع في Chrome اختر الكاميرا ← السماح.",
+   PermissionDeniedError:"اسمح باستخدام الكاميرا في إعدادات الموقع ثم أعد المحاولة.",
+   NotFoundError:"لم تُعثر على كاميرا متاحة.",
+   NotReadableError:"الكاميرا مشغولة بتطبيق آخر؛ أغلقه ثم أعد المحاولة."
+  };
+  const msg=reasons[e.name]||("تعذر بدء الكاميرا: "+e.message);
+  placeholder.textContent=msg;announceAuto(msg);
  }
 }
 function stopCamera(){
+ ++state.cameraRun;
  state.videoStream?.getTracks().forEach(t=>t.stop());state.videoStream=null;
- state.handEnabled=false;state.handTask?.close?.();state.handTask=null;$("video").srcObject=null;
- $("camera-stage").dataset.cameraState="idle";
- $("camera-placeholder").textContent="الكاميرا متوقفة. اضغط «تشغيل الكاميرا الخلفية» للبدء.";
- $("camera-placeholder").hidden=false;status("تم إيقاف الكاميرا.");
+ state.handEnabled=false;state.handTask?.close?.();state.handTask=null;
+ state.autoVision?.dispose();state.autoVision=null;state.activeMatch=null;
+ state.lastPlayed="";state.seen=null;state.pageCandidate=null;
+ $("video").srcObject=null;$("camera-stage").dataset.cameraState="idle";
+ $("camera-placeholder").textContent="اضغط تشغيل الكاميرا ليبدأ التعرف على الصفحة والإصبع.";
+ $("camera-placeholder").hidden=false;
+ announceAuto("الكاميرا متوقفة.");
 }
+function sizeCanvas(){const c=$("camera-overlay"),v=$("video");c.width=v.videoWidth||640;c.height=v.videoHeight||480}
 $("camera-on").onclick=startCamera;
 $("camera-off").onclick=stopCamera;
-function sizeCanvas(){const c=$("camera-overlay"),v=$("video");c.width=v.videoWidth||640;c.height=v.videoHeight||480;}
-$("calibrate").onclick=()=>{state.corners=[];state.H=null;state.calibrating=true;$("camera-hint").textContent="المس الزوايا على الصورة: أعلى يسار ← أعلى يمين ← أسفل يمين ← أسفل يسار";status("بدأت معايرة الصفحة")};
-$("camera-overlay").addEventListener("pointerdown",e=>{if(!state.calibrating)return;const rect=e.currentTarget.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;state.corners.push({x,y});if(state.corners.length===4){state.H=homography(state.corners,[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}]);state.calibrating=false;$("camera-hint").textContent="تم ضبط الزوايا. فعّل تتبع الإصبع، أو المس موضع الكلمة في الصورة لتجربة المطابقة.";status("اكتملت معايرة زوايا الصفحة")}else status("تم تعيين الزاوية "+state.corners.length+" من 4")});
-$("camera-overlay").addEventListener("click",e=>{if(state.calibrating||!state.H)return;const rect=e.currentTarget.getBoundingClientRect();const p=project(state.H,{x:(e.clientX-rect.left)/rect.width,y:(e.clientY-rect.top)/rect.height});const z=p&&closestZone(p,state.pages[state.page]?.zones||[]);if(z)select(z);else status("لم أجد كلمة في هذا الموضع")});
-$("hand-on").onclick=async()=>{if(!state.videoStream)return status("شغّل الكاميرا أولًا");try{status("تحميل نموذج تتبع اليد...");const {FilesetResolver,HandLandmarker}=await import("@mediapipe/tasks-vision");const resolver=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21/wasm");state.handTask=await HandLandmarker.createFromOptions(resolver,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"CPU"},runningMode:"VIDEO",numHands:1});state.handEnabled=true;status("تم تشغيل تتبع طرف السبابة؛ ثبّت إصبعك على الكلمة")}catch(e){status("تعذر تحميل نموذج الإصبع (يلزم اتصال إنترنت أول مرة): "+e.message)}};
-function track(t){if(!state.videoStream)return;const c=$("camera-overlay"),ctx=c.getContext("2d"),v=$("video");if(v.videoWidth&&c.width!==v.videoWidth)sizeCanvas();ctx.clearRect(0,0,c.width,c.height);if(state.corners.length){ctx.beginPath();state.corners.forEach((p,i)=>i?ctx.lineTo(p.x*c.width,p.y*c.height):ctx.moveTo(p.x*c.width,p.y*c.height));ctx.strokeStyle="#eabf69";ctx.lineWidth=4;ctx.stroke()}if(state.handEnabled&&state.handTask&&t-state.lastHand>130&&v.readyState>=2){state.lastHand=t;try{const result=state.handTask.detectForVideo(v,t);const tip=result.landmarks?.[0]?.[8];if(tip){const p={x:tip.x,y:tip.y};ctx.beginPath();ctx.arc(p.x*c.width,p.y*c.height,12,0,Math.PI*2);ctx.fillStyle="#52b58a";ctx.fill();if(state.H){const q=project(state.H,p),z=q&&closestZone(q,state.pages[state.page]?.zones||[]);if(z){if(state.seen!==z.id){state.seen=z.id;state.seenAt=t}else if(t-state.seenAt>700&&state.lastPlayed!==z.id){state.lastPlayed=z.id;select(z)}}else {state.seen=null;state.lastPlayed=""}}}else {state.seen=null;state.lastPlayed=""}}catch(e){}}requestAnimationFrame(track)}
+function updateAutoPage(result,now){
+ if(result){
+  state.lastRecognized=now;
+  if(state.pageCandidate===result.page)state.pageCandidateCount++;
+  else {state.pageCandidate=result.page;state.pageCandidateCount=1}
+  if(state.pageCandidateCount>=2){
+   state.activeMatch=result;
+   if(state.page!==result.page)setPage(result.page);
+   const n=state.pilot?.pages[result.page]?.printedPage??result.page;
+   if(state.autoStatus.indexOf("الصفحة "+n)===-1)announceAuto("تعرّفت على الصفحة "+n+". أشر إلى حرف بإصبعك لسماع نطقه.");
+  }
+ }else if(now-state.lastRecognized>3500){
+  state.activeMatch=null;state.pageCandidate=null;state.pageCandidateCount=0;
+  announceAuto("لم أتعرف على الصفحة؛ قرب الكتاب حتى تظهر الصفحة كاملة وثبت الكاميرا. الصفحات المجهزة حاليًا 15–17.");
+ }
+}
+function track(now){
+ if(!state.videoStream)return;
+ const c=$("camera-overlay"),ctx=c.getContext("2d"),v=$("video");
+ if(v.videoWidth&&c.width!==v.videoWidth)sizeCanvas();
+ ctx.clearRect(0,0,c.width,c.height);
+ if(state.autoVision?.templates?.length&&now-state.lastVision>1050&&v.readyState>=2){
+  state.lastVision=now;
+  state.autoVision.detect(v).then(found=>{if(state.videoStream)updateAutoPage(found,performance.now())}).catch(e=>{if(state.autoVision)announceAuto("تعذر تحليل صورة الصفحة: "+e.message)})
+ }
+ const det=state.activeMatch;
+ if(det&&now-state.lastRecognized<4000){
+  ctx.fillStyle="rgba(21,135,77,.9)";
+  ctx.font="bold 30px sans-serif";
+  ctx.fillText("صفحة "+(state.pilot?.pages[det.page]?.printedPage||det.page),18,42);
+ }
+ if(state.handEnabled&&state.handTask&&now-state.lastHand>115&&v.readyState>=2){
+  state.lastHand=now;
+  try{
+   const hand=state.handTask.detectForVideo(v,now);
+   const landmarks=hand.landmarks?.[0],tip=landmarks?.[8];
+   if(tip){
+    ctx.beginPath();ctx.arc(tip.x*c.width,tip.y*c.height,12,0,Math.PI*2);
+    ctx.fillStyle="#12ca83";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.stroke();
+    if(det&&now-state.lastRecognized<4000){
+     const q=state.autoVision?.pointInPage(det,tip);
+     const z=q&&closestZone(q,state.pilot?.pages[det.page]?.zones||[]);
+     if(z){
+      if(state.seen!==z.id){state.seen=z.id;state.seenAt=now}
+      else if(now-state.seenAt>=300&&state.lastPlayed!==z.id){
+       state.lastPlayed=z.id;select(z);announceAuto("الصفحة "+(state.pilot?.pages[det.page]?.printedPage||det.page)+" — "+(z.spokenText||z.text));
+      }
+     }else{state.seen=null;state.lastPlayed=""}
+    }
+   }else{state.seen=null;state.lastPlayed=""}
+  }catch(e){if(!state.trackErrorReported){state.trackErrorReported=true;announceAuto("خطأ في تتبع الإصبع: "+e.message)}}
+ }
+ requestAnimationFrame(track);
+}
+
 let installPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("install").hidden=false});$("install").onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$("install").hidden=true}};
 load();
-
