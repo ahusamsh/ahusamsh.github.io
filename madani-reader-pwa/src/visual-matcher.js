@@ -81,7 +81,7 @@ function match(current,template){
  if(out.some(v=>!Number.isFinite(v)))return null;
  const middle=project(out,{x:.5,y:.5});
  if(!middle||Math.abs(middle.x)>8||Math.abs(middle.y)>8)return null;
- return {H:out,inliers:n,ratio,score:n*ratio+Math.min((pmaxy-pminy)/template.height,1)*10,confidence:"visual"};
+ return {H:out,inliers:n,ratio,anchors:inlierPairs.map(p=>({x:p.s.x/current.width,y:p.s.y/current.height,u:p.t.x/template.width,v:p.t.y/template.height})),score:n*ratio+Math.min((pmaxy-pminy)/template.height,1)*10,confidence:"visual"};
 }
 function invert3(h){
  const [a,b,c,d,e,f,g,j,k]=h;
