@@ -2,6 +2,7 @@ import jsQR from "jsqr";
 import {FilesetResolver,HandLandmarker} from "@mediapipe/tasks-vision";
 import {markerFromUrl,markerGeometry} from "./page-vision.js";
 import {VisualPageMatcher} from "./visual-matcher.js";
+import {TemporalPageTracker} from "./temporal-tracker.js";
 import {closestZone,project} from "./core.js";
 import {reliableMatch,strongMovingMatch,geometryAgrees} from "./alignment-quality.js";
 import "./reader.css";
@@ -23,12 +24,12 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
  const ctx=canvas.getContext("2d");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
  function clearAudio(){try{s.audioSource?.stop()}catch{}s.audioSource=null}
- function resetPage(){s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
+ function resetPage(){s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
  async function unlockAudio(){
   const A=window.AudioContext||window.webkitAudioContext;
   if(A){s.audioContext??=new A();await s.audioContext.resume()}
@@ -73,25 +74,30 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   return c;
  }
  async function qrCode(){
-  const c=screenshot(1152);
+  // Decode the QR using Android's native detector directly on the video
+  // before copying pixels. Use a smaller canvas for the JS fallback.
+  let c=null;
   if(s.qrReader){
    try{
-    const codes=await s.qrReader.detect(c);
+    const codes=await s.qrReader.detect(video);
     for(const code of codes){
-      if(markerFromUrl(code.rawValue))return {raw:code.rawValue,points:code.cornerPoints,width:c.width,height:c.height};
+      if(markerFromUrl(code.rawValue))return {raw:code.rawValue,points:code.cornerPoints,width:video.videoWidth,height:video.videoHeight};
       if(code.rawValue?.trim())s.lastScannedQr=code.rawValue.trim();
     }
    }catch{ /* fall back to jsQR */ }
   }
+  c=screenshot(900);
   const context=c.getContext("2d",{willReadFrequently:true});
-  const crops=[[0,0,1,1],[.18,.12,.64,.72],[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]];
+  // Fast path: the child already points the QR into the green guide.
+  // Search its center first; expensive wide crops are fallback only.
+  const crops=[[.21,.17,.58,.65],[0,0,1,1],[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]];
   // Camera QR can be small. Upscale focused crops with nearest-neighbour
   // contrast-preserving pixels; never send a camera frame to a server.
   for(const [rx,ry,rw,rh] of crops){
    const x=Math.round(c.width*rx),y=Math.round(c.height*ry),w=Math.floor(c.width*rw),h=Math.floor(c.height*rh);
    const data=context.getImageData(x,y,w,h);
    const samples=[{pixels:data.data,w,h,scale:1}];
-   if(rw<1){
+   if(rw<1&&w*h<190000){
     const scale=2;
     const big=new Uint8ClampedArray(w*h*4*scale*scale);
     for(let row=0;row<h*scale;row++)for(let col=0;col<w*scale;col++){
@@ -124,15 +130,13 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   confirmQR(page.printedPage);
   onPage({page:marker.page,printedPage:page.printedPage});
   s.matcher=new VisualPageMatcher();
-  try{await s.matcher.init([[marker.page,url(page.image)]])}
-  catch(e){announce("تم تحديد الصفحة؛ تعذر تهيئة التتبع البصري: "+e.message)}
-  if(currentRun!==s.run)return;
-  // A QR scanned close-up identifies the page but does NOT locate all its
-  // letters. Wait for a wide view and a new geometric alignment.
-  s.lockedH=null;s.lastAligned=0;
+  // Do not block finger model initialization on reference-image descriptors.
+  // Both heavy modules begin after QR confirmation in parallel.
+  const matcher=s.matcher;
+  matcher.init([[marker.page,url(page.image)]])
+   .catch(e=>{if(currentRun===s.run)announce("تعذر تجهيز صورة الصفحة: "+e.message)});
   initializeHand(currentRun);
-  // Warm a small number of audio clips after QR confirmation; audio output
-  // remains reserved for an actual selected letter.
+  // Warm audio asynchronously so a selected letter does not wait on its MP3.
   prefetchPageAudio(currentRun,marker.page);
  }
  async function prefetchPageAudio(run,pageNumber){
@@ -164,7 +168,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   }catch(e){if(run===s.run)announce("تم تحديد الصفحة، لكن تعذر تجهيز تتبع الإصبع: "+e.message)}
  }
  async function scan(){
-  if(s.scanning||s.phase==="idle")return;
+  if(s.scanning||s.phase!=="scan")return;
   s.scanning=true;
   try{
    const q=await qrCode();
@@ -181,61 +185,77 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   }catch(e){announce("تعذر التعرف على رمز الصفحة: "+e.message)}
   finally{s.scanning=false}
  }
- async function align(){
-  if(s.phase!=="point"||s.matching||!s.matcher)return;
+ function acceptPose(result,now,fromTracking=false){
+  if(!result||result.page&&result.page!==s.page?.pdfPage)return false;
+  const previous=s.lockedH;
+  const wasReady=!!previous&&now-s.lastAligned<1450;
+  const agreed=!!previous&&geometryAgrees({H:previous},result,.10);
+  if(previous&&agreed){
+   // Follow deliberate handheld motion: 90% new geometry, 10% jitter filter.
+   s.lockedH=result.H.map((v,i)=>.90*v+.10*previous[i]);
+  }else s.lockedH=result.H;
+  s.lastAligned=now;
+  if(!wasReady&&s.audioState!=="loading"&&s.audioState!=="playing"){
+   announce(s.tracker?"الصفحة جاهزة. أشر إلى الحرف.":"تم التعرف على الصفحة، وجارٍ تجهيز قراءة الحروف.");
+  }
+  return true;
+ }
+ function align(){
+  if(s.phase!=="point"||s.matching||!s.matcher||!video.videoWidth)return;
   s.matching=true;
   try{
-   const result=s.matcher.detect(screenshot(1100));
-   // After QR establishes which page it is, a strong perspective-RANSAC
-   // match is sufficient even when lighting makes pixel similarity low.
-   const valid=reliableMatch(result,s.page.pdfPage);
-   const veryStrong=strongMovingMatch(result,s.page.pdfPage);
-   if(valid){
-    // Never accept a single ambiguous geometry: require two consistent
-    // homographies whose projections agree at the center and opposite cells.
-    const now=performance.now(),points=[{x:.2,y:.25},{x:.8,y:.72}];
-    let stable=false;
-    if(s.lastCandidate&&now-s.lastCandidateAt<2600){
-     stable=geometryAgrees(result,s.lastCandidate);
-    }
-    s.alignStreak=stable?s.alignStreak+1:1;
-    s.lastCandidate=result;s.lastCandidateAt=now;
-    // A phone in a child's hand does not remain still for two snapshots.
-    // Strong single-frame matches may update immediately, whereas weaker
-    // ones must agree across frames. Never reuse stale geometry indefinitely.
-    if(veryStrong||s.alignStreak>=2){
-     const wasReady=!!s.lockedH&&now-s.lastAligned<=1050;
-     const previous=s.lockedH;
-     if(previous&&stable){
-      // Slightly smooth the projection for handheld jitter without freezing
-      // it during deliberate phone motion.
-      const alpha=.82;
-      s.lockedH=result.H.map((v,i)=>v*alpha+previous[i]*(1-alpha));
-     }else s.lockedH=result.H;
-     s.lastAligned=now;s.alignFails=0;
-     // Repeated alignment updates must not overwrite the selected letter,
-     // audio playback status, or the "finger not detected" diagnostic.
-     if(!wasReady&&s.audioState!=="loading"&&s.audioState!=="playing"){
-      announce(s.tracker?"الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.":"تم تحديد الصفحة "+s.page.printedPage+"، وجارٍ تجهيز قراءة الحروف.");
-     }
-    }
-   }else{
-    s.alignStreak=0;s.alignFails++;
-    if(performance.now()-s.alignReportAt>3500){
-     s.alignReportAt=performance.now();
-     if(result)announce("تم التعرف على الصفحة لكن المحاذاة غير كافية (النقاط "+result.inliers+"، الوضوح "+Math.round(result.visual*100)+"٪). أظهر الصفحة كاملة في الكاميرا.");
-     else announce("تم تحديد الصفحة. اجعل الجدول كاملًا ظاهرًا، وأبعد إصبعك لحظة حتى تُثبت مواقع الحروف.");
+   const now=performance.now(),frame=screenshot(800);
+   // Fast optical flow is preferred over full ORB re-matching. It tracks
+   // remaining page features while fingers temporarily cover other areas.
+   if(s.temporal.previous){
+    const t=performance.now(),tracked=s.temporal.update(frame);
+    s.flowMs=performance.now()-t;
+    if(tracked){
+     acceptPose({...tracked,page:s.page.pdfPage},performance.now(),true);
+     if(now-s.lastFullMatch<4500)return;
     }
    }
-  }catch(e){if(performance.now()-s.alignReportAt>3500){s.alignReportAt=performance.now();announce("تعذر تحليل الصفحة، حاول توجيه الكاميرا إلى الصفحة: "+e.message)}}finally{s.matching=false}
+   const fullStart=performance.now();
+   const result=s.matcher.detect(frame);
+   s.lastFullMs=performance.now()-fullStart;
+   s.lastFullMatch=performance.now();
+   const valid=reliableMatch(result,s.page.pdfPage);
+   const strong=strongMovingMatch(result,s.page.pdfPage);
+   if(valid){
+    const consistent=!!s.lastCandidate&&now-s.lastCandidateAt<2200&&geometryAgrees(result,s.lastCandidate,.1);
+    s.alignStreak=consistent?s.alignStreak+1:1;
+    s.lastCandidate=result;s.lastCandidateAt=now;
+    if(strong||s.alignStreak>=2){
+     acceptPose(result,performance.now());
+     s.temporal.seed(frame,result);
+     s.alignFails=0;
+    }
+   }else{
+    // Page ID remains known after a hand occludes the QR/letters. Do not
+    // return to scanning state. Optical flow / ORB reacquire automatically.
+    s.alignStreak=0;
+    s.alignFails++;
+    if(performance.now()-s.alignReportAt>3500&&performance.now()-s.lastAligned>1800){
+     s.alignReportAt=performance.now();
+     announce("الصفحة محفوظة. أظهر جزءًا أكبر من الحروف حتى يستعيد التطبيق موضعها تلقائيًا، دون مسح QR مرة أخرى.");
+    }
+   }
+  }catch(e){
+   if(performance.now()-s.alignReportAt>3500){
+    s.alignReportAt=performance.now();
+    announce("جارٍ استعادة تتبع الصفحة: "+e.message);
+   }
+  }finally{s.matching=false}
  }
  function detectFinger(t){
-  if(!s.tracker||!s.lockedH||t-s.lastAligned>1050)return;
+  if(!s.tracker||!s.lockedH||t-s.lastAligned>1450)return;
   const results=s.tracker.detectForVideo(video,t);
   const tip=results.landmarks?.[0]?.[8];
   if(!tip){
    s.fingerVisible=false;s.fingerZone=null;
    s.seen=null;
+   // A child may lift the finger and point at the SAME letter again.
+   if(t-s.lastFingerSeen>330)s.lastZone=null;
    if(t-s.lastFingerHint>2500&&t-s.lastFingerSeen>1200){
     s.lastFingerHint=t;announce("الصفحة جاهزة، لكن الإصبع غير ظاهر للكاميرا. أظهر يدك والإصبع داخل الصورة.");
    }
@@ -250,16 +270,18 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   const zone=p&&p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1&&closestZone(p,page?.zones||[]);
   if(!zone){
    s.fingerZone=null;s.seen=null;
+   if(!s.lastZoneLostAt)s.lastZoneLostAt=t;
+   if(t-s.lastZoneLostAt>340)s.lastZone=null;
    if(t-s.lastFingerHint>2200){s.lastFingerHint=t;announce("رصدت الإصبع. وجّه طرفه إلى أحد مربعات الحروف.");}
    return;
   }
-  s.fingerZone=zone.id;
+  s.fingerZone=zone.id;s.lastZoneLostAt=0;
   // Display visible positive feedback BEFORE audio starts.
   if(s.seen!==zone.id){s.seen=zone.id;s.seenAt=t;announce("تم تحديد: "+(zone.spokenText||zone.text));return}
   // Faster dwell for a moving child's hand. Requires 2 sampled frames, while
   // a short cooldown protects against repetitive activation.
   if(t-s.seenAt<175||s.lastZone===zone.id||t<s.coolUntil)return;
-  s.lastZone=zone.id;s.coolUntil=t+650;
+  s.lastZone=zone.id;s.coolUntil=t+450;
   announce("جارٍ نطق: "+(zone.spokenText||zone.text));
   say(zone);
  }
@@ -274,8 +296,8 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
    if(s.phase==="scan"&&t-s.lastScan>420){s.lastScan=t;scan()}
    // Prioritize hand detection over expensive page feature matching.
    if(s.phase==="point"&&s.tracker&&t-s.lastFinger>125){s.lastFinger=t;try{detectFinger(t)}catch(e){if(t-s.lastFingerHint>2000){s.lastFingerHint=t;announce("تتبع الإصبع غير متاح: "+e.message)}}}
-   if(s.phase==="point"&&t-s.lastMatch>590){s.lastMatch=t;align()}
-   if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>1900){
+   if(s.phase==="point"&&t-s.lastMatch>(s.temporal.previous?190:650)){s.lastMatch=t;align()}
+   if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>2600){
     announce("وجّه الكاميرا إلى الصفحة كاملة لتحديد الحروف بدقة.");
    }
   }
@@ -328,5 +350,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1050,handReady:!!s.tracker,fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
 }
