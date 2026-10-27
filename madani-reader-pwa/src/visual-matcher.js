@@ -1,7 +1,7 @@
 import jsfeat from "jsfeat";
 import {project} from "./core.js";
 
-const CORNERS=14000, FEATURES=380;
+const CORNERS=14000, FEATURES=720;
 const U_MAX=[15,15,15,15,14,14,14,13,13,12,11,10,9,8,6,3,0];
 function popcount(v){v=v-((v>>>1)&0x55555555);v=(v&0x33333333)+((v>>>2)&0x33333333);return (((v+(v>>>4))&0x0f0f0f0f)*0x01010101)>>>24;}
 function angle(gray,px,py){
@@ -24,11 +24,26 @@ function features(canvas,width){
  jsfeat.yape06.laplacian_threshold=23;jsfeat.yape06.min_eigen_value_threshold=16;
  const points=Array.from({length:CORNERS},()=>new jsfeat.keypoint_t(0,0,0,0));
  let count=jsfeat.yape06.detect(blurred,points,17);
- if(count>FEATURES){jsfeat.math.qsort(points,0,count-1,(a,b)=>b.score>a.score);count=FEATURES}
- for(let i=0;i<count;i++)points[i].angle=angle(blurred,points[i].x,points[i].y);
+ // Balance ORB features across the entire page. Taking only the strongest
+ // corners concentrated matches around the heading, keyboard or fingertip.
+ const candidates=points.slice(0,count).sort((a,b)=>b.score-a.score);
+ const COLS=5, ROWS=8, PER_TILE=24, tiles=new Uint8Array(COLS*ROWS);
+ const selected=[];
+ for(const pt of candidates){
+  const x=Math.max(0,Math.min(COLS-1,Math.floor(pt.x*COLS/width)));
+  const y=Math.max(0,Math.min(ROWS-1,Math.floor(pt.y*ROWS/h)));
+  const idx=y*COLS+x;
+  if(tiles[idx]>=PER_TILE)continue;
+  if(pt.x<16||pt.y<16||pt.x>=width-16||pt.y>=h-16)continue;
+  tiles[idx]++;
+  selected.push(pt);
+  if(selected.length>=FEATURES)break;
+ }
+ count=selected.length;
+ for(let i=0;i<count;i++)selected[i].angle=angle(blurred,selected[i].x,selected[i].y);
  const descriptors=new jsfeat.matrix_t(32,count,jsfeat.U8C1_t);
- jsfeat.orb.describe(blurred,points,count,descriptors);
- return {width,height:h,points:points.slice(0,count).map(p=>({x:p.x,y:p.y})),data:new Uint32Array(descriptors.buffer.i32.slice(0,count*8)),pixels:new Uint8Array(blurred.data.slice(0,width*h)),count};
+ jsfeat.orb.describe(blurred,selected,count,descriptors);
+ return {width,height:h,points:selected.map(p=>({x:p.x,y:p.y})),data:new Uint32Array(descriptors.buffer.i32.slice(0,count*8)),pixels:new Uint8Array(blurred.data.slice(0,width*h)),count};
 }
 function match(current,template){
  if(current.count<20||template.count<20)return null;
@@ -42,9 +57,9 @@ function match(current,template){
    if(diff<best){second=best;best=diff;bestIdx=j}
    else if(diff<second)second=diff;
   }
-  if(best<77&&best<.80*second)candidates.push({s:current.points[i],t:template.points[bestIdx],distance:best});
+  if(best<90&&best<.86*second)candidates.push({s:current.points[i],t:template.points[bestIdx],distance:best});
  }
- if(candidates.length<17)return null;
+ if(candidates.length<12)return null;
  // Estimate frame -> printed-page transform with RANSAC; never guess the
  // page solely from raw descriptor similarity.
  const source=candidates.map(c=>c.s),target=candidates.map(c=>c.t);
@@ -55,10 +70,10 @@ function match(current,template){
  if(!ok)return null;
  const inlierPairs=candidates.filter((c,i)=>mask.data[i]>0);
  const n=inlierPairs.length,ratio=n/candidates.length;
- if(n<13||ratio<.34)return null;
+ if(n<12||ratio<.28)return null;
  const pminx=Math.min(...inlierPairs.map(c=>c.t.x)),pmaxx=Math.max(...inlierPairs.map(c=>c.t.x));
  const pminy=Math.min(...inlierPairs.map(c=>c.t.y)),pmaxy=Math.max(...inlierPairs.map(c=>c.t.y));
- if((pmaxx-pminx)/template.width<.19||(pmaxy-pminy)/template.height<.19)return null;
+ if((pmaxx-pminx)/template.width<.25||(pmaxy-pminy)/template.height<.20)return null;
  const values=Array.from(H.data).slice(0,9);
  const out=[values[0]*current.width/template.width,values[1]*current.height/template.width,values[2]/template.width,
  values[3]*current.width/template.height,values[4]*current.height/template.height,values[5]/template.height,
@@ -103,7 +118,7 @@ export class VisualPageMatcher{
    mctx.fillStyle='#ffffff';
    if(Number(page)===18)mctx.fillRect(masked.width*.82,0,masked.width*.18,masked.height*.13);
    else mctx.fillRect(0,0,masked.width*.18,masked.height*.13);
-   for(const width of [380,550,740]){
+   for(const width of [500,740]){
     const f=features(masked,width);
     if(f.count>30)this.templates.push({...f,page:Number(page)});
    }
