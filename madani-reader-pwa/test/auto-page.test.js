@@ -28,3 +28,17 @@ test("a page marker automatically maps fingertip to the matching letter, no cali
   assert.equal(closestZone(mapped,pilot.pages[m.page].zones)?.id,z.id);
  }
 });
+
+test("actual printed QR uses BookSound/page15.mp3 and maps to PDF page 17",()=>{
+ assert.equal(markerFromUrl("https://a-alqasim.com/App/BookSound/page15.mp3")?.page,17);
+ assert.equal(markerFromUrl("https://www.a-alqasim.com/App/BookSound/page016.mp3")?.page,18);
+ assert.equal(markerFromUrl("http://a-alqasim.com/App/BookSound/page17.mp3")?.page,19);
+ assert.equal(markerFromUrl("https://a-alqasim.com/App/BookSound/page99.mp3"),null);
+ assert.equal(markerFromUrl("https://evil.example/App/BookSound/page15.mp3"),null);
+ assert.equal(markerFromUrl("https://evil.example/QM015"),null);
+});
+test("printed page15 QR geometry is accepted for finger projection",()=>{
+ const m=markers[0], [x,y,w,h]=m.box;
+ const pts=[{x:x*850,y:y*1180},{x:(x+w)*850,y:y*1180},{x:(x+w)*850,y:(y+h)*1180},{x:x*850,y:(y+h)*1180}];
+ assert.equal(markerGeometry("https://a-alqasim.com/App/BookSound/page15.mp3",pts,850,1180)?.page,17);
+});
