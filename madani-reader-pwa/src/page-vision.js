@@ -20,9 +20,18 @@ function cornerOrder(points){
  if(new Set([tl,tr,br,bl]).size!==4)return null;
  return [tl,tr,br,bl];
 }
-export function markerFromUrl(url){
- const m=String(url||"").match(/QM0(15|16|17)(?!\d)/i);
- return m?MARKERS["QM0"+m[1]]||null:null;
+export function markerFromUrl(value){
+ // The QR actually printed on the book contains a direct audio URL, e.g.
+ // https://a-alqasim.com/App/BookSound/page15.mp3. The original prototype
+ // incorrectly accepted only the PDF annotation's QM015 redirect.
+ let u;
+ try{u=new URL(String(value||"").trim())}catch{return null}
+ const host=u.hostname.toLowerCase();
+ if(!["a-alqasim.com","www.a-alqasim.com","go.alqasim.com"].includes(host))return null;
+ if(!["https:","http:"].includes(u.protocol))return null;
+ let match=u.pathname.match(/^\/App\/BookSound\/page0*(15|16|17)\.mp3\/?$/i);
+ if(!match)match=u.pathname.match(/^\/QM0(15|16|17)\/?$/i);
+ return match?MARKERS["QM0"+match[1]]||null:null;
 }
 export function markerGeometry(rawValue,corners,frameWidth,frameHeight){
  const marker=markerFromUrl(rawValue);
