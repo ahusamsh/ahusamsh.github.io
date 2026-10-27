@@ -23,36 +23,49 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
  const ctx=canvas.getContext("2d");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
  function clearAudio(){try{s.audioSource?.stop()}catch{}s.audioSource=null}
- function resetPage(){s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
+ function resetPage(){s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
  async function unlockAudio(){
   const A=window.AudioContext||window.webkitAudioContext;
   if(A){s.audioContext??=new A();await s.audioContext.resume()}
  }
  async function say(zone){
-  const a=s.manifest?.segments?.[zone.id];
-  if(!a?.clip){announce("لا يوجد صوت لهذا الحرف بعد.");return}
-  const sourceUrl=url(a.clip);
+  const segment=s.manifest?.segments?.[zone.id];
+  if(!segment?.clip){announce("لم نجد تسجيلًا لهذا الحرف.");return}
+  const clipUrl=url(segment.clip);
+  // IMPORTANT: committing a selection must not depend on the finger remaining
+  // over the word while the MP3 downloads. This previously caused silent
+  // cancellation on mobile when the finger moved or a frame was dropped.
+  const request=++s.audioRequest,run=s.run,pageId=s.page?.pdfPage;
+  s.audioState="loading";
   try{
-   let buffer=s.audioCache.get(sourceUrl);
+   let buffer=s.audioCache.get(clipUrl);
    if(!buffer){
-    const response=await fetch(sourceUrl);
+    const response=await fetch(clipUrl);
     if(!response.ok)throw Error("HTTP "+response.status);
-    buffer=await s.audioContext.decodeAudioData(await response.arrayBuffer());
-    s.audioCache.set(sourceUrl,buffer);
+    const bytes=await response.arrayBuffer();
+    if(!s.audioContext)throw Error("تهيئة الصوت غير مكتملة");
+    buffer=await s.audioContext.decodeAudioData(bytes);
+    s.audioCache.set(clipUrl,buffer);
    }
-   if(s.phase!=="point"||s.lastZone!==zone.id)return;
+   // Reject only when page, chosen target, or reader session changes,
+   // NOT when the child's finger moves after the selection.
+   if(s.phase!=="point"||s.run!==run||s.page?.pdfPage!==pageId||s.audioRequest!==request)return;
+   if(s.audioContext?.state!=="running")await s.audioContext.resume();
+   if(s.run!==run||s.audioRequest!==request)return;
    clearAudio();
    const node=s.audioContext.createBufferSource();
    node.buffer=buffer;node.connect(s.audioContext.destination);node.start();s.audioSource=node;
+   s.audioState="playing";
    onWord({page:s.page.pdfPage,printedPage:s.page.printedPage,zoneId:zone.id,text:zone.spokenText||zone.text});
-   announce("الصفحة "+s.page.printedPage+" — "+(zone.spokenText||zone.text));
-  }catch(e){announce("تعذر تشغيل الصوت: "+e.message)}
+   announce("🔊 "+(zone.spokenText||zone.text));
+  }catch(e){s.audioState="error";announce("تعذر تشغيل صوت الحرف: "+e.message)}
  }
+
  function resize(){if(!video.videoWidth)return;canvas.width=video.videoWidth;canvas.height=video.videoHeight;}
  function screenshot(width=1000){
   const c=s.qrCanvas;c.width=Math.min(width,video.videoWidth);c.height=Math.round(video.videoHeight*c.width/video.videoWidth);
@@ -118,6 +131,28 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   // letters. Wait for a wide view and a new geometric alignment.
   s.lockedH=null;s.lastAligned=0;
   initializeHand(currentRun);
+  // Warm a small number of audio clips after QR confirmation; audio output
+  // remains reserved for an actual selected letter.
+  prefetchPageAudio(currentRun,marker.page);
+ }
+ async function prefetchPageAudio(run,pageNumber){
+  const zones=s.manifest?.pages?.[pageNumber]?.zones||[];
+  const clips=zones.map(z=>s.manifest?.segments?.[z.id]?.clip).filter(Boolean);
+  let index=0;
+  async function worker(){
+   while(index<clips.length&&s.run===run&&s.page?.pdfPage===pageNumber){
+    const path=clips[index++],uri=url(path);
+    if(s.audioCache.has(uri))continue;
+    try{
+     const response=await fetch(uri);
+     if(!response.ok)continue;
+     const data=await response.arrayBuffer();
+     if(s.run!==run)return;
+     s.audioCache.set(uri,await s.audioContext.decodeAudioData(data));
+    }catch{/* Skip missing assets; say() handles error upon selection */}
+   }
+  }
+  await Promise.all(Array.from({length:2},worker));
  }
  async function initializeHand(run){
   try{
@@ -169,6 +204,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
     // Strong single-frame matches may update immediately, whereas weaker
     // ones must agree across frames. Never reuse stale geometry indefinitely.
     if(veryStrong||s.alignStreak>=2){
+     const wasReady=!!s.lockedH&&now-s.lastAligned<=1050;
      const previous=s.lockedH;
      if(previous&&stable){
       // Slightly smooth the projection for handheld jitter without freezing
@@ -177,7 +213,11 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
       s.lockedH=result.H.map((v,i)=>v*alpha+previous[i]*(1-alpha));
      }else s.lockedH=result.H;
      s.lastAligned=now;s.alignFails=0;
-     announce(s.tracker?"الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.":"تم تحديد الصفحة "+s.page.printedPage+"، وجارٍ تجهيز قراءة الحروف.");
+     // Repeated alignment updates must not overwrite the selected letter,
+     // audio playback status, or the "finger not detected" diagnostic.
+     if(!wasReady&&s.audioState!=="loading"&&s.audioState!=="playing"){
+      announce(s.tracker?"الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.":"تم تحديد الصفحة "+s.page.printedPage+"، وجارٍ تجهيز قراءة الحروف.");
+     }
     }
    }else{
     s.alignStreak=0;s.alignFails++;
@@ -193,28 +233,51 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   if(!s.tracker||!s.lockedH||t-s.lastAligned>1050)return;
   const results=s.tracker.detectForVideo(video,t);
   const tip=results.landmarks?.[0]?.[8];
-  if(!tip){s.seen=null;s.lastZone=null;return}
+  if(!tip){
+   s.fingerVisible=false;s.fingerZone=null;
+   s.seen=null;
+   if(t-s.lastFingerHint>2500&&t-s.lastFingerSeen>1200){
+    s.lastFingerHint=t;announce("الصفحة جاهزة، لكن الإصبع غير ظاهر للكاميرا. أظهر يدك والإصبع داخل الصورة.");
+   }
+   return;
+  }
+  s.fingerVisible=true;s.lastFingerSeen=t;
   const x=tip.x*canvas.width,y=tip.y*canvas.height;
-  ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);ctx.fillStyle="#36dd91";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.stroke();
+  ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);
+  ctx.fillStyle="#36dd91";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.stroke();
   const p=project(s.lockedH,{x:tip.x,y:tip.y});
   const page=s.manifest?.pages?.[s.page.pdfPage];
   const zone=p&&p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1&&closestZone(p,page?.zones||[]);
-  if(!zone){s.seen=null;s.lastZone=null;return}
-  if(s.seen!==zone.id){s.seen=zone.id;s.seenAt=t;return}
-  if(t-s.seenAt<460||s.lastZone===zone.id||t<s.coolUntil)return;
-  s.lastZone=zone.id;s.coolUntil=t+500;say(zone);
+  if(!zone){
+   s.fingerZone=null;s.seen=null;
+   if(t-s.lastFingerHint>2200){s.lastFingerHint=t;announce("رصدت الإصبع. وجّه طرفه إلى أحد مربعات الحروف.");}
+   return;
+  }
+  s.fingerZone=zone.id;
+  // Display visible positive feedback BEFORE audio starts.
+  if(s.seen!==zone.id){s.seen=zone.id;s.seenAt=t;announce("تم تحديد: "+(zone.spokenText||zone.text));return}
+  // Faster dwell for a moving child's hand. Requires 2 sampled frames, while
+  // a short cooldown protects against repetitive activation.
+  if(t-s.seenAt<175||s.lastZone===zone.id||t<s.coolUntil)return;
+  s.lastZone=zone.id;s.coolUntil=t+650;
+  announce("جارٍ نطق: "+(zone.spokenText||zone.text));
+  say(zone);
  }
+
  function loop(t){
   if(s.phase==="idle")return;
   if(canvas.width!==video.videoWidth&&video.videoWidth)resize();
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(video.readyState>=2&&video.videoWidth){
-   if((s.phase==="scan"||s.phase==="point")&&t-s.lastScan>420){s.lastScan=t;scan()}
-   if(s.phase==="point"&&t-s.lastMatch>340){s.lastMatch=t;align()}
+   // Critical on low-powered Android devices: QR detection is CPU-heavy.
+   // After scanning QR once, never run jsQR repeatedly while tracking a finger.
+   if(s.phase==="scan"&&t-s.lastScan>420){s.lastScan=t;scan()}
+   // Prioritize hand detection over expensive page feature matching.
+   if(s.phase==="point"&&s.tracker&&t-s.lastFinger>125){s.lastFinger=t;try{detectFinger(t)}catch(e){if(t-s.lastFingerHint>2000){s.lastFingerHint=t;announce("تتبع الإصبع غير متاح: "+e.message)}}}
+   if(s.phase==="point"&&t-s.lastMatch>590){s.lastMatch=t;align()}
    if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>1900){
     announce("وجّه الكاميرا إلى الصفحة كاملة لتحديد الحروف بدقة.");
    }
-   if(s.phase==="point"&&s.tracker&&t-s.lastFinger>110){s.lastFinger=t;try{detectFinger(t)}catch(e){}}
   }
   s.loopId=requestAnimationFrame(loop);
  }
@@ -265,5 +328,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1050,handReady:!!s.tracker,matchingFrames:s.alignStreak})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1050,handReady:!!s.tracker,fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
 }
