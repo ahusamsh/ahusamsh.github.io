@@ -133,7 +133,10 @@ export class VisualPageMatcher{
    const result=match(current,t);
    if(!result)continue;
    const visual=inkSimilarity(current,t,result.H);
-   const item={...result,page:t.page,frameWidth:canvas.width,frameHeight:canvas.height,visual,score:result.score*visual*visual};
+   // Contrast/lighting shifts can reduce global binary pixel similarity to 10%,
+   // even with 50+ geometrically consistent ORB inliers (real phone observation).
+   // Trust RANSAC inliers and spread, not a global brightness threshold.
+   const item={...result,page:t.page,frameWidth:canvas.width,frameHeight:canvas.height,visual,score:result.score*(0.70+0.30*Math.max(0,Math.min(visual,1)))};
    this.debug.push({page:t.page,width:t.width,score:Math.round(item.score*10)/10,n:item.inliers,ratio:item.ratio,visual:Math.round(visual*100)/100,H:item.H.map(v=>Math.round(v*100)/100)});
    if(!best||item.score>best.score){second=best;best=item}
    else if(!second||item.score>second.score)second=item;
