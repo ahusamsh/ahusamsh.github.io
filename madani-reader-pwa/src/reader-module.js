@@ -3,6 +3,7 @@ import {FilesetResolver,HandLandmarker} from "@mediapipe/tasks-vision";
 import {markerFromUrl,markerGeometry} from "./page-vision.js";
 import {VisualPageMatcher} from "./visual-matcher.js";
 import {closestZone,project} from "./core.js";
+import {reliableMatch,strongMovingMatch,geometryAgrees} from "./alignment-quality.js";
 import "./reader.css";
 
 /** Standalone camera reader. No global DOM controls, database, PDFs, or cloud writes.
@@ -150,36 +151,46 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   s.matching=true;
   try{
    const result=s.matcher.detect(screenshot(1100));
-   const valid=!!result&&result.page===s.page.pdfPage&&result.visual>=.32&&result.inliers>=12;
+   // After QR establishes which page it is, a strong perspective-RANSAC
+   // match is sufficient even when lighting makes pixel similarity low.
+   const valid=reliableMatch(result,s.page.pdfPage);
+   const veryStrong=strongMovingMatch(result,s.page.pdfPage);
    if(valid){
     // Never accept a single ambiguous geometry: require two consistent
     // homographies whose projections agree at the center and opposite cells.
     const now=performance.now(),points=[{x:.2,y:.25},{x:.8,y:.72}];
     let stable=false;
     if(s.lastCandidate&&now-s.lastCandidateAt<2600){
-     stable=points.every(pt=>{
-      const a=project(result.H,pt),b=project(s.lastCandidate.H,pt);
-      return a&&b&&Math.hypot(a.x-b.x,a.y-b.y)<.048;
-     });
+     stable=geometryAgrees(result,s.lastCandidate);
     }
     s.alignStreak=stable?s.alignStreak+1:1;
     s.lastCandidate=result;s.lastCandidateAt=now;
-    if(s.alignStreak>=2){
-     s.lockedH=result.H;s.lastAligned=now;s.alignFails=0;
-     announce("الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.");
+    // A phone in a child's hand does not remain still for two snapshots.
+    // Strong single-frame matches may update immediately, whereas weaker
+    // ones must agree across frames. Never reuse stale geometry indefinitely.
+    if(veryStrong||s.alignStreak>=2){
+     const previous=s.lockedH;
+     if(previous&&stable){
+      // Slightly smooth the projection for handheld jitter without freezing
+      // it during deliberate phone motion.
+      const alpha=.82;
+      s.lockedH=result.H.map((v,i)=>v*alpha+previous[i]*(1-alpha));
+     }else s.lockedH=result.H;
+     s.lastAligned=now;s.alignFails=0;
+     announce(s.tracker?"الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.":"تم تحديد الصفحة "+s.page.printedPage+"، وجارٍ تجهيز قراءة الحروف.");
     }
    }else{
     s.alignStreak=0;s.alignFails++;
     if(performance.now()-s.alignReportAt>3500){
      s.alignReportAt=performance.now();
-     if(result)announce("تم التعرف على الصفحة لكن المحاذاة غير كافية (النقاط "+result.inliers+"، الوضوح "+Math.round(result.visual*100)+"٪). ثبّت الهاتف وقرّب الصفحة قليلًا.");
+     if(result)announce("تم التعرف على الصفحة لكن المحاذاة غير كافية (النقاط "+result.inliers+"، الوضوح "+Math.round(result.visual*100)+"٪). أظهر الصفحة كاملة في الكاميرا.");
      else announce("تم تحديد الصفحة. اجعل الجدول كاملًا ظاهرًا، وأبعد إصبعك لحظة حتى تُثبت مواقع الحروف.");
     }
    }
-  }catch(e){if(performance.now()-s.alignReportAt>3500){s.alignReportAt=performance.now();announce("تعذر تحليل الصفحة، حاول تثبيت الهاتف: "+e.message)}}finally{s.matching=false}
+  }catch(e){if(performance.now()-s.alignReportAt>3500){s.alignReportAt=performance.now();announce("تعذر تحليل الصفحة، حاول توجيه الكاميرا إلى الصفحة: "+e.message)}}finally{s.matching=false}
  }
  function detectFinger(t){
-  if(!s.tracker||!s.lockedH||t-s.lastAligned>2300)return;
+  if(!s.tracker||!s.lockedH||t-s.lastAligned>1050)return;
   const results=s.tracker.detectForVideo(video,t);
   const tip=results.landmarks?.[0]?.[8];
   if(!tip){s.seen=null;s.lastZone=null;return}
@@ -199,9 +210,9 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(video.readyState>=2&&video.videoWidth){
    if((s.phase==="scan"||s.phase==="point")&&t-s.lastScan>420){s.lastScan=t;scan()}
-   if(s.phase==="point"&&t-s.lastMatch>720){s.lastMatch=t;align()}
-   if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>2300){
-    announce("ثبّت الهاتف حتى تظهر الصفحة كاملة ويستطيع التطبيق تحديد الحروف بدقة.");
+   if(s.phase==="point"&&t-s.lastMatch>340){s.lastMatch=t;align()}
+   if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>1900){
+    announce("وجّه الكاميرا إلى الصفحة كاملة لتحديد الحروف بدقة.");
    }
    if(s.phase==="point"&&s.tracker&&t-s.lastFinger>110){s.lastFinger=t;try{detectFinger(t)}catch(e){}}
   }
@@ -254,5 +265,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<2300,handReady:!!s.tracker})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1050,handReady:!!s.tracker,matchingFrames:s.alignStreak})};
 }
