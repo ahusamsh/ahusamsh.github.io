@@ -22,7 +22,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
  const ctx=canvas.getContext("2d");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",isDestroyed:false};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
@@ -105,7 +105,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   s.page={pdfPage:marker.page,printedPage:page.printedPage};
   showPhase("point");
   s.lockedH=null;
-  s.lastAligned=0;
+  s.lastAligned=0;s.alignFails=0;s.alignStreak=0;s.lastCandidate=null;
   const currentRun=s.run;
   confirmQR(page.printedPage);
   onPage({page:marker.page,printedPage:page.printedPage});
@@ -150,13 +150,33 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   s.matching=true;
   try{
    const result=s.matcher.detect(screenshot(1100));
-   if(result&&result.page===s.page.pdfPage&&result.visual>=.52&&result.inliers>=22){
-    // VisualPageMatcher maps normalized frame -> normalized printed page.
-    s.lockedH=result.H;
-    s.lastAligned=performance.now();
-    announce("الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.");
+   const valid=!!result&&result.page===s.page.pdfPage&&result.visual>=.32&&result.inliers>=12;
+   if(valid){
+    // Never accept a single ambiguous geometry: require two consistent
+    // homographies whose projections agree at the center and opposite cells.
+    const now=performance.now(),points=[{x:.2,y:.25},{x:.8,y:.72}];
+    let stable=false;
+    if(s.lastCandidate&&now-s.lastCandidateAt<2600){
+     stable=points.every(pt=>{
+      const a=project(result.H,pt),b=project(s.lastCandidate.H,pt);
+      return a&&b&&Math.hypot(a.x-b.x,a.y-b.y)<.048;
+     });
+    }
+    s.alignStreak=stable?s.alignStreak+1:1;
+    s.lastCandidate=result;s.lastCandidateAt=now;
+    if(s.alignStreak>=2){
+     s.lockedH=result.H;s.lastAligned=now;s.alignFails=0;
+     announce("الصفحة "+s.page.printedPage+" جاهزة. أشر إلى الحرف.");
+    }
+   }else{
+    s.alignStreak=0;s.alignFails++;
+    if(performance.now()-s.alignReportAt>3500){
+     s.alignReportAt=performance.now();
+     if(result)announce("تم التعرف على الصفحة لكن المحاذاة غير كافية (النقاط "+result.inliers+"، الوضوح "+Math.round(result.visual*100)+"٪). ثبّت الهاتف وقرّب الصفحة قليلًا.");
+     else announce("تم تحديد الصفحة. اجعل الجدول كاملًا ظاهرًا، وأبعد إصبعك لحظة حتى تُثبت مواقع الحروف.");
+    }
    }
-  }catch(e){}finally{s.matching=false}
+  }catch(e){if(performance.now()-s.alignReportAt>3500){s.alignReportAt=performance.now();announce("تعذر تحليل الصفحة، حاول تثبيت الهاتف: "+e.message)}}finally{s.matching=false}
  }
  function detectFinger(t){
   if(!s.tracker||!s.lockedH||t-s.lastAligned>2300)return;
