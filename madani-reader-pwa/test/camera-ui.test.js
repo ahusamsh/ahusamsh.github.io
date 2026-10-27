@@ -10,7 +10,7 @@ test("student screen is camera only, no PDF or timeline editor",()=>{
 });
 test("module has standalone mount, cleanup and QR-first phase",()=>{
   assert.match(moduleSource,/export function mountMadaniReader/);
-  assert.match(moduleSource,/phase="scan"/);
+  assert.match(moduleSource,/showPhase\("scan"\)/);
   assert.match(moduleSource,/function stop\(/);
   assert.match(moduleSource,/async function destroy\(/);
   assert.match(moduleSource,/lockFromQR/);
