@@ -120,7 +120,19 @@ let pdfObjectURL=null;
 $("book-file").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(pdfObjectURL)URL.revokeObjectURL(pdfObjectURL);pdfObjectURL=URL.createObjectURL(file);state.pdf=await pdfjs.getDocument({url:pdfObjectURL}).promise;$("page").value=state.page;status("تم فتح PDF محليًا. مواقع الكلمات تتبع طبعة اللغة المختارة.");renderPDF()}catch(err){status("تعذر عرض PDF: "+err.message)}};
 function setPage(n){cancelPlayback();state.page=Math.max(1,Math.min(104,Number(n)||17));$("page").value=state.page;$("prev").disabled=state.page===1;$("next").disabled=state.page===104;state.selected=null;state.lastPlayed="";syncPageAudio();drawZones();renderWordList();if(state.pdf)renderPDF();else renderPilotImage();status("الصفحة "+state.page+" • "+activeZones().length+" مواضع قابلة للمس؛ المقاطع غير معتمدة سمعيًا");}
 $("page").onchange=e=>setPage(e.target.value);$("prev").onclick=()=>setPage(state.page-1);$("next").onclick=()=>setPage(state.page+1);
-async function renderPDF(){if(!state.pdf)return;const canvas=$("pdf-canvas"),n=state.editionCode==="ar"?state.page:(state.editionMap?.verifiedPages?.[String(state.page)]?.pdfPage||state.page),p=await state.pdf.getPage(Math.min(n,state.pdf.numPages));const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42));const view=p.getViewport({scale:w/p.view[2]});const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(view.width*dpr);canvas.height=Math.round(view.height*dpr);canvas.style.width=view.width+"px";canvas.style.height=view.height+"px";$("paper").style.width=view.width+"px";$("paper").style.height=view.height+"px";$("pdf-placeholder").hidden=true;await p.render({canvasContext:canvas.getContext("2d"),viewport:p.getViewport({scale:w*dpr/p.view[2]})}).promise;drawZones();}
+async function renderPDF(){if(!state.pdf)return;const canvas=$("pdf-canvas");
+ const n=state.editionCode==="ar"?state.page:
+  (state.editionMap?.verifiedPages?.[String(state.page)]?.pdfPage||
+   state.editionMap?.pageIndex?.[String(state.page)]?.pdfPage);
+ if(!Number.isInteger(n)||n<1||n>state.pdf.numPages){
+  $("pdf-placeholder").hidden=false;
+  $("pdf-placeholder").textContent="لا توجد صفحة مناظرة متحققة لهذه الطبعة؛ لن نعرض صفحة مختلفة بالخطأ.";
+  canvas.width=1;canvas.height=1;
+  drawZones();
+  status("تعذر تحديد الصفحة المقابلة لهذه الترجمة؛ لا يمكن استعمال إحداثيات العربية عليها.");
+  return;
+ }
+ const p=await state.pdf.getPage(n);const w=Math.min(850,Math.max(300,document.documentElement.clientWidth-42));const view=p.getViewport({scale:w/p.view[2]});const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(view.width*dpr);canvas.height=Math.round(view.height*dpr);canvas.style.width=view.width+"px";canvas.style.height=view.height+"px";$("paper").style.width=view.width+"px";$("paper").style.height=view.height+"px";$("pdf-placeholder").hidden=true;await p.render({canvasContext:canvas.getContext("2d"),viewport:p.getViewport({scale:w*dpr/p.view[2]})}).promise;drawZones();}
 function drawZones(){const layer=$("word-layer");layer.replaceChildren();for(const z of activeZones()){const b=document.createElement("button");b.className="wordzone";b.title=z.text;b.setAttribute("aria-label","نطق "+z.text);b.style.left=(z.box[0]*100)+"%";b.style.top=(z.box[1]*100)+"%";b.style.width=(z.box[2]*100)+"%";b.style.height=(z.box[3]*100)+"%";b.dataset.id=z.id;b.onclick=()=>select(z);layer.append(b)}layer.classList.toggle("hide-zones",!$("show-zones").checked)}
 $("show-zones").onchange=drawZones;$("trial-mode").onchange=cancelPlayback;
 function select(z){state.selected=z;$("selected-word").textContent=z.text;document.querySelectorAll(".wordzone").forEach(x=>x.classList.toggle("selected",x.dataset.id===z.id));const seg=state.segments[z.id];$("segment-state").textContent=seg?('بداية '+seg.start.toFixed(2)+' ث • نهاية '+seg.end.toFixed(2)+' ث • '+(seg.reviewed?"معتمد":"بانتظار الاعتماد")):"لم يُربط تسجيل معتمد لهذه الكلمة";if(validSegment(seg)||canPreview(z.id,seg))playSegment(z.id,seg);else status("حددت «"+z.text+"». لا يوجد مقطع صوتي معتمد لهذه الكلمة بعد.")}

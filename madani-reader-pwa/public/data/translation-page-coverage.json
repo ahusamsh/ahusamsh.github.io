@@ -1,0 +1,199 @@
+{
+  "bn": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 44,
+    "folioMatches": 43,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "en": {
+    "pdfPages": 104,
+    "indexed": 102,
+    "zonesVerified": 51,
+    "folioMatches": 38,
+    "inferredPages": 13,
+    "missingPrintedFolios": [],
+    "quarantinedConflicts": 0
+  },
+  "es": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 45,
+    "folioMatches": 42,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "fa": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 49,
+    "folioMatches": 37,
+    "inferredPages": 15,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ff": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 48,
+    "folioMatches": 39,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "fr": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 42,
+    "folioMatches": 45,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ha": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 46,
+    "folioMatches": 41,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "hi": {
+    "pdfPages": 103,
+    "indexed": 100,
+    "zonesVerified": 43,
+    "folioMatches": 45,
+    "inferredPages": 12,
+    "missingPrintedFolios": [
+      101,
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "id": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 43,
+    "folioMatches": 44,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "it": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 45,
+    "folioMatches": 43,
+    "inferredPages": 13,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ml": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 44,
+    "folioMatches": 45,
+    "inferredPages": 12,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ms": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 46,
+    "folioMatches": 42,
+    "inferredPages": 13,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "pt": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 44,
+    "folioMatches": 43,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ru": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 45,
+    "folioMatches": 0,
+    "inferredPages": 56,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "sq": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 46,
+    "folioMatches": 41,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "sw": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 44,
+    "folioMatches": 43,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "ur": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 46,
+    "folioMatches": 41,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  },
+  "zh": {
+    "pdfPages": 102,
+    "indexed": 101,
+    "zonesVerified": 45,
+    "folioMatches": 42,
+    "inferredPages": 14,
+    "missingPrintedFolios": [
+      102
+    ],
+    "quarantinedConflicts": 0
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "bn": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "en": {
+    "printed": 24,
+    "mapped": 24,
+    "pdfPage": 101
+  },
+  "es": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "ff": {
+    "printed": 21,
+    "mapped": 20,
+    "pdfPage": 100
+  },
+  "fr": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "ha": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "hi": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 101
+  },
+  "id": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "it": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "ml": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "ms": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "pt": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "ru": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "sq": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "sw": {
+    "printed": 21,
+    "mapped": 19,
+    "pdfPage": 100
+  },
+  "zh": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100
+  },
+  "fa": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100,
+    "method": "raster-fingerprint-verified-21-digit-grid",
+    "f1Median": 0.8889
+  },
+  "ur": {
+    "printed": 21,
+    "mapped": 21,
+    "pdfPage": 100,
+    "method": "raster-fingerprint-verified-21-digit-grid",
+    "f1Median": 0.931
+  }
+}

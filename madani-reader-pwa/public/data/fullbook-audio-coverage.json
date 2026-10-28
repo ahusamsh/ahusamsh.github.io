@@ -1,0 +1,1398 @@
+{
+  "schema": 1,
+  "bookPdfPages": 104,
+  "editionCount": 19,
+  "teachingAudioLanguage": "ar",
+  "humanApprovedWordAudio": 0,
+  "mediaCopyrightStatus": "source recording and books require owner permission before third-party redistribution",
+  "availableOfficialPageRecordings": 90,
+  "sourceAudioMissingCanonicalPdfPages": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    14,
+    62,
+    70,
+    74,
+    78,
+    90,
+    98,
+    103,
+    104
+  ],
+  "catalogRecords": 9077,
+  "autoAlignedNewLinks": {
+    "exactGrid": 192,
+    "lessonPatterns": 204,
+    "recognizedFullWords": 56,
+    "total": 452
+  },
+  "visualTimedZonesTotal": 2819,
+  "unplacedAsrWordsTotal": 6258,
+  "editionCoverage": {
+    "bn": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 44,
+      "mappedClickableItems": 785,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "en": {
+      "pdfPages": 104,
+      "pageIndexEntries": 102,
+      "verifiedGeometryPages": 51,
+      "mappedClickableItems": 841,
+      "mappedPrintedCells": 452,
+      "missingCanonicalPages": [],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "es": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 45,
+      "mappedClickableItems": 792,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "fa": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 49,
+      "mappedClickableItems": 844,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "fr": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 42,
+      "mappedClickableItems": 775,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ha": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 46,
+      "mappedClickableItems": 816,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "hi": {
+      "pdfPages": 103,
+      "pageIndexEntries": 100,
+      "verifiedGeometryPages": 43,
+      "mappedClickableItems": 782,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        103,
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "id": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 43,
+      "mappedClickableItems": 782,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "it": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 45,
+      "mappedClickableItems": 813,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ms": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 46,
+      "mappedClickableItems": 845,
+      "mappedPrintedCells": 443,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ml": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 44,
+      "mappedClickableItems": 800,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "pt": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 44,
+      "mappedClickableItems": 785,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ru": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 45,
+      "mappedClickableItems": 807,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "sq": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 46,
+      "mappedClickableItems": 795,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "sw": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 44,
+      "mappedClickableItems": 783,
+      "mappedPrintedCells": 447,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ur": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 46,
+      "mappedClickableItems": 813,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "zh": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 45,
+      "mappedClickableItems": 788,
+      "mappedPrintedCells": 449,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    },
+    "ff": {
+      "pdfPages": 102,
+      "pageIndexEntries": 101,
+      "verifiedGeometryPages": 48,
+      "mappedClickableItems": 835,
+      "mappedPrintedCells": 448,
+      "missingCanonicalPages": [
+        104
+      ],
+      "humanReviewedItems": 0,
+      "quality": "page navigation and machine geometry only; subject to visual/audio review"
+    }
+  },
+  "pageCoverage": {
+    "1": {
+      "canonicalPdfPage": 1,
+      "printedPage": null,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "2": {
+      "canonicalPdfPage": 2,
+      "printedPage": null,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "3": {
+      "canonicalPdfPage": 3,
+      "printedPage": 1,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "4": {
+      "canonicalPdfPage": 4,
+      "printedPage": 2,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "5": {
+      "canonicalPdfPage": 5,
+      "printedPage": 3,
+      "officialPageAudio": true,
+      "listedSegments": 28,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 28,
+      "humanReviewed": 0,
+      "status": "page-audio-only-or-no-visible-word-links"
+    },
+    "6": {
+      "canonicalPdfPage": 6,
+      "printedPage": 4,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "7": {
+      "canonicalPdfPage": 7,
+      "printedPage": 5,
+      "officialPageAudio": true,
+      "listedSegments": 121,
+      "timeLinkedVisualZones": 74,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 47,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "8": {
+      "canonicalPdfPage": 8,
+      "printedPage": 6,
+      "officialPageAudio": true,
+      "listedSegments": 233,
+      "timeLinkedVisualZones": 121,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 112,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "9": {
+      "canonicalPdfPage": 9,
+      "printedPage": 7,
+      "officialPageAudio": true,
+      "listedSegments": 208,
+      "timeLinkedVisualZones": 117,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 91,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "10": {
+      "canonicalPdfPage": 10,
+      "printedPage": 8,
+      "officialPageAudio": true,
+      "listedSegments": 72,
+      "timeLinkedVisualZones": 46,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 26,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "11": {
+      "canonicalPdfPage": 11,
+      "printedPage": 9,
+      "officialPageAudio": true,
+      "listedSegments": 117,
+      "timeLinkedVisualZones": 96,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 21,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "12": {
+      "canonicalPdfPage": 12,
+      "printedPage": 10,
+      "officialPageAudio": true,
+      "listedSegments": 70,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 70,
+      "humanReviewed": 0,
+      "status": "page-audio-only-or-no-visible-word-links"
+    },
+    "13": {
+      "canonicalPdfPage": 13,
+      "printedPage": 11,
+      "officialPageAudio": true,
+      "listedSegments": 223,
+      "timeLinkedVisualZones": 55,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 168,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "14": {
+      "canonicalPdfPage": 14,
+      "printedPage": 12,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "15": {
+      "canonicalPdfPage": 15,
+      "printedPage": 13,
+      "officialPageAudio": true,
+      "listedSegments": 51,
+      "timeLinkedVisualZones": 44,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 7,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "16": {
+      "canonicalPdfPage": 16,
+      "printedPage": 14,
+      "officialPageAudio": true,
+      "listedSegments": 230,
+      "timeLinkedVisualZones": 124,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 106,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "17": {
+      "canonicalPdfPage": 17,
+      "printedPage": 15,
+      "officialPageAudio": true,
+      "listedSegments": 64,
+      "timeLinkedVisualZones": 28,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 36,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "18": {
+      "canonicalPdfPage": 18,
+      "printedPage": 16,
+      "officialPageAudio": true,
+      "listedSegments": 60,
+      "timeLinkedVisualZones": 30,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 30,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "19": {
+      "canonicalPdfPage": 19,
+      "printedPage": 17,
+      "officialPageAudio": true,
+      "listedSegments": 52,
+      "timeLinkedVisualZones": 32,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 20,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "20": {
+      "canonicalPdfPage": 20,
+      "printedPage": 18,
+      "officialPageAudio": true,
+      "listedSegments": 35,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 11,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "21": {
+      "canonicalPdfPage": 21,
+      "printedPage": 19,
+      "officialPageAudio": true,
+      "listedSegments": 48,
+      "timeLinkedVisualZones": 29,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 19,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "22": {
+      "canonicalPdfPage": 22,
+      "printedPage": 20,
+      "officialPageAudio": true,
+      "listedSegments": 30,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 27,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "23": {
+      "canonicalPdfPage": 23,
+      "printedPage": 21,
+      "officialPageAudio": true,
+      "listedSegments": 30,
+      "timeLinkedVisualZones": 27,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "24": {
+      "canonicalPdfPage": 24,
+      "printedPage": 22,
+      "officialPageAudio": true,
+      "listedSegments": 214,
+      "timeLinkedVisualZones": 88,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 126,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "25": {
+      "canonicalPdfPage": 25,
+      "printedPage": 23,
+      "officialPageAudio": true,
+      "listedSegments": 62,
+      "timeLinkedVisualZones": 32,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 30,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "26": {
+      "canonicalPdfPage": 26,
+      "printedPage": 24,
+      "officialPageAudio": true,
+      "listedSegments": 105,
+      "timeLinkedVisualZones": 26,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 79,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "27": {
+      "canonicalPdfPage": 27,
+      "printedPage": 25,
+      "officialPageAudio": true,
+      "listedSegments": 88,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 64,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "28": {
+      "canonicalPdfPage": 28,
+      "printedPage": 26,
+      "officialPageAudio": true,
+      "listedSegments": 61,
+      "timeLinkedVisualZones": 32,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 29,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "29": {
+      "canonicalPdfPage": 29,
+      "printedPage": 27,
+      "officialPageAudio": true,
+      "listedSegments": 99,
+      "timeLinkedVisualZones": 26,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 73,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "30": {
+      "canonicalPdfPage": 30,
+      "printedPage": 28,
+      "officialPageAudio": true,
+      "listedSegments": 97,
+      "timeLinkedVisualZones": 26,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 71,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "31": {
+      "canonicalPdfPage": 31,
+      "printedPage": 29,
+      "officialPageAudio": true,
+      "listedSegments": 59,
+      "timeLinkedVisualZones": 31,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 28,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "32": {
+      "canonicalPdfPage": 32,
+      "printedPage": 30,
+      "officialPageAudio": true,
+      "listedSegments": 91,
+      "timeLinkedVisualZones": 26,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 65,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "33": {
+      "canonicalPdfPage": 33,
+      "printedPage": 31,
+      "officialPageAudio": true,
+      "listedSegments": 99,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 75,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "34": {
+      "canonicalPdfPage": 34,
+      "printedPage": 32,
+      "officialPageAudio": true,
+      "listedSegments": 92,
+      "timeLinkedVisualZones": 33,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 59,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "35": {
+      "canonicalPdfPage": 35,
+      "printedPage": 33,
+      "officialPageAudio": true,
+      "listedSegments": 61,
+      "timeLinkedVisualZones": 18,
+      "newGridOrExactSoundZones": 16,
+      "unplacedOrUnverifiedAsr": 43,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "36": {
+      "canonicalPdfPage": 36,
+      "printedPage": 34,
+      "officialPageAudio": true,
+      "listedSegments": 55,
+      "timeLinkedVisualZones": 20,
+      "newGridOrExactSoundZones": 16,
+      "unplacedOrUnverifiedAsr": 35,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "37": {
+      "canonicalPdfPage": 37,
+      "printedPage": 35,
+      "officialPageAudio": true,
+      "listedSegments": 25,
+      "timeLinkedVisualZones": 21,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 4,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "38": {
+      "canonicalPdfPage": 38,
+      "printedPage": 36,
+      "officialPageAudio": true,
+      "listedSegments": 190,
+      "timeLinkedVisualZones": 102,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 88,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "39": {
+      "canonicalPdfPage": 39,
+      "printedPage": 37,
+      "officialPageAudio": true,
+      "listedSegments": 64,
+      "timeLinkedVisualZones": 30,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 34,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "40": {
+      "canonicalPdfPage": 40,
+      "printedPage": 38,
+      "officialPageAudio": true,
+      "listedSegments": 82,
+      "timeLinkedVisualZones": 16,
+      "newGridOrExactSoundZones": 4,
+      "unplacedOrUnverifiedAsr": 66,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "41": {
+      "canonicalPdfPage": 41,
+      "printedPage": 39,
+      "officialPageAudio": true,
+      "listedSegments": 64,
+      "timeLinkedVisualZones": 31,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 33,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "42": {
+      "canonicalPdfPage": 42,
+      "printedPage": 40,
+      "officialPageAudio": true,
+      "listedSegments": 81,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 78,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "43": {
+      "canonicalPdfPage": 43,
+      "printedPage": 41,
+      "officialPageAudio": true,
+      "listedSegments": 64,
+      "timeLinkedVisualZones": 31,
+      "newGridOrExactSoundZones": 28,
+      "unplacedOrUnverifiedAsr": 33,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "44": {
+      "canonicalPdfPage": 44,
+      "printedPage": 42,
+      "officialPageAudio": true,
+      "listedSegments": 89,
+      "timeLinkedVisualZones": 13,
+      "newGridOrExactSoundZones": 6,
+      "unplacedOrUnverifiedAsr": 76,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "45": {
+      "canonicalPdfPage": 45,
+      "printedPage": 43,
+      "officialPageAudio": true,
+      "listedSegments": 32,
+      "timeLinkedVisualZones": 29,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "46": {
+      "canonicalPdfPage": 46,
+      "printedPage": 44,
+      "officialPageAudio": true,
+      "listedSegments": 219,
+      "timeLinkedVisualZones": 68,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 151,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "47": {
+      "canonicalPdfPage": 47,
+      "printedPage": 45,
+      "officialPageAudio": true,
+      "listedSegments": 53,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 53,
+      "humanReviewed": 0,
+      "status": "page-audio-only-or-no-visible-word-links"
+    },
+    "48": {
+      "canonicalPdfPage": 48,
+      "printedPage": 46,
+      "officialPageAudio": true,
+      "listedSegments": 81,
+      "timeLinkedVisualZones": 9,
+      "newGridOrExactSoundZones": 7,
+      "unplacedOrUnverifiedAsr": 72,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "49": {
+      "canonicalPdfPage": 49,
+      "printedPage": 47,
+      "officialPageAudio": true,
+      "listedSegments": 47,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 44,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "50": {
+      "canonicalPdfPage": 50,
+      "printedPage": 48,
+      "officialPageAudio": true,
+      "listedSegments": 91,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 88,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "51": {
+      "canonicalPdfPage": 51,
+      "printedPage": 49,
+      "officialPageAudio": true,
+      "listedSegments": 55,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 52,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "52": {
+      "canonicalPdfPage": 52,
+      "printedPage": 50,
+      "officialPageAudio": true,
+      "listedSegments": 99,
+      "timeLinkedVisualZones": 13,
+      "newGridOrExactSoundZones": 11,
+      "unplacedOrUnverifiedAsr": 86,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "53": {
+      "canonicalPdfPage": 53,
+      "printedPage": 51,
+      "officialPageAudio": true,
+      "listedSegments": 32,
+      "timeLinkedVisualZones": 29,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "54": {
+      "canonicalPdfPage": 54,
+      "printedPage": 52,
+      "officialPageAudio": true,
+      "listedSegments": 275,
+      "timeLinkedVisualZones": 103,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 172,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "55": {
+      "canonicalPdfPage": 55,
+      "printedPage": 53,
+      "officialPageAudio": true,
+      "listedSegments": 43,
+      "timeLinkedVisualZones": 2,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 41,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "56": {
+      "canonicalPdfPage": 56,
+      "printedPage": 54,
+      "officialPageAudio": true,
+      "listedSegments": 41,
+      "timeLinkedVisualZones": 2,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 39,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "57": {
+      "canonicalPdfPage": 57,
+      "printedPage": 55,
+      "officialPageAudio": true,
+      "listedSegments": 57,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 54,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "58": {
+      "canonicalPdfPage": 58,
+      "printedPage": 56,
+      "officialPageAudio": true,
+      "listedSegments": 45,
+      "timeLinkedVisualZones": 2,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 43,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "59": {
+      "canonicalPdfPage": 59,
+      "printedPage": 57,
+      "officialPageAudio": true,
+      "listedSegments": 59,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 56,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "60": {
+      "canonicalPdfPage": 60,
+      "printedPage": 58,
+      "officialPageAudio": true,
+      "listedSegments": 49,
+      "timeLinkedVisualZones": 10,
+      "newGridOrExactSoundZones": 7,
+      "unplacedOrUnverifiedAsr": 39,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "61": {
+      "canonicalPdfPage": 61,
+      "printedPage": 59,
+      "officialPageAudio": true,
+      "listedSegments": 99,
+      "timeLinkedVisualZones": 13,
+      "newGridOrExactSoundZones": 8,
+      "unplacedOrUnverifiedAsr": 86,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "62": {
+      "canonicalPdfPage": 62,
+      "printedPage": 60,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "63": {
+      "canonicalPdfPage": 63,
+      "printedPage": 61,
+      "officialPageAudio": true,
+      "listedSegments": 34,
+      "timeLinkedVisualZones": 28,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 6,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "64": {
+      "canonicalPdfPage": 64,
+      "printedPage": 62,
+      "officialPageAudio": true,
+      "listedSegments": 154,
+      "timeLinkedVisualZones": 86,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 68,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "65": {
+      "canonicalPdfPage": 65,
+      "printedPage": 63,
+      "officialPageAudio": true,
+      "listedSegments": 111,
+      "timeLinkedVisualZones": 1,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 110,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "66": {
+      "canonicalPdfPage": 66,
+      "printedPage": 64,
+      "officialPageAudio": true,
+      "listedSegments": 90,
+      "timeLinkedVisualZones": 3,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 87,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "67": {
+      "canonicalPdfPage": 67,
+      "printedPage": 65,
+      "officialPageAudio": true,
+      "listedSegments": 28,
+      "timeLinkedVisualZones": 25,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "68": {
+      "canonicalPdfPage": 68,
+      "printedPage": 66,
+      "officialPageAudio": true,
+      "listedSegments": 89,
+      "timeLinkedVisualZones": 44,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 45,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "69": {
+      "canonicalPdfPage": 69,
+      "printedPage": 67,
+      "officialPageAudio": true,
+      "listedSegments": 121,
+      "timeLinkedVisualZones": 19,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 102,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "70": {
+      "canonicalPdfPage": 70,
+      "printedPage": 68,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "71": {
+      "canonicalPdfPage": 71,
+      "printedPage": 69,
+      "officialPageAudio": true,
+      "listedSegments": 23,
+      "timeLinkedVisualZones": 16,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 7,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "72": {
+      "canonicalPdfPage": 72,
+      "printedPage": 70,
+      "officialPageAudio": true,
+      "listedSegments": 64,
+      "timeLinkedVisualZones": 34,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 30,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "73": {
+      "canonicalPdfPage": 73,
+      "printedPage": 71,
+      "officialPageAudio": true,
+      "listedSegments": 59,
+      "timeLinkedVisualZones": 4,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 55,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "74": {
+      "canonicalPdfPage": 74,
+      "printedPage": 72,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "75": {
+      "canonicalPdfPage": 75,
+      "printedPage": 73,
+      "officialPageAudio": true,
+      "listedSegments": 27,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "76": {
+      "canonicalPdfPage": 76,
+      "printedPage": 74,
+      "officialPageAudio": true,
+      "listedSegments": 57,
+      "timeLinkedVisualZones": 31,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 26,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "77": {
+      "canonicalPdfPage": 77,
+      "printedPage": 75,
+      "officialPageAudio": true,
+      "listedSegments": 96,
+      "timeLinkedVisualZones": 7,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 89,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "78": {
+      "canonicalPdfPage": 78,
+      "printedPage": 76,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "79": {
+      "canonicalPdfPage": 79,
+      "printedPage": 77,
+      "officialPageAudio": true,
+      "listedSegments": 32,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 8,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "80": {
+      "canonicalPdfPage": 80,
+      "printedPage": 78,
+      "officialPageAudio": true,
+      "listedSegments": 224,
+      "timeLinkedVisualZones": 104,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 120,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "81": {
+      "canonicalPdfPage": 81,
+      "printedPage": 79,
+      "officialPageAudio": true,
+      "listedSegments": 143,
+      "timeLinkedVisualZones": 9,
+      "newGridOrExactSoundZones": 7,
+      "unplacedOrUnverifiedAsr": 134,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "82": {
+      "canonicalPdfPage": 82,
+      "printedPage": 80,
+      "officialPageAudio": true,
+      "listedSegments": 100,
+      "timeLinkedVisualZones": 10,
+      "newGridOrExactSoundZones": 6,
+      "unplacedOrUnverifiedAsr": 90,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "83": {
+      "canonicalPdfPage": 83,
+      "printedPage": 81,
+      "officialPageAudio": true,
+      "listedSegments": 25,
+      "timeLinkedVisualZones": 22,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 3,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "84": {
+      "canonicalPdfPage": 84,
+      "printedPage": 82,
+      "officialPageAudio": true,
+      "listedSegments": 231,
+      "timeLinkedVisualZones": 116,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 115,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "85": {
+      "canonicalPdfPage": 85,
+      "printedPage": 83,
+      "officialPageAudio": true,
+      "listedSegments": 136,
+      "timeLinkedVisualZones": 9,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 127,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "86": {
+      "canonicalPdfPage": 86,
+      "printedPage": 84,
+      "officialPageAudio": true,
+      "listedSegments": 187,
+      "timeLinkedVisualZones": 27,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 160,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "87": {
+      "canonicalPdfPage": 87,
+      "printedPage": 85,
+      "officialPageAudio": true,
+      "listedSegments": 245,
+      "timeLinkedVisualZones": 17,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 228,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "88": {
+      "canonicalPdfPage": 88,
+      "printedPage": 86,
+      "officialPageAudio": true,
+      "listedSegments": 327,
+      "timeLinkedVisualZones": 29,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 298,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "89": {
+      "canonicalPdfPage": 89,
+      "printedPage": 87,
+      "officialPageAudio": true,
+      "listedSegments": 499,
+      "timeLinkedVisualZones": 25,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 474,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "90": {
+      "canonicalPdfPage": 90,
+      "printedPage": 88,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "91": {
+      "canonicalPdfPage": 91,
+      "printedPage": 89,
+      "officialPageAudio": true,
+      "listedSegments": 43,
+      "timeLinkedVisualZones": 32,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 11,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "92": {
+      "canonicalPdfPage": 92,
+      "printedPage": 90,
+      "officialPageAudio": true,
+      "listedSegments": 211,
+      "timeLinkedVisualZones": 106,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 105,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "93": {
+      "canonicalPdfPage": 93,
+      "printedPage": 91,
+      "officialPageAudio": true,
+      "listedSegments": 84,
+      "timeLinkedVisualZones": 4,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 80,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "94": {
+      "canonicalPdfPage": 94,
+      "printedPage": 92,
+      "officialPageAudio": true,
+      "listedSegments": 132,
+      "timeLinkedVisualZones": 6,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 126,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "95": {
+      "canonicalPdfPage": 95,
+      "printedPage": 93,
+      "officialPageAudio": true,
+      "listedSegments": 161,
+      "timeLinkedVisualZones": 18,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 143,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "96": {
+      "canonicalPdfPage": 96,
+      "printedPage": 94,
+      "officialPageAudio": true,
+      "listedSegments": 133,
+      "timeLinkedVisualZones": 15,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 118,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "97": {
+      "canonicalPdfPage": 97,
+      "printedPage": 95,
+      "officialPageAudio": true,
+      "listedSegments": 48,
+      "timeLinkedVisualZones": 7,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 41,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "98": {
+      "canonicalPdfPage": 98,
+      "printedPage": 96,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "99": {
+      "canonicalPdfPage": 99,
+      "printedPage": 97,
+      "officialPageAudio": true,
+      "listedSegments": 22,
+      "timeLinkedVisualZones": 18,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 4,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "100": {
+      "canonicalPdfPage": 100,
+      "printedPage": 98,
+      "officialPageAudio": true,
+      "listedSegments": 47,
+      "timeLinkedVisualZones": 6,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 41,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "101": {
+      "canonicalPdfPage": 101,
+      "printedPage": 99,
+      "officialPageAudio": true,
+      "listedSegments": 65,
+      "timeLinkedVisualZones": 24,
+      "newGridOrExactSoundZones": 24,
+      "unplacedOrUnverifiedAsr": 41,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "102": {
+      "canonicalPdfPage": 102,
+      "printedPage": 100,
+      "officialPageAudio": true,
+      "listedSegments": 138,
+      "timeLinkedVisualZones": 71,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 67,
+      "humanReviewed": 0,
+      "status": "machine-linked-audio-unreviewed"
+    },
+    "103": {
+      "canonicalPdfPage": 103,
+      "printedPage": 101,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    },
+    "104": {
+      "canonicalPdfPage": 104,
+      "printedPage": 102,
+      "officialPageAudio": false,
+      "listedSegments": 0,
+      "timeLinkedVisualZones": 0,
+      "newGridOrExactSoundZones": 0,
+      "unplacedOrUnverifiedAsr": 0,
+      "humanReviewed": 0,
+      "status": "no-official-page-audio"
+    }
+  },
+  "currentStatus": "machine-aligned; independent human audible/visual quality review still required"
+}

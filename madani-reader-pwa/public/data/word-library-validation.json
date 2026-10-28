@@ -1,7 +1,7 @@
 {
   "status": "machine-generated-unreviewed",
   "canonicalPages": 104,
-  "totalItems": 8817,
+  "totalItems": 9077,
   "asrPages": 90,
   "wordOccurrencesFromASR": 8482,
   "visuallyLocatedASRWords": 2224,
@@ -61,6 +61,316 @@
       "asrMatches": 19,
       "asrWithText": 19,
       "introductoryUtterances": 3
+    }
+  },
+  "patternAlignedNewClips": 204,
+  "patternAlignedPages": 9,
+  "patternPageDetails": {
+    "26": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 3,
+      "uttPerRow": 9,
+      "recorded": 75,
+      "expected": 75,
+      "asrObservations": 18,
+      "asrMatches": 14,
+      "asrAgreement": 0.778,
+      "completeWordObservations": 7,
+      "completeWordMatches": 7,
+      "humanReviewed": false
+    },
+    "27": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 0,
+      "uttPerRow": 9,
+      "recorded": 72,
+      "expected": 72,
+      "asrObservations": 15,
+      "asrMatches": 13,
+      "asrAgreement": 0.867,
+      "completeWordObservations": 7,
+      "completeWordMatches": 6,
+      "humanReviewed": false
+    },
+    "29": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 1,
+      "uttPerRow": 9,
+      "recorded": 73,
+      "expected": 73,
+      "asrObservations": 12,
+      "asrMatches": 10,
+      "asrAgreement": 0.833,
+      "completeWordObservations": 8,
+      "completeWordMatches": 8,
+      "humanReviewed": false
+    },
+    "30": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 0,
+      "uttPerRow": 9,
+      "recorded": 72,
+      "expected": 72,
+      "asrObservations": 15,
+      "asrMatches": 11,
+      "asrAgreement": 0.733,
+      "completeWordObservations": 7,
+      "completeWordMatches": 7,
+      "humanReviewed": false
+    },
+    "32": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 1,
+      "uttPerRow": 9,
+      "recorded": 73,
+      "expected": 73,
+      "asrObservations": 19,
+      "asrMatches": 14,
+      "asrAgreement": 0.737,
+      "completeWordObservations": 6,
+      "completeWordMatches": 6,
+      "humanReviewed": false
+    },
+    "33": {
+      "count": 24,
+      "method": "three-column-progressive-word",
+      "intro": 0,
+      "uttPerRow": 9,
+      "recorded": 72,
+      "expected": 72,
+      "asrObservations": 14,
+      "asrMatches": 9,
+      "asrAgreement": 0.643,
+      "completeWordObservations": 7,
+      "completeWordMatches": 6,
+      "humanReviewed": false
+    },
+    "34": {
+      "count": 28,
+      "method": "four-column-repeat-two",
+      "intro": 2,
+      "uttPerRow": 8,
+      "recorded": 58,
+      "expected": 58,
+      "asrObservations": 16,
+      "asrMatches": 16,
+      "asrAgreement": 1.0,
+      "completeWordObservations": 3,
+      "completeWordMatches": 3,
+      "humanReviewed": false
+    },
+    "35": {
+      "count": 16,
+      "method": "two-column-progressive-word",
+      "intro": 1,
+      "uttPerRow": 6,
+      "recorded": 49,
+      "expected": 49,
+      "asrObservations": 10,
+      "asrMatches": 10,
+      "asrAgreement": 1.0,
+      "completeWordObservations": 7,
+      "completeWordMatches": 7,
+      "humanReviewed": false
+    },
+    "36": {
+      "count": 16,
+      "method": "two-column-progressive-word",
+      "intro": 0,
+      "uttPerRow": 6,
+      "recorded": 48,
+      "expected": 48,
+      "asrObservations": 8,
+      "asrMatches": 8,
+      "asrAgreement": 1.0,
+      "completeWordObservations": 6,
+      "completeWordMatches": 6,
+      "humanReviewed": false
+    }
+  },
+  "patternRejectedPages": [
+    {
+      "page": 20,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 6,
+      "cols": 4,
+      "utterances": 24
+    },
+    {
+      "page": 21,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 7,
+      "cols": 4,
+      "utterances": 29
+    },
+    {
+      "page": 40,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 73
+    },
+    {
+      "page": 42,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 75
+    },
+    {
+      "page": 44,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 71
+    },
+    {
+      "page": 48,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 70
+    },
+    {
+      "page": 50,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 69
+    },
+    {
+      "page": 52,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 77
+    },
+    {
+      "page": 56,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 6,
+      "cols": 2,
+      "utterances": 33
+    },
+    {
+      "page": 58,
+      "reason": "insufficient independent ASR matching",
+      "rows": 6,
+      "cols": 2,
+      "utterances": 36,
+      "proposed": "two-column-progressive-word"
+    },
+    {
+      "page": 60,
+      "reason": "insufficient independent ASR matching",
+      "rows": 6,
+      "cols": 2,
+      "utterances": 36,
+      "proposed": "two-column-progressive-word"
+    },
+    {
+      "page": 61,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 6,
+      "cols": 2,
+      "utterances": 84
+    },
+    {
+      "page": 73,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 6,
+      "cols": 2,
+      "utterances": 71
+    },
+    {
+      "page": 81,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 119
+    },
+    {
+      "page": 82,
+      "reason": "recorded count differs from phonics pattern",
+      "rows": 8,
+      "cols": 2,
+      "utterances": 96
+    }
+  ],
+  "asrVerifiedNewWordLinks": 56,
+  "asrVerifiedPages": 8,
+  "asrVerifiedDetails": {
+    "40": {
+      "matchedCells": 4,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    },
+    "44": {
+      "matchedCells": 6,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    },
+    "48": {
+      "matchedCells": 7,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    },
+    "52": {
+      "matchedCells": 11,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    },
+    "60": {
+      "matchedCells": 7,
+      "gridCells": 12,
+      "alignmentReviewed": false
+    },
+    "61": {
+      "matchedCells": 8,
+      "gridCells": 12,
+      "alignmentReviewed": false
+    },
+    "81": {
+      "matchedCells": 7,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    },
+    "82": {
+      "matchedCells": 6,
+      "gridCells": 16,
+      "alignmentReviewed": false
+    }
+  },
+  "asrVerifiedSkipped": {
+    "42": {
+      "reason": "too few sequential lexical anchors",
+      "cells": 16,
+      "matches": 3
+    },
+    "50": {
+      "reason": "too few sequential lexical anchors",
+      "cells": 16,
+      "matches": 3
+    },
+    "56": {
+      "reason": "too few sequential lexical anchors",
+      "cells": 12,
+      "matches": 1
+    },
+    "58": {
+      "reason": "too few sequential lexical anchors",
+      "cells": 12,
+      "matches": 3
+    },
+    "73": {
+      "reason": "too few sequential lexical anchors",
+      "cells": 12,
+      "matches": 1
     }
   }
 }
