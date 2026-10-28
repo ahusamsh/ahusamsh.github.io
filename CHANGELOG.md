@@ -17,4 +17,3 @@
 - Predecode bounded audio cache, shorten stable interior pointing to 80 ms, reject sweeps and duplicate jitter; use GPU hand inference with CPU fallback, autofocus/exposure and optional torch.
 - Preserve the 104-page catalog, 18 edition maps and all review states. 34 Node tests pass; 18 degraded-image cases and perspective/occlusion/unsupported-page checks pass. Nine simulated points schedule audio in 148–200 ms, median 182 ms. Physical Android optics/fingers and acoustic latency remain unverified.
 - Full evidence and operating limits: madani-reader-pwa/docs/CAMERA_PERFORMANCE_2026-10-28.md. Roll back by restoring the preceding Vercel deployment.
-
