@@ -29,3 +29,6 @@ Browser QA scripts accept a base URL argument, `PLAYWRIGHT_MODULE` (module or fi
 - OpenCV.js 4.11.0 via pinned `@techstark/opencv-js@4.11.0-release.1`; feature matching/RANSAC with geometric checks.
 - MediaPipe Tasks Vision 0.10.21 and pinned hand model; same-origin copies, browser-only inference.
 - `src/page-vision.js` remains as the legacy QR implementation and benchmark baseline; the current camera controller uses `VisualTracker`.
+
+## First-network-use follow-up
+The first production check passed, but eight of nine synthetic selections still needed a network fetch: median 477 ms, maximum 565 ms (see camera-live-cold-baseline.json). Camera startup now stages all 90 pilot MP3s (about 0.76 MB total) in a separate bounded 8 MiB compressed cache while loading the models. The active page is decoded immediately; compressed bytes remain available after decoded-cache eviction, avoiding a second network request when turning pages. Copies prevent decodeAudioData from detaching cached bytes. Staging is limited to three workers and 96 entries, shares pending fetches, and retries failures. Two regression tests cover reuse and memory bounds; all 36 Node tests and the production build pass.

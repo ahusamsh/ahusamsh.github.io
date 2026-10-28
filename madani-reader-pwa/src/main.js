@@ -172,7 +172,7 @@ $("export-data").onclick=()=>{const blob=new Blob([JSON.stringify({schema:1,segm
 $("import-data").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{state.segments={...state.segments,...sanitizeImport(JSON.parse(await f.text()))};localStorage.setItem("madani_segments_pilot_v2",JSON.stringify(state.segments));status("تم استيراد التوقيتات من الملف")}catch(e){status("ملف التوقيت غير صالح")}};
 try{state.segments=sanitizeImport({schema:1,segments:JSON.parse(localStorage.getItem("madani_segments_pilot_v2")||"{}")})}catch(e){}
 // The camera controller owns one cancellable session and uses only prepared page maps.
-const camera=createCamera({getPages:()=>state.pilot?.pages,onPage:n=>{if(state.page!==n)setPage(n)},onTarget:select,onLost:cancelPlayback,unlockAudio:()=>fastAudio.unlock(),warmPage:n=>{const zones=state.pilot?.pages[n]?.zones||[];fastAudio.warm(zones.map(z=>state.pilot.segments[z.id]?.clip))}});
+const camera=createCamera({getPages:()=>state.pilot?.pages,onPage:n=>{if(state.page!==n)setPage(n)},onTarget:select,onLost:cancelPlayback,unlockAudio:()=>{const unlocked=fastAudio.unlock();fastAudio.stage(Object.values(state.pilot?.segments||{}).map(s=>s.clip));return unlocked},warmPage:n=>{const zones=state.pilot?.pages[n]?.zones||[];fastAudio.warm(zones.map(z=>state.pilot.segments[z.id]?.clip))}});
 function startCamera(){return camera.start()}
 function stopCamera(){camera.stop()}
 
