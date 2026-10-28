@@ -1,0 +1,100 @@
+{
+  "url": "http://127.0.0.1:4186/",
+  "checks": [
+    "Real recognition and real hand model initialize from local assets",
+    "Nine fingertip targets across three automatically detected pages play matching clips",
+    "Unknown/absent page clears recognition promptly",
+    "Permission denial has a visible Arabic message and retry"
+  ],
+  "samples": [
+    {
+      "page": "17",
+      "index": 4,
+      "url": "./pilot-media/p015-word-005.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.20000004768371582,
+      "at": 2525.9000000953674,
+      "pointToStartMs": 148
+    },
+    {
+      "page": "17",
+      "index": 12,
+      "url": "./pilot-media/p015-word-013.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.20000004768371582,
+      "at": 2951.100000143051,
+      "pointToStartMs": 197.60000014305115
+    },
+    {
+      "page": "17",
+      "index": 20,
+      "url": "./pilot-media/p015-word-021.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.09999990463256836,
+      "at": 3374.7000000476837,
+      "pointToStartMs": 199.09999990463257
+    },
+    {
+      "page": "18",
+      "index": 4,
+      "url": "./pilot-media/p016-word-005.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.10000014305114746,
+      "at": 4297.600000143051,
+      "pointToStartMs": 166.90000009536743
+    },
+    {
+      "page": "18",
+      "index": 12,
+      "url": "./pilot-media/p016-word-013.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.10000014305114746,
+      "at": 4718.600000143051,
+      "pointToStartMs": 180.90000009536743
+    },
+    {
+      "page": "18",
+      "index": 20,
+      "url": "./pilot-media/p016-word-021.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.10000014305114746,
+      "at": 5142.600000143051,
+      "pointToStartMs": 198.29999995231628
+    },
+    {
+      "page": "19",
+      "index": 4,
+      "url": "./pilot-media/p017-word-005.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.10000014305114746,
+      "at": 6055.600000143051,
+      "pointToStartMs": 165
+    },
+    {
+      "page": "19",
+      "index": 12,
+      "url": "./pilot-media/p017-word-013.mp3",
+      "cacheHit": true,
+      "latencyMs": 0,
+      "at": 6480.100000143051,
+      "pointToStartMs": 197.79999995231628
+    },
+    {
+      "page": "19",
+      "index": 20,
+      "url": "./pilot-media/p017-word-021.mp3",
+      "cacheHit": true,
+      "latencyMs": 0.10000014305114746,
+      "at": 6901.300000190735,
+      "pointToStartMs": 182.10000014305115
+    }
+  ],
+  "notTested": [
+    "physical Android camera and acoustic speaker onset",
+    "real low-light fingers"
+  ],
+  "passed": true,
+  "checkedAt": "2026-10-28T15:56:24.325Z",
+  "medianPointToScheduledAudioMs": 182.10000014305115,
+  "maxPointToScheduledAudioMs": 199.09999990463257
+}

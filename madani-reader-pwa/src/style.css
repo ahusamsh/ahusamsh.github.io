@@ -20,3 +20,5 @@
 .word-entry{padding:8px 12px;min-height:40px;border:1px solid #b3c7bc;background:var(--surface,#fff);color:inherit;border-radius:8px;cursor:pointer;font-size:1rem}
 .word-entry[data-placed='false']{border-style:dashed;opacity:.85}
 .word-entry:hover{outline:2px solid #287755}
+
+#camera-torch[hidden]{display:none}button:disabled{opacity:.55;cursor:default}#camera-hint[data-error="true"]{background:#fff0e4;color:#853b14}

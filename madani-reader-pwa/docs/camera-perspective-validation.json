@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "page": "17",
+      "occluded": false,
+      "cornerError": 0.0011076597082976705,
+      "elapsedMs": 169.90000009536743,
+      "inliers": 157
+    },
+    {
+      "page": "17",
+      "occluded": true,
+      "cornerError": 0.0022164905250461405,
+      "elapsedMs": 149.70000004768372,
+      "inliers": 114
+    },
+    {
+      "page": "18",
+      "occluded": false,
+      "cornerError": 0.001979173712316263,
+      "elapsedMs": 168.70000004768372,
+      "inliers": 165
+    },
+    {
+      "page": "18",
+      "occluded": true,
+      "cornerError": 0.0015163941037419962,
+      "elapsedMs": 165.20000004768372,
+      "inliers": 138
+    },
+    {
+      "page": "19",
+      "occluded": false,
+      "cornerError": 0.0014709274371836453,
+      "elapsedMs": 198.89999985694885,
+      "inliers": 124
+    },
+    {
+      "page": "19",
+      "occluded": true,
+      "cornerError": 0.001506432188690092,
+      "elapsedMs": 190.70000004768372,
+      "inliers": 123
+    },
+    {
+      "unsupported": "unsupported-20.jpg",
+      "rejected": true
+    },
+    {
+      "unsupported": "unsupported-21.jpg",
+      "rejected": true
+    }
+  ]
+}

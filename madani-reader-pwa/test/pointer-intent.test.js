@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {PointerIntent} from '../src/pointer-intent.js';
+const a={id:'a',box:[.1,.1,.2,.2]},b={id:'b',box:[.3,.1,.2,.2]},center={x:.2,y:.2};
+test('stable interior selects in 80 ms, once, without a 300 ms delay',()=>{const p=new PointerIntent();assert.equal(p.update(a,center,0),null);assert.equal(p.update(a,center,79),null);assert.equal(p.update(a,center,80),a);assert.equal(p.update(a,center,300),null)});
+test('fast sweep and boundary jitter cannot trigger another word',()=>{const p=new PointerIntent();p.update(a,center,0);assert.equal(p.update(b,{x:.4,y:.2},60),null);assert.equal(p.update(a,center,120),null);assert.equal(p.update(a,{x:.101,y:.2},180),null);assert.equal(p.update(a,{x:.101,y:.2},270),null)});
+test('brief missing hand does not replay, deliberate withdrawal rearms',()=>{const p=new PointerIntent();p.update(a,center,0);p.update(a,center,80);p.update(null,null,140);assert.equal(p.update(a,center,200),null);p.update(null,null,500);p.update(a,center,600);assert.equal(p.update(a,center,680),a)});

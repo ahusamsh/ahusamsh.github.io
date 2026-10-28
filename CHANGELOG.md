@@ -11,3 +11,10 @@
 - Added an explicit trial playback mode without marking clips scientifically reviewed; fixed stale page audio, playback cancellation and whole-page cutoff.
 - Verification: 11 Node tests, Vite build, Chromium decoding of 151 MP3s, mobile-width RTL checks. Human listening review and physical Android/camera checks remain outstanding.
 - Prepared an isolated Vercel trial project on the connected institutional-email account following the user's request for a testing link. No main-site files or existing deployments are changed.
+
+## 2026-10-28 — Madani camera response and weak-image reliability
+- Replace small-QR-only camera geometry with local printed-grid feature matching in a worker; normalize weak lighting and clear stale page positions.
+- Predecode bounded audio cache, shorten stable interior pointing to 80 ms, reject sweeps and duplicate jitter; use GPU hand inference with CPU fallback, autofocus/exposure and optional torch.
+- Preserve the 104-page catalog, 18 edition maps and all review states. 34 Node tests pass; 18 degraded-image cases and perspective/occlusion/unsupported-page checks pass. Nine simulated points schedule audio in 148–200 ms, median 182 ms. Physical Android optics/fingers and acoustic latency remain unverified.
+- Full evidence and operating limits: madani-reader-pwa/docs/CAMERA_PERFORMANCE_2026-10-28.md. Roll back by restoring the preceding Vercel deployment.
+

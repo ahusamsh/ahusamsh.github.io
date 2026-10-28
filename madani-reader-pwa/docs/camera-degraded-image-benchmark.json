@@ -1,0 +1,254 @@
+[
+  {
+    "page": "17",
+    "kind": "normal",
+    "oldCorrect": false,
+    "oldMs": 251.29999995231628,
+    "newCorrect": true,
+    "newMs": 190.90000009536743,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.4593277777778,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "17",
+    "kind": "dark",
+    "oldCorrect": false,
+    "oldMs": 179.5,
+    "newCorrect": true,
+    "newMs": 192.09999990463257,
+    "quality": {
+      "dark": true,
+      "lowContrast": true,
+      "mean": 41.340916666666665,
+      "contrast": 30
+    }
+  },
+  {
+    "page": "17",
+    "kind": "low-contrast",
+    "oldCorrect": false,
+    "oldMs": 168.20000004768372,
+    "newCorrect": true,
+    "newMs": 154,
+    "quality": {
+      "dark": false,
+      "lowContrast": true,
+      "mean": 142.28500555555556,
+      "contrast": 34
+    }
+  },
+  {
+    "page": "17",
+    "kind": "blur",
+    "oldCorrect": false,
+    "oldMs": 209.5,
+    "newCorrect": true,
+    "newMs": 177.10000014305115,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.20176111111113,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "17",
+    "kind": "low-resolution",
+    "oldCorrect": false,
+    "oldMs": 149.5,
+    "newCorrect": true,
+    "newMs": 158.90000009536743,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.06569444444443,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "17",
+    "kind": "qr-covered",
+    "oldCorrect": false,
+    "oldMs": 201.80000019073486,
+    "newCorrect": true,
+    "newMs": 192,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 182.7958,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "18",
+    "kind": "normal",
+    "oldCorrect": false,
+    "oldMs": 268.5,
+    "newCorrect": true,
+    "newMs": 167.70000004768372,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.38853333333333,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "18",
+    "kind": "dark",
+    "oldCorrect": false,
+    "oldMs": 204.39999985694885,
+    "newCorrect": true,
+    "newMs": 200.59999990463257,
+    "quality": {
+      "dark": true,
+      "lowContrast": true,
+      "mean": 41.32798888888889,
+      "contrast": 30
+    }
+  },
+  {
+    "page": "18",
+    "kind": "low-contrast",
+    "oldCorrect": false,
+    "oldMs": 220.29999995231628,
+    "newCorrect": true,
+    "newMs": 210.40000009536743,
+    "quality": {
+      "dark": false,
+      "lowContrast": true,
+      "mean": 142.2648,
+      "contrast": 34
+    }
+  },
+  {
+    "page": "18",
+    "kind": "blur",
+    "oldCorrect": false,
+    "oldMs": 230.79999995231628,
+    "newCorrect": true,
+    "newMs": 198.59999990463257,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.24023888888888,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "18",
+    "kind": "low-resolution",
+    "oldCorrect": false,
+    "oldMs": 84.20000004768372,
+    "newCorrect": true,
+    "newMs": 144.29999995231628,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 187.6236111111111,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "18",
+    "kind": "qr-covered",
+    "oldCorrect": false,
+    "oldMs": 179.70000004768372,
+    "newCorrect": true,
+    "newMs": 188.5,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 182.8283888888889,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "19",
+    "kind": "normal",
+    "oldCorrect": false,
+    "oldMs": 233.5,
+    "newCorrect": true,
+    "newMs": 148.90000009536743,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.01260555555555,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "19",
+    "kind": "dark",
+    "oldCorrect": false,
+    "oldMs": 204.59999990463257,
+    "newCorrect": true,
+    "newMs": 154.79999995231628,
+    "quality": {
+      "dark": true,
+      "lowContrast": true,
+      "mean": 41.247122222222224,
+      "contrast": 30
+    }
+  },
+  {
+    "page": "19",
+    "kind": "low-contrast",
+    "oldCorrect": false,
+    "oldMs": 198.60000014305115,
+    "newCorrect": true,
+    "newMs": 220.30000019073486,
+    "quality": {
+      "dark": false,
+      "lowContrast": true,
+      "mean": 142.15647777777778,
+      "contrast": 34
+    }
+  },
+  {
+    "page": "19",
+    "kind": "blur",
+    "oldCorrect": false,
+    "oldMs": 270.5,
+    "newCorrect": true,
+    "newMs": 150.70000004768372,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 188.0689,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "19",
+    "kind": "low-resolution",
+    "oldCorrect": false,
+    "oldMs": 82.10000014305115,
+    "newCorrect": true,
+    "newMs": 134.29999995231628,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 187.65523148148148,
+      "contrast": 136
+    }
+  },
+  {
+    "page": "19",
+    "kind": "qr-covered",
+    "oldCorrect": false,
+    "oldMs": 207.60000014305115,
+    "newCorrect": true,
+    "newMs": 215.70000004768372,
+    "quality": {
+      "dark": false,
+      "lowContrast": false,
+      "mean": 182.1017611111111,
+      "contrast": 136
+    }
+  }
+]

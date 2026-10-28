@@ -8,3 +8,7 @@ dist/
 local-assets/
 public/pilot-media/
 dist/
+
+public/vision/
+
+.qa/
