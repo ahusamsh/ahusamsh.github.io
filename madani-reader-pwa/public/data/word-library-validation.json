@@ -1,7 +1,7 @@
 {
   "status": "machine-generated-unreviewed",
   "canonicalPages": 104,
-  "totalItems": 8625,
+  "totalItems": 8817,
   "asrPages": 90,
   "wordOccurrencesFromASR": 8482,
   "visuallyLocatedASRWords": 2224,
@@ -9,5 +9,58 @@
   "existingPilotOrCountBasedLinks": 143,
   "humanReviewed": 0,
   "teachingAudioLanguage": "ar",
-  "translatedEditionCount": 18
+  "translatedEditionCount": 18,
+  "gridAlignedNewClips": 192,
+  "gridAlignedPages": 7,
+  "gridPageDetails": {
+    "25": {
+      "count": 28,
+      "agreement": 0.684,
+      "asrMatches": 13,
+      "asrWithText": 19,
+      "introductoryUtterances": 4
+    },
+    "28": {
+      "count": 28,
+      "agreement": 0.833,
+      "asrMatches": 15,
+      "asrWithText": 18,
+      "introductoryUtterances": 2
+    },
+    "31": {
+      "count": 28,
+      "agreement": 0.8,
+      "asrMatches": 8,
+      "asrWithText": 10,
+      "introductoryUtterances": 2
+    },
+    "39": {
+      "count": 28,
+      "agreement": 0.938,
+      "asrMatches": 15,
+      "asrWithText": 16,
+      "introductoryUtterances": 4
+    },
+    "41": {
+      "count": 28,
+      "agreement": 0.786,
+      "asrMatches": 11,
+      "asrWithText": 14,
+      "introductoryUtterances": 4
+    },
+    "43": {
+      "count": 28,
+      "agreement": 0.929,
+      "asrMatches": 13,
+      "asrWithText": 14,
+      "introductoryUtterances": 4
+    },
+    "101": {
+      "count": 24,
+      "agreement": 1.0,
+      "asrMatches": 19,
+      "asrWithText": 19,
+      "introductoryUtterances": 3
+    }
+  }
 }

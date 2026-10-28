@@ -31,7 +31,8 @@ async function load(){
   for(const [n,p] of Object.entries(wordLibrary.pages)){
    const canonical=library.pages[n];
    if(!canonical)continue;
-   const zones=p.items.map(id=>wordLibrary.wordItems[id]).filter(item=>item?.box)
+   const zones=p.items.map(id=>wordLibrary.wordItems[id])
+    .filter(item=>item?.box&&(!p.gridAudioLink||item.type==='printed-grid-cell'))
     .map(item=>({id:item.id,text:item.arabicText,spokenText:item.spokenText,box:item.box}));
    state.pages[n]={...canonical,zones,
     localAudio:canonical.localAudio||canonical.audioSourceUrl||p.pageAudioUrl,
@@ -95,7 +96,8 @@ function renderWordList(){
  const p=wordLibrary?.pages[String(state.page)];
  if(!p)return;
  const filter=($("word-filter").value||"").trim();
- const ids=[...new Set([...(p.items||[]),...(p.unplaced||[])])];
+ const gridIds=(p.items||[]).filter(id=>wordLibrary.wordItems[id]?.type==='printed-grid-cell');
+ const ids=[...new Set([...gridIds,...(p.items||[]),...(p.unplaced||[])])];
  $("word-count").textContent=ids.length+" عنصر صوتي للصفحة؛ المطابقة الآلية تحتاج استماعًا.";
  const fragment=document.createDocumentFragment();
  for(const id of ids){
@@ -133,8 +135,9 @@ async function playSegment(id,seg){
  cancelPlayback();const generation=playbackGeneration,audio=$("player");if((!validSegment(seg)&&!canPreview(id,seg))||Number(audio.dataset.page)!==state.page)return;
  if(!seg.reviewed)status("تشغيل تجريبي — هذا المقطع لم يُعتمد سمعيًا بعد.");
  const bundled=state.pilot?.segments[id];
- if(bundled&&bundled.start===seg.start&&bundled.end===seg.end&&!state.urls[state.page]){
-   clipPlayer.src=bundled.clip;clipPlayer.onerror=()=>status("حمّل حزمة المقاطع المحلية لتشغيل هذا المقطع المقسّم بدقة.");
+ const clipUrl=!state.urls[state.page]&&(bundled?.clip||seg?.clip);
+ if(clipUrl&&(!bundled||bundled.start===seg.start&&bundled.end===seg.end)){
+   clipPlayer.src=clipUrl;clipPlayer.onerror=()=>status("حمّل حزمة المقاطع المحلية لتشغيل هذا المقطع المقسّم بدقة.");
    try{await clipPlayer.play()}catch{status("تعذر تشغيل المقطع المحلي؛ راجع حزمة الصوتيات.")}return;
  }
  if(!audio.getAttribute("src")){status("حمّل تسجيل الصفحة أولًا");return}
