@@ -3,6 +3,8 @@ import {FilesetResolver,HandLandmarker} from "@mediapipe/tasks-vision";
 import {markerFromUrl,markerGeometry} from "./page-vision.js";
 import {VisualPageMatcher} from "./visual-matcher.js";
 import {TemporalPageTracker} from "./temporal-tracker.js";
+import {ShapeVerifier} from "./shape-verifier.js";
+import {decideHybrid} from "./hybrid-decision.js";
 import {closestZone,project} from "./core.js";
 import {reliableMatch,strongMovingMatch,geometryAgrees} from "./alignment-quality.js";
 import "./reader.css";
@@ -24,12 +26,12 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
  const ctx=canvas.getContext("2d");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,shapeVerifier:null,poseStrong:false,lastShape:null,hybridVerified:0,hybridGeometryFallback:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
  function clearAudio(){try{s.audioSource?.stop()}catch{}s.audioSource=null}
- function resetPage(){s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
+ function resetPage(){s.shapeVerifier?.dispose();s.shapeVerifier=null;s.poseStrong=false;s.lastShape=null;s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
  async function unlockAudio(){
   const A=window.AudioContext||window.webkitAudioContext;
   if(A){s.audioContext??=new A();await s.audioContext.resume()}
@@ -135,6 +137,12 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   const matcher=s.matcher;
   matcher.init([[marker.page,url(page.image)]])
    .catch(e=>{if(currentRun===s.run)announce("تعذر تجهيز صورة الصفحة: "+e.message)});
+  ShapeVerifier.fromImage(url(page.image)).then(verifier=>{
+   if(currentRun!==s.run){verifier.dispose?.();return}
+   s.shapeVerifier=verifier;
+  }).catch(e=>{
+   if(currentRun===s.run)console.info("Glyph appearance reference unavailable",e.message);
+  });
   initializeHand(currentRun);
   // Warm audio asynchronously so a selected letter does not wait on its MP3.
   prefetchPageAudio(currentRun,marker.page);
@@ -195,6 +203,13 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
    s.lockedH=result.H.map((v,i)=>.90*v+.10*previous[i]);
   }else s.lockedH=result.H;
   s.lastAligned=now;
+  // A hybrid decision only falls back to position when perspective tracking
+  // is independently strong. Shape checks are local and never invoke OCR.
+  if(fromTracking){
+   s.poseStrong=!!(s.poseStrong&&result.inliers>=10&&result.ratio>=.42);
+  }else{
+   s.poseStrong=!!(result.inliers>=30&&result.ratio>=.34);
+  }
   if(!wasReady&&s.audioState!=="loading"&&s.audioState!=="playing"){
    announce(s.tracker?"الصفحة جاهزة. أشر إلى الحرف.":"تم التعرف على الصفحة، وجارٍ تجهيز قراءة الحروف.");
   }
@@ -281,6 +296,26 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   // Faster dwell for a moving child's hand. Requires 2 sampled frames, while
   // a short cooldown protects against repetitive activation.
   if(t-s.seenAt<175||s.lastZone===zone.id||t<s.coolUntil)return;
+  // Position selects a candidate; visible glyph appearance checks the
+  // candidate against its reference. A finger often covers the letter,
+  // so strong recent geometry may safely fall back on position.
+  let appearance={status:"inconclusive",reason:"reference-loading"};
+  if(s.shapeVerifier){
+   const frame=screenshot(720);
+   appearance=s.shapeVerifier.verify(frame.getContext("2d",{willReadFrequently:true}).getImageData(0,0,frame.width,frame.height),s.lockedH,zone,tip);
+  }
+  const decision=decideHybrid({geometryStrong:s.poseStrong,stableFrames:2,appearance});
+  s.lastShape={zoneId:zone.id,status:appearance?.status||"unknown",score:appearance?.score??null,reason:decision.reason};
+  if(!decision.allow){
+   if(t-s.lastFingerHint>1300){
+    s.lastFingerHint=t;announce(decision.reason==="clear-shape-mismatch"
+     ?"الحرف الظاهر لا يطابق الموضع المتوقع؛ حرّك الكاميرا قليلًا ثم أشر."
+     :"أحاول التأكد من موضع الحرف قبل نطقه.");
+   }
+   s.seenAt=t-90;return;
+  }
+  if(decision.reason==="geometry-and-appearance")s.hybridVerified++;
+  else s.hybridGeometryFallback++;
   s.lastZone=zone.id;s.coolUntil=t+450;
   announce("جارٍ نطق: "+(zone.spokenText||zone.text));
   say(zone);
@@ -350,5 +385,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",shape:s.lastShape,hybridVerified:s.hybridVerified,hybridGeometryFallback:s.hybridGeometryFallback,flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
 }
