@@ -41,11 +41,11 @@ function testShift(current,points,dx,dy){
  return {loss:count?loss/count:Infinity,score:count?good/count:0};
 }
 export class OCRFrameMotion{
- constructor(){this.original=null;this.points=[];this.last=null}
+ constructor(){this.original=null;this.points=[];this.last=null;this.shiftedBoxes=null}
  capture(video){
   this.original=snapshot(video);
   this.points=this.original?edges(this.original):[];
-  this.last=null;
+  this.last=null;this.shiftedBoxes=null;
   return this.points.length;
  }
  track(video,boxes){
@@ -67,7 +67,17 @@ export class OCRFrameMotion{
   this.last=best;
   // Severe rotation/zoom/camera motion => do not use stale OCR boxes.
   if(best.score<.36||best.loss>48||Math.abs(best.dx)>=8||Math.abs(best.dy)>=8)return null;
-  return boxes.map(b=>({...b,box:[b.box[0]+best.dx/current.w,b.box[1]+best.dy/current.h,b.box[2],b.box[3]]}));
+  // Previous version compared every new frame against the original snapshot.
+  // It stopped recognizing a naturally moving handheld phone once its total
+  // displacement exceeded eight LOW-RES pixels. Track each short step and
+  // accumulate displacement only when the observed image is still reliable.
+  const source=this.shiftedBoxes||boxes;
+  const shifted=source.map(b=>({...b,box:[b.box[0]+best.dx/current.w,b.box[1]+best.dy/current.h,b.box[2],b.box[3]]}));
+  this.original=current;
+  this.points=edges(current);
+  if(this.points.length<35)return null;
+  this.shiftedBoxes=shifted;
+  return shifted;
  }
- reset(){this.original=null;this.points=[];this.last=null}
+ reset(){this.original=null;this.points=[];this.last=null;this.shiftedBoxes=null}
 }
