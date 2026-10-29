@@ -1,3 +1,4 @@
+import {findColoredPen} from "./colored-pen.js";
 // Local-only pointer detection. Does NOT use page geometry or page zone boxes.
 // All targets are first detected/recognized by local OCR from live camera pixels.
 const gray=(r,g,b)=>.299*r+.587*g+.114*b;
@@ -22,7 +23,7 @@ function foregroundSkin(img,targets){
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
   const start=y*w+x;if(!mask[start]||visited[start])continue;
   const queue=[start];visited[start]=1;
-  let minX=w,minY=h,maxX=0,maxY=0,touches=0,points=[];
+  let minX=w,minY=h,maxX=0,maxY=0,touches=0,points=[],entry=[];
   const rowLeft=new Int32Array(h).fill(w),rowRight=new Int32Array(h).fill(-1);
   const colTop=new Int32Array(w).fill(h),colBottom=new Int32Array(w).fill(-1);
   for(let k=0;k<queue.length;k++){
@@ -30,7 +31,7 @@ function foregroundSkin(img,targets){
    if(ix<minX)minX=ix;if(ix>maxX)maxX=ix;if(iy<minY)minY=iy;if(iy>maxY)maxY=iy;
    rowLeft[iy]=Math.min(rowLeft[iy],ix);rowRight[iy]=Math.max(rowRight[iy],ix);
    colTop[ix]=Math.min(colTop[ix],iy);colBottom[ix]=Math.max(colBottom[ix],iy);
-   if(ix<w*.035||ix>w*.965||iy>h*.965)touches++;
+   if(ix<w*.035||ix>w*.965||iy>h*.965){touches++;entry.push({x:ix,y:iy})}
    if(k%2===0)points.push({x:ix,y:iy});
    for(const j of [i-1,i+1,i-w,i+w]){
     if(j<0||j>=mask.length||visited[j]||!mask[j])continue;
@@ -40,10 +41,16 @@ function foregroundSkin(img,targets){
    }
   }
   if(queue.length<Math.max(70,w*h*.00085)||touches<3)continue;
-  const anchor={x:(minX+maxX)/2,y:h*.99};
-  // Bounded ink association: skin must actually extend to a visible OCR glyph,
-  // not merely pass near a row in the center of the hand.
+  // The finger must be a connected protrusion entering from outside
+  // the frame. A small skin-colored eraser cannot be classified as a finger.
+  const anchor={x:entry.reduce((a,p)=>a+p.x,0)/entry.length,y:entry.reduce((a,p)=>a+p.y,0)/entry.length};
+  const maxDepth=Math.max(...points.map(p=>Math.hypot(p.x-anchor.x,p.y-anchor.y)));
+  if(maxDepth<Math.min(w,h)*.14)continue;
+  // Only inspect the farthest fingertip, not the side of a palm or a finger
+  // that passes near an unrelated letter along its shaft.
   for(const p of points){
+   const depth=Math.hypot(p.x-anchor.x,p.y-anchor.y);
+   if(depth<maxDepth*.82)continue;
    const horizontalWidth=rowRight[p.y]-rowLeft[p.y]+1;
    const verticalHeight=colBottom[p.x]-colTop[p.x]+1;
    // The broad palm is not a fingertip. Prefer slender protrusions.
@@ -53,8 +60,8 @@ function foregroundSkin(img,targets){
    if(!matches.length||matches[0].d>Math.max(.026,matches[0].t.box[3]*.7))continue;
    // Refuse an in-between fingertip: never guess the neighboring glyph.
    if(matches.length>1&&Math.abs(matches[0].d-matches[1].d)<.012)continue;
-   const progress=(anchor.y-p.y)/h;
-   const score=progress*.72-matches[0].d*1.8;
+   const progress=depth/Math.hypot(w,h);
+   const score=progress-matches[0].d*2.2;
    if(!best||score>best.score)best={tip:normalized,score,kind:"finger",text:matches[0].t.text,ocr:matches[0].t,confidence:matches[0].t.confidence};
   }
  }
@@ -137,6 +144,10 @@ export function findPointer(image,detected,allowed,{pen=true,hand=true}={}){
  if(!image||!detected?.length)return null;
  const targets=detected.filter(t=>t.confidence>=.83&&allowed.has(t.text));
  if(!targets.length)return null;
+ // First detect the body of a colored pencil/pen: a pink eraser must not
+ // get classified as a human fingertip and snap to the previous glyph.
+ const colored=pen?findColoredPen(image,targets):null;
+ if(colored)return colored;
  const finger=hand?foregroundSkin(image,targets):null;
  if(finger)return finger;
  return pen?penStrokes(image,targets):null;
