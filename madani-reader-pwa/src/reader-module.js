@@ -216,7 +216,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
     }
    }
    const fullStart=performance.now();
-   const result=s.matcher.detect(frame);
+   const result=s.matcher.detect(frame,{recover:!s.lockedH||now-s.lastAligned>1500});
    s.lastFullMs=performance.now()-fullStart;
    s.lastFullMatch=performance.now();
    const valid=reliableMatch(result,s.page.pdfPage);
