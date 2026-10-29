@@ -13,7 +13,7 @@ test("lost page geometry reacquires without resetting the QR page",()=>{
  const end=src.indexOf("function detectFinger(t)",start);
  const flow=src.slice(start,end);
  assert.match(flow,/s\.temporal\.update\(frame\)/);
- assert.match(flow,/s\.matcher\.detect\(frame\)/);
+ assert.match(flow,/s\.matcher\.detect\(frame,\{recover:/);
  assert.doesNotMatch(flow,/showPhase\("scan"\)/);
  assert.doesNotMatch(flow,/resetPage\(\)/);
 });
