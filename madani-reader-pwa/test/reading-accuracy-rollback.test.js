@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 
@@ -14,5 +14,5 @@ test("restored reading selects sound from a stable page zone without experimenta
 test("QR remains single scan, and occlusion does not require rescanning",()=>{
  assert.match(source,/s\.phase==="scan"&&t-s\.lastScan>420/);
  assert.match(source,/s\.temporal\.update\(frame\)/);
- assert.match(source,/s\.matcher\.detect\(frame\)/);
+ assert.match(source,/s\.matcher\.detect\(frame,\{recover:/);
 });
