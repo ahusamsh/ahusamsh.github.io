@@ -15,6 +15,7 @@ import "./reader.css";
 export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord=()=>{},onStatus=()=>{},recognitionMode="geometry"}={}){
  if(!(container instanceof HTMLElement))throw new TypeError("Container HTMLElement required");
  const localMode=recognitionMode==="ocr";
+ const debugMode=localMode&&new URLSearchParams(window.location.search).has("diagnostics");
  const origin=new URL(assetBase,document.baseURI);
  const url=p=>new URL(String(p).replace(/^\.\//,""),origin).href;
  const ui=document.createElement("section");
@@ -23,14 +24,14 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  ui.innerHTML='<div class="madani-screen"><div class="madani-qr-guide" aria-hidden="true"><span></span></div><video class="madani-video" muted playsinline autoplay></video><canvas class="madani-overlay"></canvas><div class="madani-message" role="status">اضغط تشغيل الكاميرا ثم امسح رمز QR الموجود على الصفحة.</div></div><div class="madani-actions"><button type="button" class="madani-start">تشغيل الكاميرا</button><button type="button" class="madani-stop" hidden>إيقاف</button></div><p class="madani-guide">امسح QR مرة واحدة، ثم وجّه الكاميرا إلى الصفحة وأشر بإصبعك إلى الحرف.</p>';
  container.replaceChildren(ui);
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
- const ctx=canvas.getContext("2d");
+ const ctx=canvas.getContext("2d"),guide=$(".madani-guide");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",localOCR:null,localPointer:null,localMotion:null,localReady:false,ocrBusy:false,ocrAt:0,ocrBoxes:[],lastLocalPointer:0,localCandidate:null,localCandidateAt:0,localOcrError:null,temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",localOCR:null,localPointer:null,localMotion:null,localReady:false,ocrBusy:false,ocrAt:0,ocrStartedAt:0,ocrLastCompletedAt:0,ocrBoxes:[],ocrRuns:0,ocrValid:0,ocrStatus:"idle",lastLocalPointer:0,localPointerHits:0,localPointerMisses:0,localMotionRejects:0,localLastPointer:null,ocrLastErrorAt:0,lastDiagnosticsAt:0,localCandidate:null,localCandidateAt:0,localOcrError:null,temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
  function clearAudio(){try{s.audioSource?.stop()}catch{}s.audioSource=null}
- function resetPage(){s.localMotion?.reset();s.ocrAt=0;s.ocrBoxes=[];s.ocrBusy=false;s.localCandidate=null;s.localCandidateAt=0;s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
+ function resetPage(){s.localMotion?.reset();s.ocrAt=0;s.ocrStartedAt=0;s.ocrLastCompletedAt=0;s.ocrBoxes=[];s.ocrBusy=false;s.ocrRuns=0;s.ocrValid=0;s.ocrStatus="idle";s.localPointerHits=0;s.localPointerMisses=0;s.localMotionRejects=0;s.localLastPointer=null;s.localCandidate=null;s.localCandidateAt=0;s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
  async function unlockAudio(){
   const A=window.AudioContext||window.webkitAudioContext;
   if(A){s.audioContext??=new A();await s.audioContext.resume()}
@@ -160,44 +161,65 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
    await s.localOCR.init();
    if(run!==s.run)return;
    s.localReady=true;
+   s.ocrStatus="ready";
    announce("القارئ المباشر جاهز. أشر بطرف إصبعك أو قلمك إلى الحرف.");
   }catch(e){
    if(run!==s.run)return;
-   s.localOcrError=e.message;
+   s.localOcrError=e.message;s.ocrStatus="error";
    announce("تعذر تجهيز القراءة المباشرة: "+e.message);
   }
  }
  async function updateLocalOCR(){
   if(!s.localReady||s.ocrBusy||s.phase!=="point")return;
   const run=s.run,stamp=performance.now();
-  s.ocrBusy=true;s.ocrAt=stamp;
+  s.ocrBusy=true;s.ocrStartedAt=stamp;s.ocrStatus="reading";
+  if(s.ocrRuns===0)announce("جارٍ التعرف على حروف الصورة. في أول مرة قد يستغرق التحليل عدة ثوانٍ.");
+  // OCR inference can take several seconds on budget Android devices.
+  // Capture the corresponding camera frame BEFORE inference. Do not mark
+  // the text boxes as expired while they are still being computed.
   s.localMotion.capture(video);
   try{
    const boxes=await s.localOCR.detect(video);
    if(s.run!==run||s.phase!=="point")return;
    s.ocrBoxes=boxes;
-   if(boxes.length&&s.lastStatus.includes("جارٍ تجهيز"))
-    announce("رصدت "+boxes.length+" منطقة نصية في الصورة. أشر إلى أحد الحروف.");
+   s.ocrAt=performance.now();
+   s.ocrLastCompletedAt=s.ocrAt;
+   s.ocrRuns++;
+   s.ocrValid=boxes.filter(b=>b.confidence>=.83).length;
+   s.ocrStatus=boxes.length?"ready":"no-text";
+   if(s.ocrRuns===1){
+    announce(s.ocrValid>0?"تمت قراءة "+s.ocrValid+" منطقة واضحة. أشر بطرف القلم أو الإصبع إلى الحرف.":"لم أتعرف على حروف واضحة. وجّه الكاميرا إلى نص الكتاب.");
+   }
   }catch(e){
-   if(s.run===run){s.localOcrError=e.message;announce("تعذر فحص الحروف: "+e.message)}
+   if(s.run===run){
+    s.localOcrError=e.message;s.ocrStatus="error";
+    s.ocrAt=performance.now();s.ocrLastCompletedAt=s.ocrAt;
+    announce("تعذر فحص الحروف: "+e.message);
+   }
   }finally{s.ocrBusy=false}
  }
  function detectLocalPointer(t){
-  if(!s.localReady||!s.ocrBoxes.length||t-s.ocrAt>2650)return;
+  // The previous implementation started the expiry clock BEFORE OCR, so
+  // slow phones sometimes expired a recognition before it even existed.
+  // Never read boxes while a fresh inference is replacing their camera pose.
+  if(!s.localReady||s.ocrBusy||!s.ocrBoxes.length||!s.ocrAt||t-s.ocrAt>Math.max(3800,2*s.localOCR.lastDuration+1200))return;
   const page=s.manifest?.pages?.[s.page?.pdfPage];
   if(!page)return;
   const allowed=new Set(page.zones.map(z=>s.localNormalize(z.text)));
   const shifted=s.localMotion?.track(video,s.ocrBoxes);
-  if(!shifted)return;
+  if(!shifted){s.localMotionRejects++;return;}
   const normalizedBoxes=shifted.map(b=>({...b,text:s.localNormalize(b.text)}));
   const pointer=s.localPointer.scan(video,normalizedBoxes,allowed);
   if(!pointer){
+   s.localPointerMisses++;s.localLastPointer=null;
    s.fingerVisible=false;s.fingerZone=null;
    if(s.localCandidate&&t-s.localCandidateAt>520){
     s.localCandidate=null;s.lastZone=null;
    }
    return;
   }
+  s.localPointerHits++;
+  s.localLastPointer={type:pointer.kind,text:pointer.text,confidence:pointer.confidence,at:t};
   // The printed letter is recognized by OCR: zone positions and page pose
   // are intentionally not involved in this path.
   const matches=page.zones.filter(z=>s.localNormalize(z.text)===pointer.text);
@@ -370,6 +392,13 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  function loop(t){
   if(s.phase==="idle")return;
   if(canvas.width!==video.videoWidth&&video.videoWidth)resize();
+  if(debugMode&&t-s.lastDiagnosticsAt>1200){
+   s.lastDiagnosticsAt=t;
+   const loaded=s.localReady?"جاهز":s.localOcrError?"فشل":"قيد التحميل";
+   const reading=s.ocrBusy?"تحليل جارٍ":"";
+   const hint=s.localLastPointer?s.localLastPointer.type+" / "+s.localLastPointer.text:"لا توجد إشارة مؤكدة";
+   guide.textContent="تشخيص القراءة: النموذج "+loaded+"؛ "+reading+"؛ حروف "+s.ocrValid+"؛ زمن الفحص "+Math.round(s.localOCR?.lastDuration||0)+" مللي ثانية؛ مؤشر: "+hint+"؛ رفض حركة "+s.localMotionRejects+(s.localOcrError?"؛ خطأ "+s.localOcrError:"");
+  }
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(video.readyState>=2&&video.videoWidth){
    // Critical on low-powered Android devices: QR detection is CPU-heavy.
@@ -377,7 +406,8 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
    if(s.phase==="scan"&&t-s.lastScan>420){s.lastScan=t;scan()}
    // Prioritize hand detection over expensive page feature matching.
    if(localMode&&s.phase==="point"){
-    if(s.localReady&&!s.ocrBusy&&t-s.ocrAt>2300)updateLocalOCR();
+    if(s.localReady&&!s.ocrBusy&&t-(s.ocrLastCompletedAt||0)>4200&&
+       !s.localCandidate&&t>s.coolUntil)updateLocalOCR();
     if(s.localReady&&t-s.lastLocalPointer>145){s.lastLocalPointer=t;detectLocalPointer(t)}
    }else{
     if(s.phase==="point"&&s.tracker&&t-s.lastFinger>125){s.lastFinger=t;try{detectFinger(t)}catch(e){if(t-s.lastFingerHint>2000){s.lastFingerHint=t;announce("تتبع الإصبع غير متاح: "+e.message)}}}
@@ -436,5 +466,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,recognitionMode:localMode?"ocr":"geometry",ocrReady:s.localReady,ocrBoxes:s.ocrBoxes.length,ocrMs:s.localOCR?.lastDuration||0,ocrError:s.localOcrError,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,recognitionMode:localMode?"ocr":"geometry",ocrReady:s.localReady,ocrBusy:s.ocrBusy,ocrStatus:s.ocrStatus,ocrBoxes:s.ocrBoxes.length,ocrValid:s.ocrValid,ocrRuns:s.ocrRuns,ocrAgeMs:Math.round(performance.now()-s.ocrAt),ocrMs:s.localOCR?.lastDuration||0,ocrError:s.localOcrError,localPointerHits:s.localPointerHits,localPointerMisses:s.localPointerMisses,localMotionRejects:s.localMotionRejects,lastLocalPointer:s.localLastPointer,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
 }
