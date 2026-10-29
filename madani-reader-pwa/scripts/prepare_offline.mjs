@@ -3,7 +3,11 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 const dist=path.resolve('dist');
 function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>x.isDirectory()?walk(path.join(dir,x.name)):[path.join(dir,x.name)])}
-const paths=walk(dist).filter(p=>!p.endsWith(`${path.sep}sw.js`));
+// Keep the original fast reader lightweight. The experimental OCR runtime
+// ships separately and is fetched only when recognition=ocr is selected.
+const paths=walk(dist).filter(p=>!p.endsWith(`${path.sep}sw.js`)&&
+ !p.includes(`${path.sep}sdk${path.sep}`)&&
+ !/ort-wasm|ort\.wasm|local-ocr|local-pointer/i.test(path.basename(p)));
 const files=paths.map(p=>'./'+path.relative(dist,p).split(path.sep).join('/'));
 const digest=crypto.createHash('sha256');for(const p of paths)digest.update(fs.readFileSync(p));
 const name='madani-reader-'+digest.digest('hex').slice(0,12);
