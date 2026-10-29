@@ -107,6 +107,43 @@ function inkSimilarity(current,template,H){
  if(valid<500||both+onlyA+onlyB<100)return 0;
  return 2*both/(2*both+onlyA+onlyB);
 }
+// Validate mapped page corners before accepting a homography. A repeated
+// Arabic glyph can give many ORB matches but an impossible perspective.
+export function plausiblePagePose(H){
+ const inverse=invert3(H);if(!inverse)return false;
+ const q=[{x:.05,y:.03},{x:.95,y:.03},{x:.95,y:.95},{x:.05,y:.95}].map(p=>project(inverse,p));
+ if(q.some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.y)))return false;
+ const xspan=Math.max(...q.map(p=>p.x))-Math.min(...q.map(p=>p.x));
+ const yspan=Math.max(...q.map(p=>p.y))-Math.min(...q.map(p=>p.y));
+ if(xspan<.13||yspan<.13||xspan>3.5||yspan>3.5)return false;
+ const area=Math.abs(q.reduce((n,p,i)=>n+p.x*q[(i+1)%4].y-p.y*q[(i+1)%4].x,0))*.5;
+ if(area<.025||area>6)return false;
+ const center=project(inverse,{x:.5,y:.5});
+ if(!center||center.x<-.7||center.x>1.7||center.y<-.7||center.y>1.7)return false;
+ // Prevent folded / self-crossing quadrilaterals.
+ let sign=0;
+ for(let i=0;i<4;i++){
+  const a=q[i],b=q[(i+1)%4],c=q[(i+2)%4];
+  const cross=(b.x-a.x)*(c.y-b.y)-(b.y-a.y)*(c.x-b.x);
+  if(Math.abs(cross)<.0001)return false;
+  const next=Math.sign(cross);
+  if(sign&&next!==sign)return false;
+  sign=next;
+ }
+ return true;
+}
+export function fromCropToFrame(candidate,{x,y,w,h}){
+ if(!candidate)return null;
+ const H=candidate.H;
+ const mapped=[
+ H[0]/w,H[1]/h,H[2]-H[0]*x/w-H[1]*y/h,
+ H[3]/w,H[4]/h,H[5]-H[3]*x/w-H[4]*y/h,
+ H[6]/w,H[7]/h,H[8]-H[6]*x/w-H[7]*y/h
+ ];
+ return {...candidate,H:mapped,
+   anchors:candidate.anchors?.map(a=>({...a,x:x+a.x*w,y:y+a.y*h})),
+   crop:{x,y,w,h}};
+}
 export class VisualPageMatcher{
  constructor(){this.templates=[];this.lastDetection=null}
  async init(pageEntries){
@@ -126,20 +163,45 @@ export class VisualPageMatcher{
   if(!this.templates.length)throw new Error("تعذر إنشاء بصمة الصفحات");
   return this.templates.length;
  }
- detect(canvas){
-  const current=features(canvas,760);
+ detect(canvas,{recover=false}={}){
   let best=null,second=null;this.debug=[];
-  for(const t of this.templates){
-   const result=match(current,t);
-   if(!result)continue;
-   const visual=inkSimilarity(current,t,result.H);
-   // Contrast/lighting shifts can reduce global binary pixel similarity to 10%,
-   // even with 50+ geometrically consistent ORB inliers (real phone observation).
-   // Trust RANSAC inliers and spread, not a global brightness threshold.
-   const item={...result,page:t.page,frameWidth:canvas.width,frameHeight:canvas.height,visual,score:result.score*(0.70+0.30*Math.max(0,Math.min(visual,1)))};
-   this.debug.push({page:t.page,width:t.width,score:Math.round(item.score*10)/10,n:item.inliers,ratio:item.ratio,visual:Math.round(visual*100)/100,H:item.H.map(v=>Math.round(v*100)/100)});
-   if(!best||item.score>best.score){second=best;best=item}
-   else if(!second||item.score>second.score)second=item;
+  const scan=(source,region=null)=>{
+   const current=features(source,760);
+   for(const t of this.templates){
+    const raw=match(current,t);
+    if(!raw)continue;
+    const visual=inkSimilarity(current,t,raw.H);
+    const item0={...raw,page:t.page,frameWidth:canvas.width,frameHeight:canvas.height,
+      visual,score:raw.score*(0.70+0.30*Math.max(0,Math.min(visual,1)))};
+    const item=region?fromCropToFrame(item0,region):item0;
+    if(!plausiblePagePose(item.H)){this.debug.push({page:t.page,rejected:"impossible-geometry",n:item.inliers,region});continue;}
+    if(item.inliers<25&&item.visual<.055){this.debug.push({page:t.page,rejected:"low-visual-evidence",n:item.inliers,region});continue;}
+    this.debug.push({page:t.page,width:t.width,score:Math.round(item.score*10)/10,n:item.inliers,
+      ratio:item.ratio,visual:Math.round(visual*100)/100,region});
+    if(!best||item.score>best.score){second=best;best=item}
+    else if(!second||item.score>second.score)second=item;
+   }
+  };
+  scan(canvas);
+  // The full book often occupies only half of a handheld portrait video.
+  // A low-resolution page may be surrounded by blank paper or an adjacent
+  // page: enlarge the expected book area only when initial geometry is weak.
+  if(recover&&(!best||best.inliers<29||best.visual<.20)){
+   const regions=[
+    {x:.08,y:.28,w:.81,h:.70},
+    {x:.02,y:.30,w:.70,h:.68},
+    {x:.26,y:.25,w:.71,h:.72}
+   ];
+   for(const region of regions){
+    const c=document.createElement("canvas");
+    c.width=Math.round(canvas.width*region.w);
+    c.height=Math.round(canvas.height*region.h);
+    c.getContext("2d",{willReadFrequently:true}).drawImage(canvas,
+      region.x*canvas.width,region.y*canvas.height,region.w*canvas.width,region.h*canvas.height,
+      0,0,c.width,c.height);
+    scan(c,region);
+    if(best&&best.inliers>=37&&best.ratio>.37&&best.visual>.20)break;
+   }
   }
   if(!best)return null;
   if(second&&second.page!==best.page&&second.score>best.score*.86)return null;
