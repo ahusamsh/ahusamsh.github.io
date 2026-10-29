@@ -3,7 +3,6 @@ import {FilesetResolver,HandLandmarker} from "@mediapipe/tasks-vision";
 import {markerFromUrl,markerGeometry} from "./page-vision.js";
 import {VisualPageMatcher} from "./visual-matcher.js";
 import {TemporalPageTracker} from "./temporal-tracker.js";
-import {PointerVision} from "./pointer-vision.js";
 import {closestZone,project} from "./core.js";
 import {reliableMatch,strongMovingMatch,geometryAgrees} from "./alignment-quality.js";
 import "./reader.css";
@@ -25,12 +24,12 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  const $=q=>ui.querySelector(q),video=$(".madani-video"),canvas=$(".madani-overlay"),message=$(".madani-message"),startButton=$(".madani-start"),stopButton=$(".madani-stop");
  const ctx=canvas.getContext("2d");
  const focusGuide=$(".madani-qr-guide");
- const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,pointerVision:null,pointerMode:"none",lastPointerScan:0,lastPointerSeenAt:0,pointerFallbackCount:0,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
+ const s={stream:null,run:0,phase:"idle",page:null,manifest:null,matcher:null,tracker:null,lockedH:null,lastAligned:0,qrReader:null,qrCanvas:document.createElement("canvas"),scanning:false,matching:false,lastScan:0,lastMatch:0,lastFinger:0,seen:null,seenAt:0,lastZone:null,coolUntil:0,lastZoneLostAt:0,audioRequest:0,audioState:"idle",fingerVisible:false,fingerZone:null,lastFingerSeen:0,lastFingerHint:0,audioContext:null,audioCache:new Map(),audioSource:null,loopId:0,lastStatus:"",lastScannedQr:"",temporal:new TemporalPageTracker(),lastFullMatch:0,lastFlow:0,flowMs:0,lastFullMs:0,isDestroyed:false,alignFails:0,alignStreak:0,lastCandidate:null,lastCandidateAt:0,alignReportAt:0};
  const announce=(text)=>{if(s.lastStatus!==text){s.lastStatus=text;message.textContent=text;onStatus(text)}};
  function showPhase(next){s.phase=next;focusGuide.hidden=next!=="scan";ui.dataset.phase=next;}
  function confirmQR(page){try{navigator.vibrate?.(110)}catch{}announce("تم مسح الرمز! الصفحة "+page+". أبعد الهاتف حتى تظهر الصفحة كاملة ثم أشر إلى الحرف.");}
  function clearAudio(){try{s.audioSource?.stop()}catch{}s.audioSource=null}
- function resetPage(){s.pointerVision?.dispose();s.pointerVision=null;s.pointerMode="none";s.lastPointerScan=0;s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
+ function resetPage(){s.temporal.reset();s.lastFullMatch=0;s.lastFlow=0;s.audioRequest++;s.audioState="idle";s.fingerVisible=false;s.fingerZone=null;s.page=null;s.lockedH=null;s.lastAligned=0;s.matcher?.dispose();s.matcher=null;s.seen=null;s.lastZone=null;}
  async function unlockAudio(){
   const A=window.AudioContext||window.webkitAudioContext;
   if(A){s.audioContext??=new A();await s.audioContext.resume()}
@@ -136,13 +135,6 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   const matcher=s.matcher;
   matcher.init([[marker.page,url(page.image)]])
    .catch(e=>{if(currentRun===s.run)announce("تعذر تجهيز صورة الصفحة: "+e.message)});
-  // The page-foreground detector recognizes a finger tip or pen without
-  // requiring MediaPipe to see a whole hand.
-  const pointer=new PointerVision();
-  pointer.init(url(page.image)).then(()=>{
-   if(currentRun===s.run)s.pointerVision=pointer;
-   else pointer.dispose();
-  }).catch(()=>{});
   initializeHand(currentRun);
   // Warm audio asynchronously so a selected letter does not wait on its MP3.
   prefetchPageAudio(currentRun,marker.page);
@@ -256,33 +248,16 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
   }finally{s.matching=false}
  }
  function detectFinger(t){
-  if((!s.tracker&&!s.pointerVision)||!s.lockedH||t-s.lastAligned>1450)return;
-  let tip=null,method="none";
-  if(s.tracker){
-   const results=s.tracker.detectForVideo(video,t);
-   tip=results.landmarks?.[0]?.[8]||null;
-   if(tip)method="hand";
-  }
-  // Fallback when a pen or only a fingertip is visible. Validate within the
-  // already recognized printed page; this is not a new QR/hand requirement.
-  if(!tip&&s.pointerVision&&t-s.lastPointerScan>260){
-   s.lastPointerScan=t;
-   const zones=s.manifest?.pages?.[s.page.pdfPage]?.zones||[];
-   const pointer=s.pointerVision.detect(video,s.lockedH,zones);
-   if(pointer){tip=pointer.tip;method=pointer.method;s.lastPointerSeenAt=t;s.pointerFallbackCount++;}
-  }
-  s.pointerMode=method;
+  if(!s.tracker||!s.lockedH||t-s.lastAligned>1450)return;
+  const results=s.tracker.detectForVideo(video,t);
+  const tip=results.landmarks?.[0]?.[8];
   if(!tip){
    s.fingerVisible=false;s.fingerZone=null;
-   // The foreground pointer scan is deliberately slower than the camera
-   // render loop. Preserve its candidate until the next independent scan;
-   // only an actual second positive observation can trigger audio.
-   if(s.seen&&s.lastPointerSeenAt&&t-s.lastPointerSeenAt<530)return;
    s.seen=null;
    // A child may lift the finger and point at the SAME letter again.
    if(t-s.lastFingerSeen>330)s.lastZone=null;
    if(t-s.lastFingerHint>2500&&t-s.lastFingerSeen>1200){
-    s.lastFingerHint=t;announce("الصفحة جاهزة. قرّب طرف إصبعك أو القلم إلى الحرف ليتم نطقه.");
+    s.lastFingerHint=t;announce("الصفحة جاهزة، لكن الإصبع غير ظاهر للكاميرا. أظهر يدك والإصبع داخل الصورة.");
    }
    return;
   }
@@ -320,7 +295,7 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
    // After scanning QR once, never run jsQR repeatedly while tracking a finger.
    if(s.phase==="scan"&&t-s.lastScan>420){s.lastScan=t;scan()}
    // Prioritize hand detection over expensive page feature matching.
-   if(s.phase==="point"&&(s.tracker||s.pointerVision)&&t-s.lastFinger>125){s.lastFinger=t;try{detectFinger(t)}catch(e){if(t-s.lastFingerHint>2000){s.lastFingerHint=t;announce("تتبع الإصبع غير متاح: "+e.message)}}}
+   if(s.phase==="point"&&s.tracker&&t-s.lastFinger>125){s.lastFinger=t;try{detectFinger(t)}catch(e){if(t-s.lastFingerHint>2000){s.lastFingerHint=t;announce("تتبع الإصبع غير متاح: "+e.message)}}}
    if(s.phase==="point"&&t-s.lastMatch>(s.temporal.previous?190:650)){s.lastMatch=t;align()}
    if(s.phase==="point"&&s.lastAligned&&t-s.lastAligned>2600){
     announce("وجّه الكاميرا إلى الصفحة كاملة لتحديد الحروف بدقة.");
@@ -375,5 +350,5 @@ export function mountMadaniReader(container,{assetBase="./",onPage=()=>{},onWord
  }
  startButton.addEventListener("click",start);
  stopButton.addEventListener("click",()=>stop());
- return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,pointerMode:s.pointerMode,pointerFallbackCount:s.pointerFallbackCount,audioState:s.audioState,matchingFrames:s.alignStreak})};
+ return {start,stop,destroy,selectFromQr:async raw=>{if(!s.stream)await start();if(s.phase==="scan")await lockFromQR({raw})},element:ui,getStatus:()=>({phase:s.phase,page:s.page,aligned:!!s.lockedH&&performance.now()-s.lastAligned<1450,handReady:!!s.tracker,tracking:s.temporal.previous?"optical-flow":"reacquiring",flowMs:Math.round(s.flowMs),fullMs:Math.round(s.lastFullMs),fingerVisible:s.fingerVisible,fingerZone:s.fingerZone,audioState:s.audioState,matchingFrames:s.alignStreak})};
 }
